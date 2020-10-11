@@ -5,7 +5,7 @@
 <h3 align="center">一款基于 Vue 和 Electron 的研发管理工具</h3>
 <div align="center">
 
-[下载](https://github.com/shuxiaokai3/jobtool-electron/releases) | [开发文档](https://jobtool.cn/docs)
+[下载](https://github.com/shuxiaokai3/jobtool-electron/releases) | [开发文档](https://jobtool.cn/docs) | [在线体验](http://47.107.70.26/jobtool)
 
 </div>
 <div align="center">
@@ -24,7 +24,7 @@
 
 ## 简介
 
-**摸鱼**是一款用于提高研发效率的工具集。它的目标是把研发过程中能够提高开发效率和规范流程的功能都集中在一起，你可以把它看作研发过程中的一把瑞士军刀。
+**摸鱼**是一款规范研发流程的工具集。规范的软件开发流程将大大提高开发效率。传统软件开发过程中你可能制定了若干`规范`，但实际落地过程中人为去监督这些规范的落地将变得非常困难，**摸鱼**的目的就是来监督这些规范的落地。
 
 ## http错误状态码
 
