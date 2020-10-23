@@ -96,7 +96,7 @@ module.exports = appInfo => {
         },
         plugins: []
     };
-       //sms短信服务
+    //sms短信服务啊啊
     const smsConfig = {
         base: { //基础信息 
             accessKeyId: "",
