@@ -24,6 +24,7 @@
     "fs-extra": "^9.0.0",
     "koa-proxy": "^1.0.0-alpha.3",
     "officegen": "^0.6.4",
+    "shelljs": "^0.8.4",
     "svg-captcha": "^1.4.0",
     "xlsx": "^0.16.5"
   },
