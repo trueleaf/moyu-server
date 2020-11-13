@@ -121,6 +121,10 @@ module.exports = app => {
                     },
                     children: {
                         type: Array
+                    },
+                    _select: { //请求参数是否选中
+                        type: Boolean,
+                        default: true
                     }
                 }
             ],

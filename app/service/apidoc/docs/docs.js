@@ -9,7 +9,9 @@
 
 const Service = require("egg").Service;
 const officegen = require("officegen");
-const fs = require("fs");
+const fs = require("fs-extra");
+const path = require("path")
+
 
 class DocsService extends Service {
     /** 
@@ -465,7 +467,7 @@ class DocsService extends Service {
 
     async convertDocToWord(params) { 
         const { projectId } = params;
-        const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false });
+        const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true });
         const docx = officegen("docx");
         
         docs.forEach(doc => {
@@ -632,7 +634,28 @@ class DocsService extends Service {
         foo(plainData, result);
         return result;
     }
-
+    /** 
+     * @description        获取所有接口离线数据
+     * @author              shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    projectId 项目id
+     * @return {String}    返回字符串
+     */
+    async getDocOfflineData(params) { 
+        const { projectId } = params;
+        const banner = await this.ctx.service.apidoc.docs.docs.getDocTreeNode({ _id: projectId });
+        const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, enabled: true }, { item: 1, _id: 1, docName: 1, createdAt: 1, updatedAt: 1, pid: 1 });
+        const result = {
+            banner,
+            docs
+        };
+        let file = await fs.readFile(path.resolve(this.app.baseDir, "app/public/share-doc/index.html"), "utf-8");
+        file = file.replace(/window.SHARE_DATA = null/, `window.SHARE_DATA = ${JSON.stringify(result)}`);
+        file = file.replace(/window.PROJECT_ID = null/, `window.PROJECT_ID = "${projectId}"`);
+        this.ctx.set("content-type", "application/force-download");
+        this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent("接口文档.html")}`);
+        return result;
+    }
 }
 
 module.exports = DocsService;

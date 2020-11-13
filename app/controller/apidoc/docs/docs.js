@@ -79,7 +79,6 @@ class DocsController extends Controller {
         }
     }
 
-
     /** 
         @description  新增多个空白文档
         @author       shuxiaokai
@@ -152,8 +151,6 @@ class DocsController extends Controller {
             return;
         }
     }
-
-
 
     /** 
         @description  修改文档在文档树中的位置
@@ -435,6 +432,30 @@ class DocsController extends Controller {
             return;
         }
     }
+    /** 
+     * @description        获取所有接口离线数据
+     * @author              shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    projectId 项目id
+     * @return {String}    返回字符串
+     */
+    async getDocOfflineData() {
+        try {
+            const params = this.ctx.request.query;
+            const reqRule = {
+                projectId: {
+                    type: "string"
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docs.getDocOfflineData(params);
+            this.ctx.body = result;
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+
 }
 
 module.exports = DocsController;
