@@ -157,7 +157,7 @@ class DocsService extends Service {
             val.projectId = projectId;
             if (val.pid) {
                 const matchDoc = docs.find(doc => doc.uuid === val.pid);
-                console.log(matchDoc)
+                // console.log(matchDoc)
                 val.pid = matchDoc._id.toString();
             }
         });

@@ -33,7 +33,7 @@ class docParamsMindService extends Service {
             const newResParams = this.ctx.helper.unique([...mindResponseParams, ...oldResParams], "key");
 
 
-            console.log(newReqParams, 22, newResParams)
+            // console.log(newReqParams, 22, newResParams)
             await this.ctx.model.Apidoc.Docs.DocsParamsMind.update({ projectId }, { $set: {
                 mindRequestParams: newReqParams,
                 mindResponseParams: newResParams,
