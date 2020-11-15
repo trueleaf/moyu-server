@@ -34,6 +34,7 @@ module.exports = app => {
     router.get("/api/project/filter_doc", controller.apidoc.docs.docs.filterDoc); //根据url获取文档id，用于菜单筛选
     router.get("/api/project/doc_word", controller.apidoc.docs.docs.convertDocToWord); //将文档导出为word
     router.get("/api/project/doc_mock", controller.apidoc.docs.docs.getMockData); //获取文档mock数据
+    router.get("/api/project/doc_offline_data", controller.apidoc.docs.docs.getDocOfflineData); //获取文档全部离线数据
     //=====================================内置请求返回参数相关路由====================================//
     router.post("/api/apidoc/docs/docs_internal_params", controller.apidoc.docs.docsInternalParams.createDocsInternalParams); //新增内置请求返回参数
     router.put("/api/apidoc/docs/docs_internal_params", controller.apidoc.docs.docsInternalParams.updateDocsInternalParams); //修改内置请求返回参数
