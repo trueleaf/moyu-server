@@ -11,6 +11,7 @@
     "adm-zip": "^0.4.14",
     "ali-oss": "^6.5.1",
     "canvas": "^2.6.1",
+    "deepmerge": "^4.2.2",
     "echarts": "^4.7.0",
     "egg": "^2.15.1",
     "egg-cors": "^2.2.0",
@@ -26,7 +27,8 @@
     "officegen": "^0.6.4",
     "shelljs": "^0.8.4",
     "svg-captcha": "^1.4.0",
-    "xlsx": "^0.16.5"
+    "xlsx": "^0.16.5",
+    "xss": "^1.0.8"
   },
   "devDependencies": {
     "autod": "^3.0.1",

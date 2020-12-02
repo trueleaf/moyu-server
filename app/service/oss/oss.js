@@ -23,7 +23,9 @@ class ossService extends Service {
             region: ossBaseConf.region,
             bucket: ossBaseConf.bucket,
         });
-        const url = client.signatureUrl(fileUrl);
+        const url = client.signatureUrl(fileUrl, {
+            expires: 60 * 60, //单位s
+        });
         return { url };
     }
 

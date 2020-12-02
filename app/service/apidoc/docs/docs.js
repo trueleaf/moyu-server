@@ -11,7 +11,7 @@ const Service = require("egg").Service;
 const officegen = require("officegen");
 const fs = require("fs-extra");
 const path = require("path")
-
+const xss = require("xss");
 
 class DocsService extends Service {
     /** 
@@ -159,7 +159,6 @@ class DocsService extends Service {
             val.projectId = projectId;
             if (val.pid) {
                 const matchDoc = docs.find(doc => doc.uuid === val.pid);
-                // console.log(matchDoc)
                 val.pid = matchDoc._id.toString();
             }
         });
@@ -295,6 +294,9 @@ class DocsService extends Service {
             error.code = 4001;
             throw error;
         }
+
+        // console.log(item.description, 222)
+        item.description = xss(item.description)
         const currentDocInfo = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { item }}, { new: true }).lean();
         //第一个为历史文档信息，第二个为新的文档信息
         const docRecord = {

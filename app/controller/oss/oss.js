@@ -21,8 +21,8 @@ class ossController extends Controller {
         try {
             const policy = this.app.config.ossConfig.policy; //授权策略，eg: 可读可写
             const userName = "shu";
-            policy.Statement[0].Resource = [`acs:oss:*:*:jobtool/${userName}/*`];
-
+            policy.Statement[0].Resource = [`acs:oss:*:*:happymoyu/${userName}/*`]; //用户名称当作一个文件夹
+            //获取sts
             const ossBaseConf = this.app.config.ossConfig.base;
             const sts = new STS({
                 accessKeyId: ossBaseConf.accessKeyId,
@@ -35,6 +35,7 @@ class ossController extends Controller {
                 stsToken: token.SecurityToken,
                 bucket: ossBaseConf.bucket,
             });
+
             const policy2 = {
                 expiration: token.credentials.Expiration, // 请求有效期
                 conditions: [

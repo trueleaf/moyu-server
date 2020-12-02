@@ -47,7 +47,7 @@ module.exports = app => {
             description: {
                 type: String,
                 trim: true,
-                maxlength: 255,
+                maxlength: 9999,
                 default: "",      
             },
             methods: {
@@ -202,7 +202,8 @@ module.exports = app => {
                 }
             ],
             default: [],
-        }
+        },
+
     }, { timestamps: true });
 
     return mongoose.model("doc", docSchema);

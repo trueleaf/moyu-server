@@ -13,6 +13,12 @@ module.exports = app => {
     router.get("/api/project/project_enum", controller.apidoc.project.project.getProjectEnum); // 获取项目列表枚举
     router.delete("/api/project/delete_project", controller.apidoc.project.project.deleteProjectList); // 删除项目
     router.put("/api/project/edit_project", controller.apidoc.project.project.editProject); // 修改项目
+    //项目规则
+    router.put("/api/apidoc/project/project_rules", controller.apidoc.project.projectRules.updateProjectRules); //修改项目规则
+    router.get("/api/apidoc/project/project_rules", controller.apidoc.project.projectRules.readProjectRulesById); //根据id查询项目规则
+
+
+
     //项目类型枚举
     router.get("/api/project/project_type_list", controller.apidoc.project.projectType.getProjectTypeEnumList); //获取项目类型枚举列表
     router.get("/api/project/project_type_enum", controller.apidoc.project.projectType.getProjectTypeEnum); //获取项目类型枚举
