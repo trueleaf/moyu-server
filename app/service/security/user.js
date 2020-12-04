@@ -10,7 +10,6 @@ const Sms = require("@alicloud/pop-core");
 const escapeStringRegexp = require("escape-string-regexp");
 const XLSX = require("xlsx");
 // const user = require("../../model/security/user");
-
 class userService extends Service {
     /** 
      * @description        获取短信验证码
@@ -477,6 +476,7 @@ class userService extends Service {
         const allClientMenu = await this.ctx.model.Security.ClientMenu.find({}, { name: 1, path: 1, sort: 1 }); //系统所有前端菜单
         let clientRoutesResult = [];
         let clientBannerResult = []; 
+        console.log(222, roleIds)
         for (let i = 0; i < roleIds.length; i++) {
             const roleInfo = await this.ctx.model.Security.Role.findById({ _id: roleIds[i] });
             //前端路由
