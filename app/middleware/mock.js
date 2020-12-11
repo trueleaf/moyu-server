@@ -7,6 +7,7 @@
 module.exports = options => {
     return async function mock(ctx, next) {
         if (ctx.request.url.startsWith("/mock")) {
+            
             const params = ctx.request.query;
             const doc = await ctx.model.Apidoc.Docs.Docs.findOne({ _id: params._mockId, enabled: true }).lean();
             ctx.body = convertPlainParamsToTreeData(doc.item.responseParams);

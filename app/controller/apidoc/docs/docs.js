@@ -455,7 +455,6 @@ class DocsController extends Controller {
             return;
         }
     }
-
 }
 
 module.exports = DocsController;

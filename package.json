@@ -26,6 +26,7 @@
     "koa-proxy": "^1.0.0-alpha.3",
     "officegen": "^0.6.4",
     "shelljs": "^0.8.4",
+    "ssh2": "^0.8.9",
     "svg-captcha": "^1.4.0",
     "xlsx": "^0.16.5",
     "xss": "^1.0.8"
