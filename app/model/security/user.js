@@ -107,6 +107,10 @@ module.exports = app => {
             type: Array,
             default: []
         },
+        recentVisitProjects: { //最近访问的项目
+            type: Array,
+            default: []
+        },
         starProjects: { //收藏项目
             type: Array,
             default: []

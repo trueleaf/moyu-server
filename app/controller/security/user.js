@@ -582,6 +582,76 @@ class userController extends Controller {
         }
     }
 
+    /** 
+     * @description        添加最近访问页面
+     * @author             shuxiaokai
+     * @create             2020-12-18 16:41
+     * @param {any}        projectId - 项目id       
+     * @return {null}      返回null
+     */
+    async addLastVisit() { 
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                projectId: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.security.user.addLastVisit(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    /** 
+     * @description        收藏项目
+     * @author             shuxiaokai
+     * @create             2020-12-18 16:41
+     * @param {any}        projectId - 项目id       
+     * @return {null}      返回null
+     */
+    async starProject() { 
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                projectId: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.security.user.starProject(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    /** 
+     * @description        取消收藏项目
+     * @author             shuxiaokai
+     * @create             2020-12-18 16:41
+     * @param {any}        projectId - 项目id       
+     * @return {null}      返回null
+     */
+    async unStarProject() { 
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                projectId: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.security.user.unStarProject(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+
 }
 
 module.exports = userController;
