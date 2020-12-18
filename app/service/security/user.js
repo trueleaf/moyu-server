@@ -625,16 +625,14 @@ class userService extends Service {
         const { projectId } = params;
         const userInfo = this.ctx.session.userInfo;
         // console.log(userInfo)
-        await this.ctx.model.Security.User.findByIdAndUpdate({ _id: userInfo.id }, {
+        const result = await this.ctx.model.Security.User.findByIdAndUpdate({ _id: userInfo.id }, {
             $addToSet: { 
                 recentVisitProjects: {
                     $each: [projectId],
                 }
             }
-        }); 
-        return {
-            
-        };
+        }, { new: true }); 
+        return result.recentVisitProjects;
     }
     /** 
      * @description        收藏项目
