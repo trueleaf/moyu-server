@@ -623,13 +623,21 @@ class userService extends Service {
      */
     async addLastVisit(params) {
         const { projectId } = params;
+        const MAX_RECENT_VISIT = 5;
         const userInfo = this.ctx.session.userInfo;
-        // console.log(userInfo)
+        const recentVisit = await this.ctx.model.Security.User.findOne({ _id: userInfo.id }, { recentVisitProjects: 1 }).lean();
+        let recentVisitProjects = recentVisit.recentVisitProjects;
+        const matchedVisitProjectIndex = recentVisitProjects.findIndex(val => val === projectId);
+        if (matchedVisitProjectIndex  !== -1) { //匹配到数据则直接交换
+            recentVisitProjects.splice(matchedVisitProjectIndex, 1);
+            recentVisitProjects.unshift(projectId);
+        } else {
+            recentVisitProjects.unshift(projectId);
+        }
+        recentVisitProjects = recentVisitProjects.slice(0, MAX_RECENT_VISIT);
         const result = await this.ctx.model.Security.User.findByIdAndUpdate({ _id: userInfo.id }, {
-            $addToSet: { 
-                recentVisitProjects: {
-                    $each: [projectId],
-                }
+            $set: { 
+                recentVisitProjects
             }
         }, { new: true }); 
         return result.recentVisitProjects;
@@ -643,12 +651,13 @@ class userService extends Service {
      */
     async starProject(params) {
         const { projectId } = params;
-        const userInfo = this.ctx.userInfo;
-        await this.ctx.model.Security.User.updateOne(userDocs); 
-        return {
-            total: userNum,
-            success: validNum,
-        };
+        const userInfo = this.ctx.session.userInfo;
+        await this.ctx.model.Security.User.findByIdAndUpdate({ _id: userInfo.id }, {
+            $addToSet: { 
+                starProjects: projectId
+            }
+        }); 
+        return {};
     }
     /** 
      * @description        取消收藏项目
@@ -659,12 +668,13 @@ class userService extends Service {
      */
     async unStarProject(params) {
         const { projectId } = params;
-        const userInfo = this.ctx.userInfo;
-        await this.ctx.model.Security.User.updateOne(userDocs); 
-        return {
-            total: userNum,
-            success: validNum,
-        };
+        const userInfo = this.ctx.session.userInfo;
+        await this.ctx.model.Security.User.findByIdAndUpdate({ _id: userInfo.id }, {
+            $pull: { 
+                starProjects: projectId
+            }
+        }); 
+        return {};
     }
     
 }

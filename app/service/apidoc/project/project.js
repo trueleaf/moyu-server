@@ -52,11 +52,12 @@ class ProjectService extends Service {
                 "members.userId": this.ctx.session.userInfo.id
             }
         ];
-        const rows = await this.ctx.model.Apidoc.Project.Project.find(query).skip(skipNum).limit(limit).sort({ updatedAt: -1 });
-        const total = await this.ctx.model.Apidoc.Project.Project.find(query).countDocuments();
+        const userInfo = this.ctx.session.userInfo;
+        const visitAndStar = await this.ctx.model.Security.User.findOne({ _id: userInfo.id }, { recentVisitProjects: 1, starProjects: 1 }).lean();
         const result = {};
-        result.rows = rows;
-        result.total = total;
+        result.list = await this.ctx.model.Apidoc.Project.Project.find(query).skip(skipNum).limit(limit).sort({ updatedAt: -1 });;
+        result.recentVisitProjects = visitAndStar.recentVisitProjects;
+        result.starProjects = visitAndStar.starProjects;
         return result;
     }
 
