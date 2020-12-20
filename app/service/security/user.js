@@ -626,7 +626,8 @@ class userService extends Service {
         const MAX_RECENT_VISIT = 5;
         const userInfo = this.ctx.session.userInfo;
         const recentVisit = await this.ctx.model.Security.User.findOne({ _id: userInfo.id }, { recentVisitProjects: 1 }).lean();
-        let recentVisitProjects = recentVisit.recentVisitProjects;
+        let recentVisitProjects = recentVisit.recentVisitProjects || [];
+        console.log(222, recentVisit, userInfo)
         const matchedVisitProjectIndex = recentVisitProjects.findIndex(val => val === projectId);
         if (matchedVisitProjectIndex  !== -1) { //匹配到数据则直接交换
             recentVisitProjects.splice(matchedVisitProjectIndex, 1);

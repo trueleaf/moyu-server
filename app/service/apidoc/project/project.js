@@ -56,8 +56,8 @@ class ProjectService extends Service {
         const visitAndStar = await this.ctx.model.Security.User.findOne({ _id: userInfo.id }, { recentVisitProjects: 1, starProjects: 1 }).lean();
         const result = {};
         result.list = await this.ctx.model.Apidoc.Project.Project.find(query).skip(skipNum).limit(limit).sort({ updatedAt: -1 });;
-        result.recentVisitProjects = visitAndStar.recentVisitProjects;
-        result.starProjects = visitAndStar.starProjects;
+        result.recentVisitProjects = visitAndStar.recentVisitProjects || [];
+        result.starProjects = visitAndStar.starProjects || [];
         return result;
     }
 
