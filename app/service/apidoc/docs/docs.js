@@ -656,7 +656,7 @@ class DocsService extends Service {
         file = file.replace(/window.PROJECT_ID = null/, `window.PROJECT_ID = "${projectId}"`);
         this.ctx.set("content-type", "application/force-download");
         this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent("接口文档.html")}`);
-        return result;
+        return file;
     }
 }
 
