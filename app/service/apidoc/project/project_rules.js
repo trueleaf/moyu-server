@@ -12,8 +12,8 @@ const BASE_RULES = {
     dominLimit: 5, //每个项目限制配置域名个数
     contentType: [ //支持传参方式
         {
-            name: "query",
-            value: "query",
+            name: "params",
+            value: "params",
             enabled: true
         },
         {
@@ -38,7 +38,7 @@ const BASE_RULES = {
             value: "get",
             enabled: true, //是否启用
             iconColor: "#28a745", //请求方式颜色
-            enabledContenType: ["query"], //当前请求方式允许的ContentType
+            enabledContenType: ["params"], //当前请求方式允许的ContentType
         },
         {
             name: "POST",
@@ -59,7 +59,7 @@ const BASE_RULES = {
             value: "delete",
             enabled: true, 
             iconColor: "#f56c6c",
-            enabledContenType: ["query"],
+            enabledContenType: ["params"],
         },
         {
             name: "OPTIONS",

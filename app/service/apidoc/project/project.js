@@ -118,12 +118,12 @@ class ProjectService extends Service {
     async addProject(params) {
         const { projectName, remark, members } = params;
         // 判断是否存在该类型
-        const hasName = await this.ctx.model.Apidoc.Project.Project.findOne({ projectName, enabled: true });
-        if (hasName) {
-            const error = new Error("项目名称已经存在");
-            error.code = 1003;
-            throw error;
-        }
+        // const hasName = await this.ctx.model.Apidoc.Project.Project.findOne({ projectName, enabled: true });
+        // if (hasName) {
+        //     const error = new Error("项目名称已经存在");
+        //     error.code = 1003;
+        //     throw error;
+        // }
         const doc = {};
         doc.projectName = projectName;
         doc.remark = remark;
