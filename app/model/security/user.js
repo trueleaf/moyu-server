@@ -14,7 +14,7 @@ const INITIAL_USER = [
         "enable": "true",
         "lastLogin": "2/12/2020 06:03:04.464",
         "loginName": "admin",
-        "loginTimes": "340",
+        "loginTimes": "0",
         "password": "98b2f89fe0f8ac91bbdab35f9a170b82",
         "phone": "15228322222",
         "qq": "2",

@@ -1167,6 +1167,33 @@ const INITIAL_SERVER_ROUTES = [
         "method": "put",
         "name": "修改项目规则",
         "path": "/api/apidoc/project/project_rules"
+    },
+    {
+        "_id": "5ff166479c0b4737b81ee490",
+        "groupName": "api文档-项目相关",
+        "enabled": "true",
+        "name": "最近访问",
+        "path": "/api/project/visited",
+        "method": "put",
+        "__v": "0",
+    },
+    {
+        "_id": "5ff1792c972b5a29804e1ac3",
+        "groupName": "api文档-项目相关",
+        "enabled": "true",
+        "name": "收藏项目",
+        "path": "/api/project/star",
+        "method": "put",
+        "__v": "0"
+    },
+    {
+        "_id": "5ff17a0defe2a82db087c9ea",
+        "groupName": "api文档-项目相关",
+        "enabled": "true",
+        "name": "取消收藏",
+        "path": "/api/project/unstar",
+        "method": "put",
+        "__v": "0"
     }
 ]
 module.exports = app => {

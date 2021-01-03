@@ -90,7 +90,7 @@ module.exports = appInfo => {
 
     let mongoose = null;
     mongoose = {
-        url: "",
+        url: "mongodb://127.0.0.1:27017",
         options: {
             user: "",
             pass: "",

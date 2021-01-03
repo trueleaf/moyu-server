@@ -79,7 +79,8 @@ const INITIAL_CLIENT_ROUTES = [
         "groupName": "代码自动化",
         "name": "服务端代码生成",
         "path": "/v1/easycode"
-    }
+    },
+    
 ]
 
 module.exports = app => {
