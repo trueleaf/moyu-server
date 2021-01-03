@@ -34,9 +34,13 @@
 </div>
 
 ## 常用
-[客户端Git地址](https://github.com/trueleaf/moyu)
+[客户端GitHub地址](https://github.com/trueleaf/moyu)
 
-[服务端Git地址](https://github.com/trueleaf/moyu-server)
+[服务端GitHub地址](https://github.com/trueleaf/moyu-server)
+
+[客户端Gitee地址](https://gitee.com/shuzhikai/moyu)
+
+[服务端Gitee地址](https://gitee.com/shuzhikai/moyu-server)
 
 [客户端下载](https://github.com/shuxiaokai3/jobtool-electron/releases)
 
