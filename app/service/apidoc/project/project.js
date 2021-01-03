@@ -134,8 +134,8 @@ class ProjectService extends Service {
             id: this.ctx.session.userInfo.id,
             name: this.ctx.session.userInfo.realName
         };
-        await this.ctx.model.Apidoc.Project.Project.create(doc);
-        return;
+        const result = await this.ctx.model.Apidoc.Project.Project.create(doc);
+        return result._id;
     }
 
     /** 

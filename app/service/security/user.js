@@ -135,8 +135,17 @@ class userService extends Service {
             "公共基础权限"
         ],
         await this.ctx.model.Security.User.create(user);
-        const result = await this.loginWithPassword(params);
-        return result;
+        const loginResult = await this.loginWithPassword(params);
+        //=====================================为用户拷贝一份测试文档====================================//
+        const project = {
+            projectName: "示例项目"
+        };
+        project.owner = {
+            id: this.ctx.session.userInfo.id,
+            name: this.ctx.session.userInfo.realName
+        };
+        const projectResult = await this.ctx.model.Apidoc.Project.Project.create(project);
+        return loginResult;
     }
     
     /** 
