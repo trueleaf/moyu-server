@@ -70,8 +70,8 @@ module.exports = app => {
             },
             requestType: {
                 type: String,
-                enum: ["query", "json", "formData", "x-www-form-urlencoded"],
-                default: "query"
+                enum: ["params", "json", "formData", "x-www-form-urlencoded"],
+                default: "params"
             },
             header: [
                 {
