@@ -30,7 +30,7 @@ module.exports = app => {
     router.put("/api/project/project_type", controller.apidoc.project.projectType.editProjectTypeEnum); //修改项目类型
     router.post("/api/project/add_project_type", controller.apidoc.project.projectType.addProjectTypeEnum); //添加项目类型
     //=====================================文档相关====================================//
-    router.post("/api/project/new_doc", controller.apidoc.docs.docs.newDoc); //新增空白文档
+    router.post("/api/project/new_doc", controller.apidoc.docs.docs.addEmptyDoc); //新增空白文档
     router.post("/api/project/copy_doc", controller.apidoc.docs.docs.copyDoc); //拷贝文档
     router.post("/api/project/new_doc_multi", controller.apidoc.docs.docs.newMultiDoc); //新增多个空白文档
     router.put("/api/project/change_doc_pos", controller.apidoc.docs.docs.changeDocPosition); //改变文档在位置

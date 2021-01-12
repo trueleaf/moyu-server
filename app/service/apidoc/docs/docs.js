@@ -18,58 +18,39 @@ class DocsService extends Service {
         @description  新增空白文档
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {String}        docName 文档名称
-        @param {Boolean}       isFolder 是否为文档
-        @param {String}        pid 父元素id
-        @param {String}        projectId 项目id
-        @param {any?}          item 文档详情(复制使用)
+        @param {string}            name 文档名称
+        @param {string}            type 文档类型 
+        @param {string}            pid 父元素id
+        @param {string}            projectId 项目id
         @return       null
     */
-
-    async newDoc(params) {
-        const { docName, isFolder, pid, projectId, item } = params;
-        if (pid) {
-            const doc = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id: pid });
-            if (doc.isFolder === false) {
-                const error = new Error("操作不被允许，文件下面不允许嵌套文件夹");
-                error.code = 4001;
-                throw error;
+    async addEmptyDoc(params) {
+        const { name, type, pid, projectId} = params;
+        const userInfo = this.ctx.session.userInfo;
+        const projectInfo = await this.ctx.model.Apidoc.Project.Project.findById({ _id: projectId });
+        const accessUsers = projectInfo.members.concat([projectInfo.owner])
+        if (!accessUsers.find(user => user.id === userInfo.id)) {
+            this.ctx.helper.errorInfo("暂无当前项目权限", 4002);
+        }
+        if (pid) { //不允许在非folder类型文档下面插入文档
+            const parentDoc = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id: pid });
+            if (parentDoc.type !== "folder") {
+                this.ctx.helper.errorInfo("操作不被允许，文件下面不允许嵌套文件夹", 4001);
             }
         }
-        const isInProject = await this.ctx.model.Apidoc.Project.Project.findById({ _id: projectId });
-        if (!isInProject) {
-            const error = new Error("操作不被允许，项目不存在");
-            error.code = 4001;
-            throw error;
-        }
         const doc = {
-            docName,
-            isFolder,
             pid,
             projectId,
-            sort: Date.now(),
-            item: item || {}
-        };
-        let result = {};
-        result = await this.ctx.model.Apidoc.Docs.Docs.create(doc);
-        if (!isFolder) { //目录不属于文档
-            await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $inc: { docNum: 1 }});
+            info: {
+                name,
+                type,
+                sort: Date.now()
+            }
         }
-        const docRecord = {
-            projectId,
-            docId: result._id,
-            docInfo: [
-                {
-                    docName: doc.docName,
-                    isFolder: doc.isFolder,
-                    method: doc.item && doc.item.methods,
-                    url: doc.item && doc.item.url && doc.item.url.path,
-                }
-            ]
+        const result = await this.ctx.model.Apidoc.Docs.Docs.create(doc);
+        return {
+            ...result.info
         };
-        doc.isFolder ? (docRecord.operation = "addFolder") : (docRecord.operation = "addDoc");
-        await this.ctx.service.apidoc.docs.docsHistory.addDocHistory(docRecord);
-        return result;
     }
     /** 
      * @description        拷贝一个节点

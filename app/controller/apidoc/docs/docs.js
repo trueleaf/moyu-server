@@ -6,32 +6,28 @@
 
 
 const Controller = require("egg").Controller;
-// const officegen = require("officegen");
-// const fs = require("fs");
-// const path = require("path");
 
 class DocsController extends Controller {
     /** 
         @description  新增空白文档
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {String}            docName 文档名称
-        @param {Boolean}           isFolder 是否为文件夹 
-        @param {String}            pid 父元素id
-        @param {String}            projectId 项目id
-        @param {any?}              item 文档详情(复制使用)
+        @param {string}            name 文档名称
+        @param {string}            type 文档类型 
+        @param {string}            pid 父元素id
+        @param {string}            projectId 项目id
         @return       null
     */
-
-    async newDoc() { 
+    async addEmptyDoc() { 
         try {
             const params = this.ctx.request.body;
             const reqRule = {
-                docName: {
+                name: {
                     type: "string",
                 },
-                isFolder: {
-                    type: "boolean",
+                type: {
+                    type: "string",
+                    enum: ["folder", "api", "markdown"],
                 },
                 pid: {
                     type: "string",
@@ -40,13 +36,9 @@ class DocsController extends Controller {
                 projectId: {
                     type: "string",
                 },
-                item: {
-                    type: "object",
-                    required: false
-                }
             };
             this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.newDoc(params);
+            const result = await this.ctx.service.apidoc.docs.docs.addEmptyDoc(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);
