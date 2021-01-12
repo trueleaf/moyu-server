@@ -48,7 +48,7 @@ module.exports = app => {
             default: true
         }
     });
-
+    //文档模型信息
     const docSchema = new Schema({
         pid: { //父元素id
             type: String, 
@@ -89,12 +89,22 @@ module.exports = app => {
                 enum: ["get", "post", "put", "delete", "options", "patch", "head"],
                 default: "get"  
             },
-            servers: [ServerSchema], //服务器信息
+            url: { //请求地址信息
+                type: String,
+            }, 
             paths: [ProperytySchema], //restful请求路径
             queryParams: [ProperytySchema], //查询字符串
             requestBody: [ProperytySchema], //请求body
             responses: [{ //返回值
-                
+                title: {
+                    type: String,
+                    default: "返回值"
+                },
+                statusCode: {
+                    type: Number,
+                    default: 200
+                },
+                values: [ProperytySchema]
             }],
             headers: [ProperytySchema], //请求头
             contentType: { //请求contentType
