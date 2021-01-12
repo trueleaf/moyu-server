@@ -658,6 +658,27 @@ class DocsService extends Service {
         this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent("接口文档.html")}`);
         return file;
     }
+
+    /** 
+     * @description        导出为摸鱼文档
+     * @author              shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    projectId 项目id
+     * @return {String}    返回字符串
+     */
+    async exportAsMoyuDoc(params) { 
+        const { projectId } = params;
+        const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId }, {projectName: 1});
+        const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, enabled: true }).lean();
+        this.ctx.set("content-type", "application/force-download");
+        this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.json`)}`);
+        const result = {
+            type: "moyu",
+            docs 
+        };
+        return JSON.stringify(result);
+    }
+
 }
 
 module.exports = DocsService;
