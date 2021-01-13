@@ -44,6 +44,15 @@ module.exports = app => {
             required: true,
             type: String,
         },
+        isFolder: { //是否为文件夹
+            type: Boolean,
+            required: true
+        },
+        sort: { //排序字段，时间戳
+            required: true,
+            type: Number,
+            default: Date.now()
+        },
         info: { //基本信息
             name: { //文档名称
                 type: String,
@@ -59,10 +68,6 @@ module.exports = app => {
                 type: String,
                 enum: ["folder", "api", "markdown"]
             },
-            sort: { //排序字段，时间戳
-                required: true,
-                type: Number,
-            },
         },
         enabled: { //使能
             type: Boolean,
@@ -76,7 +81,12 @@ module.exports = app => {
                 default: "get"  
             },
             url: { //请求地址信息
-                type: String,
+                host: { //host地址
+                    type: String,
+                },
+                path: { //请求路径
+                    type: String,
+                }
             }, 
             paths: [ProperytySchema], //restful请求路径
             queryParams: [ProperytySchema], //查询字符串
