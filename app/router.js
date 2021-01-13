@@ -34,7 +34,7 @@ module.exports = app => {
     router.post("/api/project/copy_doc", controller.apidoc.docs.docs.copyDoc); //拷贝文档
     router.post("/api/project/new_doc_multi", controller.apidoc.docs.docs.newMultiDoc); //新增多个空白文档
     router.put("/api/project/change_doc_pos", controller.apidoc.docs.docs.changeDocPosition); //改变文档在位置
-    router.put("/api/project/change_doc_info", controller.apidoc.docs.docs.editDocInfo); //修改文档树形结构基础信息
+    router.put("/api/project/change_doc_info", controller.apidoc.docs.docs.changeDocName); //修改文档树形结构基础信息
     router.put("/api/project/publish_doc", controller.apidoc.docs.docs.publishDoc); //发布文档
     router.delete("/api/project/doc", controller.apidoc.docs.docs.deleteDoc); //删除文档
     router.post("/api/project/doc_multi", controller.apidoc.docs.docs.addMultiDocs); //新增多个文档
