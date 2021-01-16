@@ -83,9 +83,11 @@ module.exports = app => {
             url: { //请求地址信息
                 host: { //host地址
                     type: String,
+                    default: ""
                 },
                 path: { //请求路径
                     type: String,
+                    default: ""
                 }
             }, 
             paths: [ProperytySchema], //restful请求路径
