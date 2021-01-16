@@ -378,7 +378,7 @@ class DocsService extends Service {
     async getDocDetail(params) { 
         const { _id, projectId } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const result = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id, enabled: true }, { pid: 0, isFolder: 0, ancestors: 0, sort: 0, enabled: 0 });
+        const result = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id, enabled: true }, { pid: 0, isFolder: 0, sort: 0, enabled: 0 });
         return result;
     }
     /** 
