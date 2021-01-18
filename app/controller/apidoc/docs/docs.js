@@ -217,8 +217,10 @@ class DocsController extends Controller {
         @description  新增文档详细信息
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {ObjectID}           _id 文档id
-        @param {Object}           item 文档数据 
+        @param {pbjectID}         _id 文档id
+        @param {object}           info 接口基本信息 
+        @param {object}           item 录入参数 
+        @param {string}           projectId 项目id
         @return       null
     */
 
@@ -230,9 +232,14 @@ class DocsController extends Controller {
                     type: "string",
                     required: true
                 },
+                info: {
+                    type: "object",
+                },
                 item: {
-                    type: "requestRule",
-                    required: true
+                    type: "object",
+                },
+                projectId: {
+                    type: "string"
                 },
             };
             this.ctx.validate(reqRule, params);

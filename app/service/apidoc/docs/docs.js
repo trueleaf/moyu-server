@@ -224,96 +224,20 @@ class DocsService extends Service {
         @description  新增文档详细信息
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {ObjectID}           _id 文档id
-        @param {Object}           item 文档数据 
+        @param {pbjectID}         _id 文档id
+        @param {object}           info 接口基本信息 
+        @param {object}           item 录入参数 
+        @param {string}           projectId 项目id 
         @return       null
     */
 
     async fillDoc(params) {
-        const { _id, item } = params;
-        const oldDocInfo = await this.ctx.model.Apidoc.Docs.Docs.findById({ _id });
-        
-        const result = {};
-        const foo = treeData => {
-            for (let i = 0; i < treeData.length; i++) {
-                result[treeData[i].key] = {
-                    type: treeData[i].type,
-                    value: treeData[i].value,
-                    description: treeData[i].description,
-                    required: treeData[i].required
-                };
-                if (treeData[i].children && treeData[i].children.length > 0) {
-                    foo(treeData[i].children);
-                }
-            }
-        };
-        foo(item.requestParams);
-        foo(item.responseParams);
-        foo(item.header);
-        //去除接口无关字段
-        this.filterFields(item.requestParams);
-        this.filterFields(item.responseParams);
-        this.filterFields(item.header);
-
-        if (!oldDocInfo) {
-            const error = new Error("操作不被允许，该文档不存在");
-            error.code = 4001;
-            throw error;
-        }
-
-        // console.log(item.description, 222)
-        item.description = xss(item.description)
-        const currentDocInfo = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { item }}, { new: true }).lean();
-        //第一个为历史文档信息，第二个为新的文档信息
-        const docRecord = {
-            operation: "editDoc",
-            projectId: currentDocInfo.projectId,
-            docId: _id,
-            docInfo: [{
-                docName: oldDocInfo.docName,
-                isFolder: oldDocInfo.isFolder,
-                method: oldDocInfo.item && oldDocInfo.item.methods && "get",
-                url: oldDocInfo.item && oldDocInfo.item.url && oldDocInfo.item.url.path,
-                item
-            }, {
-                docName: currentDocInfo.docName,
-                isFolder: currentDocInfo.isFolder,
-                method: currentDocInfo.item && currentDocInfo.item.methods && "get",
-                url: currentDocInfo.item && currentDocInfo.item.url && currentDocInfo.item.url.path,
-                item
-            }]
-        };
-        await this.ctx.service.apidoc.docs.docsHistory.addDocHistory(docRecord); //添加项目历史记录
-        await this.ctx.service.apidoc.docs.docsRecords.addDocsRecords({
-            docId: _id,
-            docInfo: currentDocInfo
-        }); //文档修改记录记录
-
+        const { _id, info, item, projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        info.description = xss(info.description)
+        await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { item, info } }, { new: true });
         return;
     }
-    //去除无关字段
-    filterFields(params) {
-        this.ctx.helper.dfsForest(params, {
-            rCondition(value) {
-                return value.children;
-            },
-            rKey: "children",
-            hooks: (data, i, current, parent) => {
-                if (parent && parent.children) {
-                    parent.children[i] = {
-                        id: data.id,
-                        type: data.type,
-                        key: data.key,
-                        value: data.value,
-                        description: data.description,
-                        required: data.required,
-                        children: data.children                  
-                    };
-                }
-            }
-        });
-    }
-
     /** 
         @description  获取文档结构树
         @author       shuxiaokai

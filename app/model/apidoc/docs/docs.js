@@ -9,6 +9,9 @@ module.exports = app => {
     const Schema = mongoose.Schema;
     //接口参数模型
     const ProperytySchema = new Schema({
+        _id: {
+            type: String,
+        },
         key: { //字段名称
             type: String,
             trim: true,
@@ -68,6 +71,9 @@ module.exports = app => {
                 type: String,
                 enum: ["folder", "api", "markdown"]
             },
+            tag: { //文档标签
+                type: String,
+            }
         },
         enabled: { //使能
             type: Boolean,
@@ -93,17 +99,24 @@ module.exports = app => {
             paths: [ProperytySchema], //restful请求路径
             queryParams: [ProperytySchema], //查询字符串
             requestBody: [ProperytySchema], //请求body
-            responses: [{ //返回值
-                title: {
-                    type: String,
-                    default: "返回值"
-                },
-                statusCode: {
-                    type: Number,
-                    default: 200
-                },
-                values: [ProperytySchema]
-            }],
+            responseParams: {
+                type: [{ //返回值
+                    title: {
+                        type: String,
+                        default: "返回值"
+                    },
+                    statusCode: {
+                        type: Number,
+                        default: 200
+                    },
+                    values: [ProperytySchema]
+                }],
+                default: [{
+                    title: "返回参数",
+                    statusCode: 200,
+                    values: []
+                }]
+            },
             headers: [ProperytySchema], //请求头
             contentType: { //请求contentType
                 type: String,
