@@ -63,6 +63,7 @@ module.exports = app => {
             },
             description: { //文档描述
                 type: String,
+                default: ""
             },
             version: { //文档版本信息
                 type: String,
