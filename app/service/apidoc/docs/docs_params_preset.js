@@ -22,6 +22,7 @@ class presetParamsService extends Service {
 
     async addPresetParams(params) {
         const { name, remark, presetParamsType, items, projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const doc = {};
         doc.name = name;
         doc.remark = remark;

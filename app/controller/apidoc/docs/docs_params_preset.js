@@ -15,7 +15,7 @@ class presetParamsController extends Controller {
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @param {String}            name 参数组名称
-        @param {enum}              presetParamsType 参数组类型 header代表应用于请求头组   request代表应用于请求参数组  response代表应用于response组
+        @param {enum}              presetParamsType 参数组类型
         @param {Array}             items 参数数据类型
         @param {String}             projectId 项目id
         @return       null
@@ -30,7 +30,7 @@ class presetParamsController extends Controller {
                 },
                 presetParamsType: {
                     type: "enum",
-                    values: ["header", "request", "response"],
+                    values: ["queryParams", "requestBody", "responseParams"],
                 },
                 items: {
                     type: "array"
@@ -125,7 +125,7 @@ class presetParamsController extends Controller {
             const reqRule = {
                 presetParamsType: {
                     type: "enum",
-                    values: ["header", "request", "response"],
+                    values: ["queryParams", "requestBody", "responseParams"],
                     required: false,
                 },
                 pageNum: {
