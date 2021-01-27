@@ -24,12 +24,13 @@ class presetParamsService extends Service {
         const { name, remark, presetParamsType, items, projectId } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const doc = {};
+        const userInfo = this.ctx.session.userInfo;
         doc.name = name;
         doc.remark = remark;
         doc.presetParamsType = presetParamsType;
         doc.items = items;
         doc.projectId = projectId;
-        doc.creatorName = this.ctx.session.userInfo.realName;
+        doc.creatorName = userInfo.realName || userInfo.loginName;
         await this.ctx.model.Apidoc.Docs.DocsParamsPreset.create(doc);
         return;
     }
@@ -96,7 +97,7 @@ class presetParamsService extends Service {
         if (presetParamsType) {
             query.presetParamsType = presetParamsType;
         }
-        const rows = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.find(query, { items: 1, creatorName: 1, name: 1, presetParamsType: 1 }).skip(skipNum).limit(limit);
+        const rows = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.find(query, { creatorName: 1, name: 1, presetParamsType: 1 }).skip(skipNum).limit(limit);
         const total = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.find(query).countDocuments();
         const result = {};
         result.rows = rows;
