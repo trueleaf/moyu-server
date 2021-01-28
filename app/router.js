@@ -85,7 +85,8 @@ module.exports = app => {
     router.put("/api/project/doc_preset_params", controller.apidoc.docs.docsParamsPreset.editPresetParams); //填写预设参数组
     router.get("/api/project/doc_preset_params_list", controller.apidoc.docs.docsParamsPreset.getPresetParamsList); //获取预设参数组列表
     router.get("/api/project/doc_preset_params_enum", controller.apidoc.docs.docsParamsPreset.getPresetParamsEnum); //获取预设参数组枚举
-    router.get("/api/project/doc_preset_params", controller.apidoc.docs.docsParamsPreset.getPresetParams); //获取预设参数数据
+    router.get("/api/project/doc_preset_params", controller.apidoc.docs.docsParamsPreset.getPresetParamsInfo); //获取预设参数数据
+
     //======host(服务器)列表
     router.post("/api/project/doc_service", controller.apidoc.docs.docsServices.addService); //新增服务器
     router.delete("/api/project/doc_service", controller.apidoc.docs.docsServices.deleteService); //删除服务器
