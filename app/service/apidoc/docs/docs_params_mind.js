@@ -73,7 +73,7 @@ class docParamsMindService extends Service {
             responseParams: 1,
             _id: 0
         });
-        return result;
+        return result || [];
     }
 }
 
