@@ -1,210 +1,131 @@
 /** 
     @description  文档模型
     @author       shuxiaokai
-    @create        2020-10-08 22:10
+    @create       2021-01-11 22:10
 */
 
 module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
-    const docSchema = new Schema({
-        uuid: { //若为导入的数据则以uuid当作_id使用
+    //接口参数模型
+    const ProperytySchema = new Schema({
+        _id: {
             type: String,
-            default: ""
         },
+        key: { //字段名称
+            type: String,
+            trim: true,
+        },
+        type: { //字段类型
+            type: String,
+            trim: true,
+            enum: ["string", "number", "boolean", "array", "object", "file"]
+        },
+        description: { //字段描述
+            type: String,
+            trim: true,
+        },
+        value: { //字段值
+            type: String,
+        },
+        required: { //是否必填
+            type: Boolean
+        },
+        children: [], //嵌套字段
+        _select: { //业务参数，是否选中
+            type: Boolean,
+            default: true
+        }
+    });
+    //文档模型信息
+    const docSchema = new Schema({
         pid: { //父元素id
             type: String, 
             default: ""
         },
-        docName: {
-            required: [true, "请正确输入doc名称"],
-            type: String,
-            trim: true,
-            minlength: 1,
-            maxlength: 100
-        },
-        docType: { //文档类型,   1.文件夹 2.普通文档 3.markdown文档
-            type: String,
-            enum: ["folder", "file", "markdown"]
-        },
-        isFolder: { //是否是文件夹
+        projectId: { //项目id
             required: true,
+            type: String,
+        },
+        isFolder: { //是否为文件夹
             type: Boolean,
+            required: true
         },
         sort: { //排序字段，时间戳
             required: true,
             type: Number,
+            default: Date.now()
         },
-        ancestors: { //当前元素所有祖先
-            required: false,
-            type: Array
-        },
-        projectId: { //项目id
-            required: true,
-            type: mongoose.Schema.Types.ObjectId,
-        },
-        item: {
-            description: {
+        info: { //基本信息
+            name: { //文档名称
                 type: String,
-                trim: true,
-                maxlength: 9999,
-                default: "",      
+                required: true
             },
-            methods: {
+            description: { //文档描述
                 type: String,
-                trim: true,
-                maxlength: 30,
-                default: "get"  
+                default: ""
             },
-            url: {
-                host: {
-                    type: String,
-                    trim: true,
-                    default: ""
-                },
-                path: {
-                    type: String,
-                    trim: true,
-                    default: ""
-                }
-            },
-            requestType: {
+            version: { //文档版本信息
                 type: String,
-                enum: ["params", "json", "formData", "x-www-form-urlencoded"],
-                default: "params"
             },
-            header: [
-                {
-                    key: {
-                        type: String,
-                        trim: true,
-                    },
-                    value: {
-                        type: String,
-                        trim: true,
-                    },
-                    description: {
-                        type: String,
-                        trim: true,
-                    },
-                    type: {
-                        type: String,
-                        trim: true
-                    },
-                    required: {
-                        type: Boolean
-                    },
-                    children: {
-                        type: Array
-                    }
-                }
-            ],
-            requestParams: [
-                {
-                    key: {
-                        type: String,
-                        trim: true,
-                    },
-                    description: {
-                        type: String,
-                        trim: true,
-                    },
-                    type: {
-                        type: String,
-                        trim: true
-                    },
-                    value: {
-                        type: String,
-                    },
-                    required: {
-                        type: Boolean
-                    },
-                    children: {
-                        type: Array
-                    },
-                    _select: { //请求参数是否选中
-                        type: Boolean,
-                        default: true
-                    }
-                }
-            ],
-            responseParams: [
-                {
-                    key: {
-                        type: String,
-                        trim: true,
-                    },
-                    value: {
-                        type: String,
-                    },
-                    description: {
-                        type: String,
-                        trim: true,
-                    },
-                    type: {
-                        type: String,
-                        trim: true
-                    },
-                    required: {
-                        type: Boolean
-                    },
-                    children: {
-                        type: Array
-                    }
-                }
-            ],
-            otherParams: [
-                {
-                    key: {
-                        type: String,
-                        trim: true,
-                    },
-                    value: {
-                        type: String,
-                        trim: true,
-                    },
-                    description: {
-                        type: String,
-                        trim: true,
-                    },
-                    type: {
-                        type: String,
-                        trim: true
-                    },
-                    required: {
-                        type: Boolean
-                    },
-                    children: {
-                        type: Array
-                    }
-                }
-            ]
+            type: { //文档类型,   1.文件夹 2.普通文档 3.markdown文档
+                type: String,
+                enum: ["folder", "api", "markdown"]
+            },
+            tag: { //文档标签
+                type: String,
+            }
         },
         enabled: { //使能
             type: Boolean,
             default: true
         },
-        publish: { //是否发布
-            type: Boolean,
-            default: false
-        },
-        publishRecords: { //发布时间日志
-            type: [
-                {
-                    publisher: { //发布人信息
-                        type: String,
-                        default: "" 
-                    },
-                    time: { //发布日期
-                        type: String,
-                        default: ""
-                    }
+        item: {
+            method: { //请求方法
+                type: String,
+                trim: true,
+                enum: ["get", "post", "put", "delete", "options", "patch", "head"],
+                default: "get"  
+            },
+            url: { //请求地址信息
+                host: { //host地址
+                    type: String,
+                    default: ""
+                },
+                path: { //请求路径
+                    type: String,
+                    default: ""
                 }
-            ],
-            default: [],
+            }, 
+            paths: [ProperytySchema], //restful请求路径
+            queryParams: [ProperytySchema], //查询字符串
+            requestBody: [ProperytySchema], //请求body
+            responseParams: {
+                type: [{ //返回值
+                    title: {
+                        type: String,
+                        default: "返回值"
+                    },
+                    statusCode: {
+                        type: Number,
+                        default: 200
+                    },
+                    values: [ProperytySchema]
+                }],
+                default: [{
+                    title: "返回参数",
+                    statusCode: 200,
+                    values: []
+                }]
+            },
+            headers: [ProperytySchema], //请求头
+            contentType: { //请求contentType
+                type: String,
+                trim: true,
+                enum: ["application/json", "application/x-www-form-urlencoded", "multipart/form-data"],
+                default: "application/json"  
+            },
         },
-
     }, { timestamps: true });
-
     return mongoose.model("doc", docSchema);
 };

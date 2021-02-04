@@ -6,32 +6,28 @@
 
 
 const Controller = require("egg").Controller;
-// const officegen = require("officegen");
-// const fs = require("fs");
-// const path = require("path");
 
 class DocsController extends Controller {
     /** 
         @description  新增空白文档
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {String}            docName 文档名称
-        @param {Boolean}           isFolder 是否为文件夹 
-        @param {String}            pid 父元素id
-        @param {String}            projectId 项目id
-        @param {any?}              item 文档详情(复制使用)
+        @param {string}            name 文档名称
+        @param {string}            type 文档类型 
+        @param {string}            pid 父元素id
+        @param {string}            projectId 项目id
         @return       null
     */
-
-    async newDoc() { 
+    async addEmptyDoc() { 
         try {
             const params = this.ctx.request.body;
             const reqRule = {
-                docName: {
+                name: {
                     type: "string",
                 },
-                isFolder: {
-                    type: "boolean",
+                type: {
+                    type: "string",
+                    enum: ["folder", "api", "markdown"],
                 },
                 pid: {
                     type: "string",
@@ -40,13 +36,9 @@ class DocsController extends Controller {
                 projectId: {
                     type: "string",
                 },
-                item: {
-                    type: "object",
-                    required: false
-                }
             };
             this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.newDoc(params);
+            const result = await this.ctx.service.apidoc.docs.docs.addEmptyDoc(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);
@@ -60,15 +52,19 @@ class DocsController extends Controller {
      * @create             2020-02-15 22:29
      * @update             2020-02-15 22:29
      * @param {String}     _id - 节点id       
+     * @param {String}     projectId - 项目id       
      */
 
-    async copyDoc(params) {
+    async copyDoc() {
         try {
             const params = this.ctx.request.body;
             const reqRule = {
                 _id: {
                     type: "string",
                 },
+                projectId: {
+                    type: "string"
+                }
             };
             this.ctx.validate(reqRule, params);
             const result = await this.ctx.service.apidoc.docs.docs.copyDoc(params);
@@ -161,7 +157,6 @@ class DocsController extends Controller {
         @param {Number}      sort 文档排序
         @return       null
     */
-
     async changeDocPosition() { 
         try {
             const params = this.ctx.request.body;
@@ -191,38 +186,41 @@ class DocsController extends Controller {
         @description  修改文档名称
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {String}    _id当前文档id      
-        @param {String}    projectId 当前文档所属项目id      
-        @param {String}    docName 当前文档名称      
+        @param {String}    _id 当前文档id      
+        @param {String}    projectId 项目id      
+        @param {String}    name 当前文档名称      
         @return       null
     */
-
-    async editDocInfo() { 
+    async changeDocName() { 
         try {
             const params = this.ctx.request.body;
             const reqRule = {
                 _id: {
                     type: "string",
                 },
-                docName: {
+                projectId: {
+                    type: "string"
+                },
+                name: {
                     type: "string",
                 },
             };
             this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.editDocInfo(params);
+            const result = await this.ctx.service.apidoc.docs.docs.changeDocName(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);
             return;
         }
     }
-
     /** 
         @description  新增文档详细信息
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {ObjectID}           _id 文档id
-        @param {Object}           item 文档数据 
+        @param {pbjectID}         _id 文档id
+        @param {object}           info 接口基本信息 
+        @param {object}           item 录入参数 
+        @param {string}           projectId 项目id
         @return       null
     */
 
@@ -234,9 +232,14 @@ class DocsController extends Controller {
                     type: "string",
                     required: true
                 },
+                info: {
+                    type: "object",
+                },
                 item: {
-                    type: "requestRule",
-                    required: true
+                    type: "object",
+                },
+                projectId: {
+                    type: "string"
                 },
             };
             this.ctx.validate(reqRule, params);
@@ -252,8 +255,7 @@ class DocsController extends Controller {
         @description  获取文档结构树
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {ObjectID}           _id 文档id
-        @param {Object}           item 文档数据 
+        @param {string}           projectId 项目id
         @return       null
     */
 
@@ -261,7 +263,7 @@ class DocsController extends Controller {
         try {
             const params = this.ctx.request.query;
             const reqRule = {
-                _id: {
+                projectId: {
                     type: "string",
                     required: true
                 },
@@ -304,22 +306,24 @@ class DocsController extends Controller {
         }
     }
 
-    /** 
-        @description  获取文档详细信息
-        @author       shuxiaokai
-        @create        2020-10-08 22:10
-        @param {ObjectID}           _id 文档id
-        @return       null
+   /** 
+    * @description        获取文档详细信息
+    * @author             shuxiaokai
+    * @create             2021-01-13 17:27
+    * @param {string}     _id 文档id
+    * @param {string}     projectId - 项目id       
+    * @return             null     
     */
-
     async getDocDetail() { 
         try {
             const params = this.ctx.request.query;
             const reqRule = {
                 _id: {
                     type: "string",
-                    required: true
                 },
+                projectId: {
+                    type: "string",
+                }
             };
             this.ctx.validate(reqRule, params);
             const result = await this.ctx.service.apidoc.docs.docs.getDocDetail(params);

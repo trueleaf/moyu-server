@@ -10,25 +10,6 @@ class AppBootHook {
         this.app = app;
     }
     async didLoad() {
-        //添加代理中间件
-        //=====================================添加常见验证规则====================//
-        this.app.validator.addRule("requestRule", (rule, value) => {
-            if (
-                !value.hasOwnProperty("description") ||
-                !value.hasOwnProperty("methods") ||
-                !value.hasOwnProperty("url") ||
-                !value.hasOwnProperty("header") ||
-                !value.hasOwnProperty("requestParams") ||
-                !value.hasOwnProperty("responseParams")
-            ) {
-                return "item参数下面必须存在description,methods,url,header,params";
-            }
-        });
-        this.app.validator.addRule("email", (rule, value) => {
-            // const rule = 
-        });
-
-
         //=========================================================================//
         this.app.once("server", server => {
             // websocket

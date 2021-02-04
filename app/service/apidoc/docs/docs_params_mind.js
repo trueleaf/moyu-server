@@ -12,36 +12,49 @@ class docParamsMindService extends Service {
         @author        shuxiaokai
         @create        2020-10-08 22:10
         @param {String}  projectId 项目id
-        @param {String}  mindRequestParams 联想请求参数
-        @param {String}  mindResponseParams 联想返回参数
+        @param {String}  paths 联想请求参数
+        @param {String}  queryParams 联想返回参数
+        @param {String}  requestBody 联想返回参数
+        @param {String}  responseParams 联想返回参数
         @return       null
     */
 
     async addDocParamsMind(params) {
-        const { projectId, mindRequestParams, mindResponseParams } = params;
+        const { projectId, paths, queryParams, requestBody, responseParams } = params;
+        let result = null;
         const doc = {
             projectId,
-            mindRequestParams,
-            mindResponseParams,
+            paths,
+            queryParams,
+            requestBody,
+            responseParams
         };
-      
         const savedDoc = await this.ctx.model.Apidoc.Docs.DocsParamsMind.findOne({ projectId: doc.projectId });
         if (savedDoc) {
-            const oldReqParams = savedDoc.mindRequestParams;
-            const oldResParams = savedDoc.mindResponseParams;
-            const newReqParams = this.ctx.helper.unique([...mindRequestParams, ...oldReqParams], "key");
-            const newResParams = this.ctx.helper.unique([...mindResponseParams, ...oldResParams], "key");
-
-
-            // console.log(newReqParams, 22, newResParams)
+            const oldPaths = savedDoc.paths;
+            const oldQueryParams = savedDoc.queryParams;
+            const oldRequestBody = savedDoc.requestBody;
+            const oldResponseParams = savedDoc.responseParams;
+            const newPaths = this.ctx.helper.unique([...paths, ...oldPaths], "key");
+            const newQueryParams = this.ctx.helper.unique([...queryParams, ...oldQueryParams], "key");
+            const newRequestBody = this.ctx.helper.unique([...requestBody, ...oldRequestBody], "key");
+            const newResponseParams = this.ctx.helper.unique([...responseParams, ...oldResponseParams], "key");
+            result = {
+                paths: newPaths,
+                queryParams: newQueryParams,
+                requestBody: newRequestBody,
+                responseParams: newResponseParams,
+            }
             await this.ctx.model.Apidoc.Docs.DocsParamsMind.update({ projectId }, { $set: {
-                mindRequestParams: newReqParams,
-                mindResponseParams: newResParams,
+                paths: newPaths,
+                queryParams: newQueryParams,
+                requestBody: newRequestBody,
+                responseParams: newResponseParams,
             }});
         } else {
             await this.ctx.model.Apidoc.Docs.DocsParamsMind.create(doc);
         }
-        return;
+        return result;
     }
     /**
         @description  获取文档参数联想
@@ -54,19 +67,13 @@ class docParamsMindService extends Service {
     async getDocParamsMindEnum(params) {
         const { projectId } = params;
         const result = await this.ctx.model.Apidoc.Docs.DocsParamsMind.findOne({ projectId }, {
-            "mindRequestParams.key": 1, 
-            "mindRequestParams.description": 1,
-            "mindRequestParams.value": 1,
-            "mindRequestParams.type": 1,
-            "mindResponseParams.key": 1,
-            "mindResponseParams.description": 1,
-            "mindResponseParams.value": 1,
-            "mindResponseParams.type": 1,
+            paths: 1,
+            queryParams: 1,
+            requestBody: 1,
+            responseParams: 1,
+            _id: 0
         });
-        return result || {
-            mindRequestParams: [],
-            mindResponseParams: []
-        };
+        return result || [];
     }
 }
 

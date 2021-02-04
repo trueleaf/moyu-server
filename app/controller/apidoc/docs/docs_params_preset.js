@@ -15,7 +15,7 @@ class presetParamsController extends Controller {
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @param {String}            name 参数组名称
-        @param {enum}              presetParamsType 参数组类型 header代表应用于请求头组   request代表应用于请求参数组  response代表应用于response组
+        @param {enum}              presetParamsType 参数组类型
         @param {Array}             items 参数数据类型
         @param {String}             projectId 项目id
         @return       null
@@ -30,7 +30,7 @@ class presetParamsController extends Controller {
                 },
                 presetParamsType: {
                     type: "enum",
-                    values: ["header", "request", "response"],
+                    values: ["queryParams", "requestBody", "responseParams"],
                 },
                 items: {
                     type: "array"
@@ -78,7 +78,11 @@ class presetParamsController extends Controller {
         @description  修改自定义组
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {String}      _id 
+        @param {String}      _id 参数id
+        @param {String}      projectId  项目id
+        @param {String}      name 参数组名称
+        @param {String}      items 参数信息
+        @param {String}      presetParamsType 参数组类型 
         @return       null
     */
 
@@ -89,6 +93,9 @@ class presetParamsController extends Controller {
                 _id: {
                     type: "string",
                 },
+                projectId: {
+                    type: "string",
+                },
                 name: {
                     type: "string",
                     required: false
@@ -96,6 +103,9 @@ class presetParamsController extends Controller {
                 items: {
                     type: "array",
                     required: false
+                },
+                presetParamsType: {
+                    type: "string"
                 },
             };
             this.ctx.validate(reqRule, params);
@@ -125,7 +135,7 @@ class presetParamsController extends Controller {
             const reqRule = {
                 presetParamsType: {
                     type: "enum",
-                    values: ["header", "request", "response"],
+                    values: ["queryParams", "requestBody", "responseParams"],
                     required: false,
                 },
                 pageNum: {
@@ -197,20 +207,23 @@ class presetParamsController extends Controller {
         @description  获取自定义参数组详情
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {String?}           _id 当前参数组id
+        @param {String}           projectId 项目id
+        @param {String}           _id 当前参数组id
         @return       null
     */
-
-    async getPresetParams() { 
+    async getPresetParamsInfo() { 
         try {
             const params = this.ctx.query;
             const reqRule = {
+                projectId: {
+                    type: "string"
+                },
                 _id: {
                     type: "string",
                 },
             };
             this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsParamsPreset.getPresetParams(params);
+            const result = await this.ctx.service.apidoc.docs.docsParamsPreset.getPresetParamsInfo(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);

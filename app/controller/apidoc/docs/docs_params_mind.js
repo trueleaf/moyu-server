@@ -14,8 +14,10 @@ class docParamsMindController extends Controller {
         @author        shuxiaokai
         @create        2020-10-08 22:10
         @param {String}  projectId 项目id
-        @param {String}  mindRequestParams 联想请求参数
-        @param {String}  mindResponseParams 联想返回参数
+        @param {String}  paths 联想请求参数
+        @param {String}  queryParams 联想返回参数
+        @param {String}  requestBody 联想返回参数
+        @param {String}  responseParams 联想返回参数
         @return       null
     */
 
@@ -26,10 +28,16 @@ class docParamsMindController extends Controller {
                 projectId: { //项目id
                     type: "string"
                 },
-                mindRequestParams: { //请求参数
+                paths: { //路径参数
                     type: "array"
                 },
-                mindResponseParams: { //返回参数
+                queryParams: { //查询字符串
+                    type: "array"
+                },
+                requestBody: { //请求body
+                    type: "array"
+                },
+                responseParams: { //返回参数
                     type: "array"
                 },
             };

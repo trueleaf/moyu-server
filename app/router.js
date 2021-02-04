@@ -30,11 +30,11 @@ module.exports = app => {
     router.put("/api/project/project_type", controller.apidoc.project.projectType.editProjectTypeEnum); //修改项目类型
     router.post("/api/project/add_project_type", controller.apidoc.project.projectType.addProjectTypeEnum); //添加项目类型
     //=====================================文档相关====================================//
-    router.post("/api/project/new_doc", controller.apidoc.docs.docs.newDoc); //新增空白文档
+    router.post("/api/project/new_doc", controller.apidoc.docs.docs.addEmptyDoc); //新增空白文档
     router.post("/api/project/copy_doc", controller.apidoc.docs.docs.copyDoc); //拷贝文档
     router.post("/api/project/new_doc_multi", controller.apidoc.docs.docs.newMultiDoc); //新增多个空白文档
     router.put("/api/project/change_doc_pos", controller.apidoc.docs.docs.changeDocPosition); //改变文档在位置
-    router.put("/api/project/change_doc_info", controller.apidoc.docs.docs.editDocInfo); //修改文档树形结构基础信息
+    router.put("/api/project/change_doc_info", controller.apidoc.docs.docs.changeDocName); //修改文档树形结构基础信息
     router.put("/api/project/publish_doc", controller.apidoc.docs.docs.publishDoc); //发布文档
     router.delete("/api/project/doc", controller.apidoc.docs.docs.deleteDoc); //删除文档
     router.post("/api/project/doc_multi", controller.apidoc.docs.docs.addMultiDocs); //新增多个文档
@@ -88,7 +88,8 @@ module.exports = app => {
     router.put("/api/project/doc_preset_params", controller.apidoc.docs.docsParamsPreset.editPresetParams); //填写预设参数组
     router.get("/api/project/doc_preset_params_list", controller.apidoc.docs.docsParamsPreset.getPresetParamsList); //获取预设参数组列表
     router.get("/api/project/doc_preset_params_enum", controller.apidoc.docs.docsParamsPreset.getPresetParamsEnum); //获取预设参数组枚举
-    router.get("/api/project/doc_preset_params", controller.apidoc.docs.docsParamsPreset.getPresetParams); //获取预设参数数据
+    router.get("/api/project/doc_preset_params", controller.apidoc.docs.docsParamsPreset.getPresetParamsInfo); //获取预设参数数据
+
     //======host(服务器)列表
     router.post("/api/project/doc_service", controller.apidoc.docs.docsServices.addService); //新增服务器
     router.delete("/api/project/doc_service", controller.apidoc.docs.docsServices.deleteService); //删除服务器

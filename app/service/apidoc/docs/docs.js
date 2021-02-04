@@ -15,61 +15,62 @@ const xss = require("xss");
 
 class DocsService extends Service {
     /** 
+     * @description        检查是否有权限操作接口
+     * @author             shuxiaokai
+     * @create             2021-01-13 11:10
+     * @param {string}     projectId 项目id
+     * @return {boolean}   true代表有权限 false代表无权限
+     */
+    async checkOperationDocPermission(projectId) {
+        const userInfo = this.ctx.session.userInfo;
+        const projectInfo = await this.ctx.model.Apidoc.Project.Project.findById({ _id: projectId });
+        if (!projectInfo) {
+            this.ctx.helper.errorInfo("暂无当前项目权限", 4002);
+        }
+        const accessUsers = projectInfo.members.concat([projectInfo.owner])
+        if (!accessUsers.find(user => user.id === userInfo.id)) {
+            this.ctx.helper.errorInfo("暂无当前项目权限", 4002);
+        }
+    }
+    /** 
         @description  新增空白文档
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {String}        docName 文档名称
-        @param {Boolean}       isFolder 是否为文档
-        @param {String}        pid 父元素id
-        @param {String}        projectId 项目id
-        @param {any?}          item 文档详情(复制使用)
+        @param {string}            name 文档名称
+        @param {string}            type 文档类型 
+        @param {string}            pid 父元素id
+        @param {string}            projectId 项目id
         @return       null
     */
-
-    async newDoc(params) {
-        const { docName, isFolder, pid, projectId, item } = params;
-        if (pid) {
-            const doc = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id: pid });
-            if (doc.isFolder === false) {
-                const error = new Error("操作不被允许，文件下面不允许嵌套文件夹");
-                error.code = 4001;
-                throw error;
+    async addEmptyDoc(params) {
+        const { name, type, pid, projectId} = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        if (pid) { //不允许在非folder类型文档下面插入文档
+            const parentDoc = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id: pid });
+            if (parentDoc.info.type !== "folder") {
+                this.ctx.helper.errorInfo("操作不被允许，文件下面不允许嵌套文件夹", 4001);
             }
         }
-        const isInProject = await this.ctx.model.Apidoc.Project.Project.findById({ _id: projectId });
-        if (!isInProject) {
-            const error = new Error("操作不被允许，项目不存在");
-            error.code = 4001;
-            throw error;
-        }
         const doc = {
-            docName,
-            isFolder,
             pid,
             projectId,
+            isFolder: type === "folder",
             sort: Date.now(),
-            item: item || {}
-        };
-        let result = {};
-        result = await this.ctx.model.Apidoc.Docs.Docs.create(doc);
-        if (!isFolder) { //目录不属于文档
-            await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $inc: { docNum: 1 }});
+            info: {
+                name,
+                type,
+            }
         }
-        const docRecord = {
-            projectId,
-            docId: result._id,
-            docInfo: [
-                {
-                    docName: doc.docName,
-                    isFolder: doc.isFolder,
-                    method: doc.item && doc.item.methods,
-                    url: doc.item && doc.item.url && doc.item.url.path,
-                }
-            ]
+        const result = await this.ctx.model.Apidoc.Docs.Docs.create(doc);
+        return {
+            ...result.item,
+            ...result.info,
+            _id: result._id,
+            pid: result.pid,
+            sort: result.sort,
+            isFolder: result.isFolder,
+            children: result.children,
         };
-        doc.isFolder ? (docRecord.operation = "addFolder") : (docRecord.operation = "addDoc");
-        await this.ctx.service.apidoc.docs.docsHistory.addDocHistory(docRecord);
-        return result;
     }
     /** 
      * @description        拷贝一个节点
@@ -77,35 +78,30 @@ class DocsService extends Service {
      * @updateAuthor       shuxiaokai
      * @create             2020-02-15 22:29
      * @update             2020-02-15 22:29
-     * @param {String}     _id - 节点id       
+     * @param {String}     _id - 节点id    
+     * @param {String}     projectId - 项目id    
      */
 
     async copyDoc(params) {
-        const { _id } = params;
-        let doc = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id });
-        doc = doc.toObject();
-        doc.docName = "副本" + doc.docName;
+        const { _id, projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        let doc = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id }).lean();
+        doc.info.name = "副本-" + doc.info.name;
         doc._id = this.app.mongoose.Types.ObjectId();
         doc.sort += 1;
-        doc.publishRecords = []; //复制的接口设置为未发布
-        doc.publish = false; //复制的接口设置为未发布
         const result = await this.ctx.model.Apidoc.Docs.Docs.create(doc);
         if (!doc.isFolder) {
             await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: doc.projectId }, { $inc: { docNum: 1 }});
         }
-        const docRecord = {
-            projectId: doc.projectId,
-            docId: doc._id,
-            docInfo: [{
-                docName: doc.docName,
-                isFolder: doc.isFolder,
-                method: doc.item && doc.item.methods,
-                url: doc.item && doc.item.url && doc.item.url.path,
-            }]
+        return {
+            ...result.item,
+            ...result.info,
+            _id: result._id,
+            pid: result.pid,
+            sort: result.sort,
+            isFolder: result.isFolder,
+            children: result.children,
         };
-        doc.isFolder ? (docRecord.operation = "copyFolder") : (docRecord.operation = "copyDoc");
-        await this.ctx.service.apidoc.docs.docsHistory.addDocHistory(docRecord);
-        return result;
     }
 
     /** 
@@ -204,23 +200,9 @@ class DocsService extends Service {
             isFolder = parentDoc.isFolder;
         }
         if (parentDoc && !isFolder) {
-            const error = new Error("操作不被允许，pid对应的父元素不是文件夹");
-            error.code = 4001;
-            throw error;
+            this.ctx.helper.errorInfo("操作不被允许，pid对应的父元素不是文件夹", 4001);
         }
-        const result = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, updateDoc);
-        const docRecord = {
-            operation: "position",
-            projectId: result.projectId,
-            docId: _id,
-            docInfo: [{
-                docName: result.docName,
-                isFolder: result.isFolder,
-                method: result.item && result.item.methods && "get",
-                url: result.item && result.item.url && result.item.url.path,
-            }]
-        };
-        await this.ctx.service.apidoc.docs.docsHistory.addDocHistory(docRecord);
+        await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, updateDoc);
         return;
     }
 
@@ -228,166 +210,82 @@ class DocsService extends Service {
         @description  修改文档名称
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {String}    _id当前文档id      
-        @param {String}    docName 当前文档名称      
+        @param {String}    _id 当前文档id      
+        @param {String}    name 当前文档名称      
         @return       null
     */
-
-    async editDocInfo(params) { 
-        const { _id, docName } = params;
-        const result = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { docName }});
-        const docRecord = {
-            operation: "rename",
-            projectId: result.projectId,
-            docInfo: [{ //第一个是历史文档名称，第二个是修改后文档名称
-                docName: result.docName,
-                isFolder: result.isFolder,
-                method: result.item && result.item.methods && "get",
-                url: result.item && result.item.url && result.item.url.path,
-            }, {
-                docName: docName,
-                isFolder: result.isFolder,
-                method: result.item && result.item.methods && "get",
-                url: result.item && result.item.url && result.item.url.path,
-            }]
-        };
-        await this.ctx.service.apidoc.docs.docsHistory.addDocHistory(docRecord);
+    async changeDocName(params) { 
+        const { _id, name, projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { "info.name": name }});
         return { _id };
     }
     /** 
         @description  新增文档详细信息
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {ObjectID}           _id 文档id
-        @param {Object}           item 文档数据 
+        @param {pbjectID}         _id 文档id
+        @param {object}           info 接口基本信息 
+        @param {object}           item 录入参数 
+        @param {string}           projectId 项目id 
         @return       null
     */
 
     async fillDoc(params) {
-        const { _id, item } = params;
-        const oldDocInfo = await this.ctx.model.Apidoc.Docs.Docs.findById({ _id });
-        
-        const result = {};
-        const foo = treeData => {
-            for (let i = 0; i < treeData.length; i++) {
-                result[treeData[i].key] = {
-                    type: treeData[i].type,
-                    value: treeData[i].value,
-                    description: treeData[i].description,
-                    required: treeData[i].required
-                };
-                if (treeData[i].children && treeData[i].children.length > 0) {
-                    foo(treeData[i].children);
-                }
-            }
-        };
-        foo(item.requestParams);
-        foo(item.responseParams);
-        foo(item.header);
-        //去除接口无关字段
-        this.filterFields(item.requestParams);
-        this.filterFields(item.responseParams);
-        this.filterFields(item.header);
-
-        if (!oldDocInfo) {
-            const error = new Error("操作不被允许，该文档不存在");
-            error.code = 4001;
-            throw error;
-        }
-
-        // console.log(item.description, 222)
-        item.description = xss(item.description)
-        const currentDocInfo = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { item }}, { new: true }).lean();
-        //第一个为历史文档信息，第二个为新的文档信息
-        const docRecord = {
-            operation: "editDoc",
-            projectId: currentDocInfo.projectId,
-            docId: _id,
-            docInfo: [{
-                docName: oldDocInfo.docName,
-                isFolder: oldDocInfo.isFolder,
-                method: oldDocInfo.item && oldDocInfo.item.methods && "get",
-                url: oldDocInfo.item && oldDocInfo.item.url && oldDocInfo.item.url.path,
-                item
-            }, {
-                docName: currentDocInfo.docName,
-                isFolder: currentDocInfo.isFolder,
-                method: currentDocInfo.item && currentDocInfo.item.methods && "get",
-                url: currentDocInfo.item && currentDocInfo.item.url && currentDocInfo.item.url.path,
-                item
-            }]
-        };
-        await this.ctx.service.apidoc.docs.docsHistory.addDocHistory(docRecord); //添加项目历史记录
-        await this.ctx.service.apidoc.docs.docsRecords.addDocsRecords({
-            docId: _id,
-            docInfo: currentDocInfo
-        }); //文档修改记录记录
-
+        const { _id, info, item, projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        info.description = xss(info.description)
+        await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { item, info } }, { new: true });
         return;
     }
-    //去除无关字段
-    filterFields(params) {
-        this.ctx.helper.dfsForest(params, {
-            rCondition(value) {
-                return value.children;
-            },
-            rKey: "children",
-            hooks: (data, i, current, parent) => {
-                if (parent && parent.children) {
-                    parent.children[i] = {
-                        id: data.id,
-                        type: data.type,
-                        key: data.key,
-                        value: data.value,
-                        description: data.description,
-                        required: data.required,
-                        children: data.children                  
-                    };
-                }
-            }
-        });
-    }
-
     /** 
         @description  获取文档结构树
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {ObjectID}           _id 文档id
-        @param {Object}           item 文档数据 
+        @param {string}          projectId 文档id
         @return       null
     */
-
     async getDocTreeNode(params) { 
-        const { _id } = params;
-        const docData = await this.ctx.model.Apidoc.Docs.Docs.find(
-            { projectId: _id, enabled: true },
-            { 
-                "item.url": 0,
-                "item.description": 0,
-                "item.header": 0,
-                "item.requestParams": 0,
-                "item.responseParams": 0,
-                "item.otherParams": 0,
-                ancestors: 0,
-                createdAt: 0,
-                enabled: 0,
-                uuid: 0,
-                updatedAt: 0,
-                __v: 0
-            }).sort({ isFolder: -1, sort: 1 }).lean();
+        const { projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const result = [];
-        for (let i = 0, len = docData.length; i < len; i++) {
-            if (docData[i].pid == null || docData[i].pid === "") { //根元素
-                docData[i].children = [];
-                result.push(docData[i]);
+        const docsInfo = await this.ctx.model.Apidoc.Docs.Docs.find({
+            projectId: projectId,
+            enabled: true
+        }, {
+            pid: 1,
+            info: 1,
+            "item.method": 1,
+            isFolder: 1,
+            sort: 1,
+        }).sort({
+            isFolder: -1,
+            sort: 1
+        }).lean();
+        const mapedData =  docsInfo.map(val => {
+            return {
+                ...val.item,
+                ...val.info,
+                _id: val._id,
+                pid: val.pid,
+                sort: val.sort,
+                isFolder: val.isFolder,
+                children: val.children,
+            };
+        })
+        for (let i = 0; i < mapedData.length; i++) {
+            const docInfo = mapedData[i];
+            if (!docInfo.pid) { //根元素
+                docInfo.children = [];
+                result.push(docInfo);
             }
-            const id = docData[i]._id.toString();
-            for (let j = 0, len2 = docData.length; j < len2; j++) {
-                if (id === docData[j].pid) { //项目中新增的数据使用标准id
-                    if (docData[i].children == null) {
-                        docData[i].children = [];
+            const id = docInfo._id.toString();
+            for (let j = 0; j < mapedData.length; j++) {
+                if (id === mapedData[j].pid) { //项目中新增的数据使用标准id
+                    if (docInfo.children == null) {
+                        docInfo.children = [];
                     }
-                    docData[i].children.push(docData[j]);
+                    docInfo.children.push(mapedData[j]);
                 }
             }
         }
@@ -397,13 +295,14 @@ class DocsService extends Service {
         @description  获取文档详细信息
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {ObjectID}           _id 文档id
+        @param {string}           _id 文档id
+        @param {string}           projectId 文档id
         @return       null
     */
-
     async getDocDetail(params) { 
-        const { _id } = params;
-        const result = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id, enabled: true }, { pid: 0, isFolder: 0, ancestors: 0, sort: 0 });
+        const { _id, projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const result = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id, enabled: true }, { pid: 0, isFolder: 0, sort: 0, enabled: 0 });
         return result;
     }
     /** 
