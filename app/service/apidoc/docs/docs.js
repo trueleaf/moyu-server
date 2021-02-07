@@ -544,7 +544,7 @@ class DocsService extends Service {
      */
     async getDocOfflineData(params) { 
         const { projectId } = params;
-        const banner = await this.ctx.service.apidoc.docs.docs.getDocTreeNode({ _id: projectId });
+        const banner = await this.ctx.service.apidoc.docs.docs.getDocTreeNode({ projectId });
         const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, enabled: true }, { item: 1, _id: 1, docName: 1, createdAt: 1, updatedAt: 1, pid: 1 });
         const result = {
             banner,
