@@ -44,6 +44,7 @@ class DocsService extends Service {
     */
     async addEmptyDoc(params) {
         const { name, type, pid, projectId} = params;
+        const userInfo = this.ctx.session.userInfo;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         if (pid) { //不允许在非folder类型文档下面插入文档
             const parentDoc = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id: pid });
@@ -59,6 +60,7 @@ class DocsService extends Service {
             info: {
                 name,
                 type,
+                creator: userInfo.realName || userInfo.loginName
             }
         }
         const result = await this.ctx.model.Apidoc.Docs.Docs.create(doc);

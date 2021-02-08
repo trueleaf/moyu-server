@@ -74,7 +74,13 @@ module.exports = app => {
             },
             tag: { //文档标签
                 type: String,
-            }
+            },
+            creator: { //创建者
+                type: String,
+            },
+            maintainer: { //维护人员，最近一次更新人员
+                type: String,
+            },
         },
         enabled: { //使能
             type: Boolean,

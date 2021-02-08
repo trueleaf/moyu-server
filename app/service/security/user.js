@@ -485,7 +485,6 @@ class userService extends Service {
         const allClientMenu = await this.ctx.model.Security.ClientMenu.find({}, { name: 1, path: 1, sort: 1 }); //系统所有前端菜单
         let clientRoutesResult = [];
         let clientBannerResult = []; 
-        console.log(222, roleIds)
         for (let i = 0; i < roleIds.length; i++) {
             const roleInfo = await this.ctx.model.Security.Role.findById({ _id: roleIds[i] });
             //前端路由
