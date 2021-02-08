@@ -220,6 +220,7 @@ class DocsController extends Controller {
         @param {pbjectID}         _id 文档id
         @param {object}           info 接口基本信息 
         @param {object}           item 录入参数 
+        @param {number}           spendTime 录入时长
         @param {string}           projectId 项目id
         @return       null
     */
@@ -237,6 +238,10 @@ class DocsController extends Controller {
                 },
                 item: {
                     type: "object",
+                },
+                spendTime: {
+                    type: "number",
+                    required: false
                 },
                 projectId: {
                     type: "string"

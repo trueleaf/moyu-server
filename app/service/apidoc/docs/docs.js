@@ -64,6 +64,10 @@ class DocsService extends Service {
             }
         }
         const result = await this.ctx.model.Apidoc.Docs.Docs.create(doc);
+        const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
+        if (type !== "folder") {
+            await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }});
+        }
         return {
             ...result.item,
             ...result.info,
@@ -229,15 +233,17 @@ class DocsService extends Service {
         @param {pbjectID}         _id 文档id
         @param {object}           info 接口基本信息 
         @param {object}           item 录入参数 
+        @param {number}           spendTime 录入时长
         @param {string}           projectId 项目id 
         @return       null
     */
 
     async fillDoc(params) {
-        const { _id, info, item, projectId } = params;
+        const { _id, info, item, projectId, spendTime = 0 } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        info.description = xss(info.description)
-        await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { item, info } }, { new: true });
+        const description = xss(info.description);
+        await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { item, "info.description": description } });
+        await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $inc: { "info.spendTime": spendTime } });
         return;
     }
     /** 

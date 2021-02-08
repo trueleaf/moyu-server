@@ -142,7 +142,7 @@ class userService extends Service {
         };
         project.owner = {
             id: this.ctx.session.userInfo.id,
-            name: this.ctx.session.userInfo.realName
+            name: this.ctx.session.userInfo.realName || this.ctx.session.userInfo.loginName
         };
         const projectResult = await this.ctx.model.Apidoc.Project.Project.create(project);
         return loginResult;
