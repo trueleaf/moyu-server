@@ -302,12 +302,12 @@ class userService extends Service {
         const result = {};
 
         const smsInfo = await this.ctx.model.Security.Sms.findOne({ phone });
-
+        console.log(smsInfo, smsCode)
         if (!smsInfo) {
             this.ctx.helper.errorInfo("请输入正确的手机号码", 2005);
         }
         if (smsInfo.smsCode !== smsCode) {
-            this.ctx.helper.errorInfo("短信验证码错误", 2004);
+            this.ctx.helper.errorInfo("短信验证码错误", 2003);
         }
 
         const userInfo = await this.ctx.model.Security.User.findOne({ phone });
