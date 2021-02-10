@@ -108,8 +108,8 @@ class clientRoutesService extends Service {
 
     async deleteClientRoutes(params) {
         const { ids } = params;
-        const result = await this.ctx.model.Security.ClientRoutes.updateMany({ _id: { $in: ids }}, { $set: { enabled: false }});
-        return result;
+        await this.ctx.model.Security.ClientRoutes.updateMany({ _id: { $in: ids }}, { $set: { enabled: false }});
+        return;
     }
     /**
         @description  获取前端资源
