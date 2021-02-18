@@ -410,7 +410,19 @@ class userService extends Service {
         if (department) {
             query.department = new RegExp(escapeStringRegexp(department));
         }
-        const rows = await this.ctx.model.Security.User.find(query, { password: 0, salt: 0, clientRoutes: 0, clinetMenus: 0, serverRoutes: 0, starProjects: 0 }).skip(skipNum).limit(limit);
+        const rows = await this.ctx.model.Security.User.find(
+            query,
+            { 
+                password: 0,
+                salt: 0,
+                clientRoutes: 0,
+                clinetMenus: 0,
+                serverRoutes: 0,
+                starProjects: 0
+            }
+        ).sort({
+            loginTimes: -1
+        }).skip(skipNum).limit(limit);
         const total = await this.ctx.model.Security.User.find(query).countDocuments();
         const result = {};
         result.rows = rows;

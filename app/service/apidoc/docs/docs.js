@@ -28,7 +28,7 @@ class DocsService extends Service {
             this.ctx.helper.errorInfo("暂无当前项目权限", 4002);
         }
         const accessUsers = projectInfo.members.concat([projectInfo.owner])
-        if (!accessUsers.find(user => user.id === userInfo.id)) {
+        if (!accessUsers.find(user => user.userId === userInfo.id)) {
             this.ctx.helper.errorInfo("暂无当前项目权限", 4002);
         }
     }
@@ -297,6 +297,41 @@ class DocsService extends Service {
                 }
             }
         }
+        // const allDoc = await this.ctx.model.Apidoc.Docs.Docs.find({}).lean();
+        // allDoc.forEach(async (doc, index) => {
+        //     const convertDoc = {
+        //         _id: doc._id,
+        //         info: {
+        //             name: doc.docName, 
+        //             description: doc.item.description,
+        //             type: doc.isFolder ? "folder" : "api"
+        //         },
+        //         pid: doc.pid,
+        //         projectId: doc.projectId,
+        //         isFolder: doc.isFolder,
+        //         sort: doc.sort,
+        //         enabled: doc.enabled,
+        //         item: {
+        //             method: doc.item.methods || "get",
+        //             url: {
+        //                 host: doc.item.url.host,
+        //                 path: doc.item.url.path,
+        //             },
+        //             paths: [],
+        //             queryParams: doc.item.methods === "get" ? (doc.item.requestParams || []) : [],
+        //             requestBody: doc.item.methods === "get" ? [] : (doc.item.requestParams || []),
+        //             responseParams: [{
+        //                 title: "成功返回参数",
+        //                 statusCode: 200,
+        //                 values: doc.item.responseParams || [],
+        //             }],
+        //             headers: doc.item.header,
+        //             contentType: "application/json"
+        //         },
+        //     };
+        //     await this.ctx.model.Apidoc.Docs.Docs.update({ _id: doc._id }, convertDoc);
+        //     console.log(index)
+        // })
         return result;
     }
     /** 
