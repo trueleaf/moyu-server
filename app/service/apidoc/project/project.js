@@ -132,7 +132,7 @@ class ProjectService extends Service {
         doc.members = members;
         doc.owner = {
             id: this.ctx.session.userInfo.id,
-            name: this.ctx.session.userInfo.realName
+            name: this.ctx.session.userInfo.realName || this.ctx.session.userInfo.loginName
         };
         const result = await this.ctx.model.Apidoc.Project.Project.create(doc);
         return result._id;
