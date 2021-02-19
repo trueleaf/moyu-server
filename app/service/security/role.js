@@ -95,7 +95,7 @@ class roleService extends Service {
         if (startTime != null && endTime != null) {
             query.createdAt = { $gt: startTime, $lt: endTime };
         }
-        const rows = await this.ctx.model.Security.Role.find(query, { clientRoutes: 0, clientBanner: 0, serverRoutes: 0 }).skip(skipNum).limit(limit);
+        const rows = await this.ctx.model.Security.Role.find(query, { clientRoutes: 0, clientBanner: 0, serverRoutes: 0 }).sort({ updatedAt: -1 }).skip(skipNum).limit(limit);
         const total = await this.ctx.model.Security.Role.find(query).countDocuments();
         const result = {};
         result.rows = rows;
