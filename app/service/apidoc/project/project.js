@@ -96,7 +96,7 @@ class ProjectService extends Service {
                 "owner.id": this.ctx.session.userInfo.id
             },
             {
-                "members.id": this.ctx.session.userInfo.id
+                "members.userId": this.ctx.session.userInfo.id
             }
         ];
         const limit = 100;

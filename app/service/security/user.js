@@ -678,7 +678,7 @@ class userService extends Service {
                 starProjects: projectId
             }
         }); 
-        return {};
+        return;
     }
     /** 
      * @description        取消收藏项目
@@ -695,7 +695,7 @@ class userService extends Service {
                 starProjects: projectId
             }
         }); 
-        return {};
+        return;
     }
     
 }
