@@ -298,13 +298,16 @@ class userController extends Controller {
                     type: "string"
                 },
                 department: {
-                    type: "string"
+                    type: "string",
+                    required: false,
                 },
                 qq: {
                     type: "string",
+                    required: false,
                 },
                 title: {
-                    type: "string"
+                    type: "string",
+                    required: false,
                 },
                 roleIds: {
                     type: "array",
