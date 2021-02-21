@@ -116,8 +116,8 @@ class ServicesService extends Service {
         if (remark) {
             updateDoc.remark = remark; 
         }
-        const result = await this.ctx.model.Apidoc.Docs.DocsServices.findOneAndUpdate({ _id }, updateDoc);
-        return result;
+        await this.ctx.model.Apidoc.Docs.DocsServices.findOneAndUpdate({ _id }, updateDoc);
+        return;
     }
 
     /** 
