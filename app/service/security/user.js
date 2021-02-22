@@ -462,8 +462,8 @@ class userService extends Service {
 
     async changeUserState(params) { 
         const { _id, enable } = params;
-        const result = await this.ctx.model.Security.User.findByIdAndUpdate({ _id }, { $set: { enable }});
-        return result;
+        await this.ctx.model.Security.User.findByIdAndUpdate({ _id }, { $set: { enable }});
+        return;
     }
 
     /** 
@@ -556,7 +556,7 @@ class userService extends Service {
 
     async getUserInfoById(params) {
         const { _id } = params;
-        const result = await this.ctx.model.Security.User.findById({ _id }, { enable: 0, password: 0, salt: 0, clientRoutes: 0, clinetMenus: 0, serverRoutes: 0, starProjects: 0 });
+        const result = await this.ctx.model.Security.User.findById({ _id }, { accessProjects: 0, enable: 0, password: 0, salt: 0, clientRoutes: 0, clinetMenus: 0, serverRoutes: 0, starProjects: 0 });
         return result;
     }
 
