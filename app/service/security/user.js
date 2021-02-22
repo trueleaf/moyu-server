@@ -152,11 +152,13 @@ class userService extends Service {
         };
         const docs = originDocs.map((docInfo) => {
             const newId = this.app.mongoose.Types.ObjectId()
-            const pid = docInfo.pid;
-            const parentDoc = originDocs.find(doc => doc._id.toString() === pid)
-            if (parentDoc) {
-                parentDoc.pid = newId;
-            }
+
+            const id = docInfo._id.toString();
+            originDocs.forEach(originDoc => {
+                if (originDoc.pid === id) {
+                    originDoc.pid = newId
+                }
+            })
             return {
                 ...docInfo,
                 projectId,
