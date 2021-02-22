@@ -133,18 +133,39 @@ class userService extends Service {
         user.roleNames = [ 
             "api文档-完全控制", 
             "公共基础权限"
-        ],
-        await this.ctx.model.Security.User.create(user);
+        ];
+        const createdUser = await this.ctx.model.Security.User.create(user);
         const loginResult = await this.loginWithPassword(params);
         //=====================================为用户拷贝一份测试文档====================================//
+        const originProject = await this.ctx.model.Apidoc.Project.Project.findOne({_id: "5ff1c8136110532cc8c6343c"}).lean(); 
+        const originDocs = await this.ctx.model.Apidoc.Docs.Docs.find({projectId: "5ff1c8136110532cc8c6343c"}).lean(); 
+        const projectId = this.app.mongoose.Types.ObjectId()
         const project = {
-            projectName: "示例项目"
+            ...originProject,
+            projectName: "快乐摸鱼",
+            _id: projectId,
+            members: [],
+            owner: {
+                name: loginName,
+                id: createdUser._id,
+            },
         };
-        project.owner = {
-            id: this.ctx.session.userInfo.id,
-            name: this.ctx.session.userInfo.realName || this.ctx.session.userInfo.loginName
-        };
-        const projectResult = await this.ctx.model.Apidoc.Project.Project.create(project);
+        const docs = originDocs.map((docInfo) => {
+            const newId = this.app.mongoose.Types.ObjectId()
+            const pid = docInfo.pid;
+            const parentDoc = originDocs.find(doc => doc._id.toString() === pid)
+            if (parentDoc) {
+                parentDoc.pid = newId;
+            }
+            return {
+                ...docInfo,
+                projectId,
+                _id: newId
+            };
+        })
+        console.log(originProject.docNum, projectId)
+        await this.ctx.model.Apidoc.Project.Project.create(project);
+        await this.ctx.model.Apidoc.Docs.Docs.create(docs);
         return loginResult;
     }
     

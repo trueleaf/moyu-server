@@ -19,7 +19,6 @@ class userController extends Controller {
      * @update             2020-03-15 20:40
      * @param {string}        String - 手机号码       
      */
-
     async getMsgCode(params) {
         try {
             const params = this.ctx.query;
@@ -45,7 +44,6 @@ class userController extends Controller {
      * @create             2020-03-15 20:40
      * @update             2020-03-15 20:40
      */
-
     async getSVGCaptcha(params) {
         try {
             const params = this.ctx.query;
@@ -74,8 +72,6 @@ class userController extends Controller {
             return;
         }
     }
-
-
     /** 
         @description  用户注册
         @author       shuxiaokai
@@ -126,7 +122,7 @@ class userController extends Controller {
     async loginGuest() {
         try {
             const params = {
-                loginName: "guest" + "_" + Date.now(),
+                loginName: "guest" + "_" + new Date().toLocaleString(),
                 password: "111111"
             };
             const result = await this.ctx.service.security.user.loginGuest(params);
@@ -136,9 +132,6 @@ class userController extends Controller {
             return;
         }
     }
-    
-
-
     /** 
      * @description        新增用户
      * @author              shuxiaokai
@@ -182,7 +175,6 @@ class userController extends Controller {
             return;
         }
     }
-
     /** 
         @description  用户登录（用户名密码）
         @author       shuxiaokai
@@ -224,7 +216,6 @@ class userController extends Controller {
         @params {String}            smsCode 密码
         @return       null
     */
-
     async loginWithPhone() {
         try {
             const params = this.ctx.request.body;
@@ -244,7 +235,6 @@ class userController extends Controller {
             return;
         }
     }
-
     /* 
         @description  删除用户
         @author       shuxiaokai
@@ -269,7 +259,6 @@ class userController extends Controller {
             return;
         }
     }
-
     /** 
         @description  修改用户权限
         @author       shuxiaokai
@@ -283,7 +272,6 @@ class userController extends Controller {
         @params {Array<string>}  roleNames //角色名称
         @return       null
     */
-
     async changeUserPermission() {
         try {
             const params = this.ctx.request.body;
@@ -326,7 +314,6 @@ class userController extends Controller {
             return;
         }
     }
-
     /** 
         @description  获取用户
         @author       shuxiaokai
@@ -342,7 +329,6 @@ class userController extends Controller {
         @params {number?}           endTime 结束日期       @remark 默认精确到毫秒
         @return       null
     */
-
     async getUserList() {
         try {
             const params = this.ctx.query;
@@ -396,7 +382,6 @@ class userController extends Controller {
             return;
         }
     }
-
     /**
         @description  修改用户状态
         @author       shuxiaokai
@@ -405,7 +390,6 @@ class userController extends Controller {
         @params {Boolean}      enable 
         @return       null
     */
-
     async changeUserState() { 
         try {
             const params = this.ctx.request.body;
@@ -425,13 +409,11 @@ class userController extends Controller {
             return;
         }
     }
-
     /** 
      * @description        获取用户基本信息
      * @author              shuxiaokai
      * @create             2020-06-14 17:38
      */
-
     async getUserBaseInfo() { 
         try {
             const result = await this.ctx.service.security.user.getUserBaseInfo();
@@ -441,7 +423,6 @@ class userController extends Controller {
             return;
         }
     }
-
     /**
         @description  通过用户id获取用户信息
         @author       shuxiaokai
@@ -449,7 +430,6 @@ class userController extends Controller {
         @param {String}           _id 用户id
         @return       null
     */
-
     async getUserInfoById() { 
         try {
             const params = this.ctx.query;
@@ -466,14 +446,12 @@ class userController extends Controller {
             return;
         }
     }
-
     /**
         @description  获取用户信息
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @return       null
     */
-
     async getUserInfo() { 
         try {
             const result = await this.ctx.service.security.user.getUserInfo();
@@ -483,7 +461,6 @@ class userController extends Controller {
             return;
         }
     }
-
     /**
         @description  下载用户批量导入模板
         @author       shuxiaokai
@@ -491,7 +468,6 @@ class userController extends Controller {
         @param {String}            name 文档名称
         @return       null
     */
-
     async getUserExcelTemplate() {
         try {
             const fileName = "用户批量导入模板";
@@ -506,7 +482,6 @@ class userController extends Controller {
             return;
         }
     }
-    
     /**
         @description  通过名称获取用户列表
         @author       shuxiaokai
@@ -514,7 +489,6 @@ class userController extends Controller {
         @param {String}     name 用户真实名称或者登录名
         @return       null
     */
-
     async getUserListByName() {
         try {
             const params = this.ctx.query;
@@ -538,7 +512,6 @@ class userController extends Controller {
         @create        2020-10-08 22:10
         @return       null
     */
-
     async addUserByExcel() {
         try {
             const files = this.ctx.request.files;
@@ -555,7 +528,6 @@ class userController extends Controller {
             return;
         }
     }
-
     /** 
      * @description        修改用户密码
      * @author              shuxiaokai
@@ -564,7 +536,6 @@ class userController extends Controller {
      * @param {String}     newPassword - 新密码       
      * @return {null}      返回null
      */
-
     async changeUserPassword() { 
         try {
             const params = this.ctx.request.body;
@@ -584,7 +555,6 @@ class userController extends Controller {
             return;
         }
     }
-
     /** 
      * @description        添加最近访问页面
      * @author             shuxiaokai
