@@ -138,10 +138,19 @@ module.exports = appInfo => {
             Version: "1"
         }
     };
-
+    //日志模块 https://eggjs.org/zh-cn/core/logger.html
+    const logger = {
+        dir: `${appInfo.root}/logs`,
+        appLogName: "app-web.log",
+        coreLogName: "web.log",
+        agentLogName: "agent.log",
+        errorLogName: "error.log",
+        outputJSON: true,
+    };
 
     return {
         ...config,
+        logger,
         mock,
         permission,
         throttle,

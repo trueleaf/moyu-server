@@ -179,4 +179,7 @@ module.exports = app => {
     router.get("/api/eoms/pwd", controller.eoms.linux.pwd); //查看当前目录信息
     router.get("/ssh/connect", controller.eoms.ssh.connect); //连接当前项目
     router.get("/ssh/exec", controller.eoms.ssh.exec); //执行命令
+
+    router.get("/api/ssh/logs", controller.eoms.logs.getLogsFileList); //日志文件列表
+    router.get("/api/ssh/logs_detail", controller.eoms.logs.getLogDetail); //日志文件详情
 };
