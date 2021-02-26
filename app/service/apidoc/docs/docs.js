@@ -297,41 +297,6 @@ class DocsService extends Service {
                 }
             }
         }
-        // const allDoc = await this.ctx.model.Apidoc.Docs.Docs.find({}).lean();
-        // allDoc.forEach(async (doc, index) => {
-        //     const convertDoc = {
-        //         _id: doc._id,
-        //         info: {
-        //             name: doc.docName, 
-        //             description: doc.item.description,
-        //             type: doc.isFolder ? "folder" : "api"
-        //         },
-        //         pid: doc.pid,
-        //         projectId: doc.projectId,
-        //         isFolder: doc.isFolder,
-        //         sort: doc.sort,
-        //         enabled: doc.enabled,
-        //         item: {
-        //             method: doc.item.methods || "get",
-        //             url: {
-        //                 host: doc.item.url.host,
-        //                 path: doc.item.url.path,
-        //             },
-        //             paths: [],
-        //             queryParams: doc.item.methods === "get" ? (doc.item.requestParams || []) : [],
-        //             requestBody: doc.item.methods === "get" ? [] : (doc.item.requestParams || []),
-        //             responseParams: [{
-        //                 title: "成功返回参数",
-        //                 statusCode: 200,
-        //                 values: doc.item.responseParams || [],
-        //             }],
-        //             headers: doc.item.header,
-        //             contentType: "application/json"
-        //         },
-        //     };
-        //     await this.ctx.model.Apidoc.Docs.Docs.update({ _id: doc._id }, convertDoc);
-        //     console.log(index)
-        // })
         return result;
     }
     /** 
@@ -591,17 +556,28 @@ class DocsService extends Service {
      */
     async getDocOfflineData(params) { 
         const { projectId } = params;
-        const banner = await this.ctx.service.apidoc.docs.docs.getDocTreeNode({ projectId });
-        const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, enabled: true }, { item: 1, _id: 1, docName: 1, createdAt: 1, updatedAt: 1, pid: 1 });
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
+        const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, enabled: true }).lean();
+        const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById(params);
+        const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList(params)
+        this.ctx.set("content-type", "application/force-download");
+        this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.json`)}`);
         const result = {
-            banner,
-            docs
+            type: "moyu",
+            info: {
+                projectName: projectInfo.projectName,
+            },
+            rules: porjectRules,
+            docs,
+            hosts
         };
         let file = await fs.readFile(path.resolve(this.app.baseDir, "app/public/share-doc/index.html"), "utf-8");
         file = file.replace(/window.SHARE_DATA = null/, `window.SHARE_DATA = ${JSON.stringify(result)}`);
         file = file.replace(/window.PROJECT_ID = null/, `window.PROJECT_ID = "${projectId}"`);
+        file = file.replace(/<title>[^<]*<\/title>/, `<title>${projectInfo.projectName}<\/title>`);
         this.ctx.set("content-type", "application/force-download");
-        this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent("接口文档.html")}`);
+        this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.html`)}`);
         return file;
     }
 
@@ -614,13 +590,21 @@ class DocsService extends Service {
      */
     async exportAsMoyuDoc(params) { 
         const { projectId } = params;
-        const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId }, {projectName: 1});
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
         const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, enabled: true }).lean();
+        const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById(params);
+        const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList(params)
         this.ctx.set("content-type", "application/force-download");
         this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.json`)}`);
         const result = {
             type: "moyu",
-            docs 
+            info: {
+                projectName: projectInfo.projectName,
+            },
+            rules: porjectRules,
+            docs,
+            hosts
         };
         return JSON.stringify(result);
     }
