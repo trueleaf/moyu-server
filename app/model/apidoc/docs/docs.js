@@ -114,7 +114,7 @@ module.exports = app => {
                 type: [{ //返回值
                     title: {
                         type: String,
-                        default: "返回值"
+                        default: "成功返回"
                     },
                     statusCode: {
                         type: Number,
@@ -123,7 +123,7 @@ module.exports = app => {
                     values: [ProperytySchema]
                 }],
                 default: [{
-                    title: "返回参数",
+                    title: "成功返回",
                     statusCode: 200,
                     values: []
                 }]
