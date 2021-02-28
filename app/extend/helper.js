@@ -3,7 +3,18 @@
     @author       shuxiaokai
     @create        2020-10-08 22:10
 */
+const { v4: uuidv4 } = require("uuid")
 module.exports = {
+    /**
+     * @description        生成uuid
+     * @author             shuxiaokai
+     * @create             2021-02-28 21:24
+     * @return {String}    返回字符串
+     */
+    uuid() {
+        return uuidv4();
+    },
+
     /** 
      * @description        异常抛出
      * @author              shuxiaokai

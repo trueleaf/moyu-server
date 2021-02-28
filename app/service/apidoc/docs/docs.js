@@ -609,6 +609,36 @@ class DocsService extends Service {
         return JSON.stringify(result);
     }
 
+    /** 
+     * @description        生成在线链接
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    projectId 项目id
+     * @param  {String?}   password 密码
+     * @param  {String?}   maxAge 过期时间
+     * @return {String}    返回在线链接
+     */
+    async exportAsOnlineDoc(params) { 
+        const { projectId, password, maxAge } = params;
+        const shareId = this.ctx.helper.uuid();
+        let expire = Date.now();
+        if (!maxAge || maxAge > 31536000 * 5) {
+            expire += 31536000 * 5; //五年后过期
+        } else {
+            expire += maxAge
+        }
+        await this.ctx.model.Apidoc.Docs.DocsOnline.findOneAndUpdate({ projectId }, {
+            $set: {
+                shareId,
+                projectId,
+                password,
+                expire,
+            }
+        }, {
+            upsert: true,
+        });
+        return shareId;
+    }
 }
 
 module.exports = DocsService;

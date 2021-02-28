@@ -487,6 +487,41 @@ class DocsController extends Controller {
             return;
         }
     }
+    /** 
+     * @description        生成在线链接
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    projectId 项目id
+     * @param  {String?}   password 密码
+     * @param  {String?}   maxAge 过期时间
+     * @return {String}    返回在线链接
+     */
+    async exportAsOnlineDoc() {
+        try {
+            const params = this.ctx.request.query;
+            const reqRule = {
+                projectId: {
+                    type: "string"
+                },
+                password: {
+                    type: "string",
+                    required: false,
+                },
+                maxAge: {
+                    type: "number",
+                    convertType: "number",
+                    required: false
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docs.exportAsOnlineDoc(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+
     
 }
 
