@@ -24,6 +24,10 @@ module.exports = app => {
         projectId: {
             type: String
         },
+        enabled: { //使能
+            type: Boolean,
+            default: true
+        },
     }, { timestamps: true });
     return mongoose.model("docs_service", docsServiceSchema);
 };

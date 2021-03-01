@@ -59,6 +59,7 @@ class ServicesService extends Service {
         let total = null;
         let result = {};
         query.projectId = projectId;
+        query.enabled = true;
         if (startTime != null && endTime != null) {
             query.createdAt = { $gt: startTime, $lt: endTime };
         }
@@ -70,7 +71,7 @@ class ServicesService extends Service {
             result.rows = rows;
             result.total = total;
         } else {
-            result = await this.ctx.model.Apidoc.Docs.DocsServices.find(query).skip(skipNum).limit(limit);
+            result = await this.ctx.model.Apidoc.Docs.DocsServices.find(query, { name: 1, url: 1 }).skip(skipNum).limit(limit);
         }
         return result;
     }
