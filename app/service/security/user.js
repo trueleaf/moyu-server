@@ -62,6 +62,10 @@ class userService extends Service {
         const isExpire = (Date.now() - new Date(smsInfo ? smsInfo.updatedAt : 0).getTime()) > smsConfig.maxAge;
         const hasSmsPhone = !!smsInfo;
 
+
+        if (loginName.match(/guest/)) {
+            this.ctx.helper.errorInfo("用户名不能以包含guest", 2010);
+        }
         if (isExpire) {
             this.ctx.helper.errorInfo("验证码失效", 2002);
         }
@@ -150,23 +154,22 @@ class userService extends Service {
                 id: createdUser._id,
             },
         };
-        const docs = originDocs.map((docInfo) => {
+        const convertDocs = originDocs.map((docInfo) => {
             const newId = this.app.mongoose.Types.ObjectId()
-
-            const id = docInfo._id.toString();
+            const oldId = docInfo._id.toString();
             originDocs.forEach(originDoc => {
-                if (originDoc.pid === id) {
+                if (originDoc.pid === oldId) {
                     originDoc.pid = newId
                 }
             })
-            return {
-                ...docInfo,
-                projectId,
-                _id: newId
-            };
+            docInfo.projectId = projectId;
+            docInfo._id = newId;
+            docInfo.info.creator = loginName;
+            return docInfo;
         })
         await this.ctx.model.Apidoc.Project.Project.create(project);
-        await this.ctx.model.Apidoc.Docs.Docs.create(docs);
+        await this.ctx.model.Apidoc.Docs.Docs.create(convertDocs);
+        // console.log(originDocs.map(val => !val.isFolder).length)
         return loginResult;
     }
     
@@ -183,6 +186,9 @@ class userService extends Service {
         const { loginName, realName, phone, password = "111111", roleIds, roleNames } = params;
         const hasUser = await this.ctx.model.Security.User.findOne({ loginName }); 
         const hasPhone = await this.ctx.model.Security.User.findOne({ phone }); 
+        if (loginName.match(/guest/)) {
+            this.ctx.helper.errorInfo("用户名不能以包含guest", 2010);
+        }
         if (hasUser) {
             this.ctx.helper.errorInfo("账号已存在", 1003);
         }
@@ -625,6 +631,9 @@ class userService extends Service {
         for (let i = 0; i < sheetJson.length; i++) {
             const user = sheetJson[i];
             const loginName = user["登录名称"];
+            if (loginName.match(/guest/)) {
+                this.ctx.helper.errorInfo("用户名不能以包含guest", 2010);
+            }
             const phone = user["手机号码"];
             const realName = user["真实姓名"];
             const title = user["职位"];

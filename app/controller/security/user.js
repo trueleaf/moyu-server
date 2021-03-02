@@ -122,7 +122,7 @@ class userController extends Controller {
     async loginGuest() {
         try {
             const params = {
-                loginName: "guest" + "_" + new Date().toLocaleString(),
+                loginName: "guest" + "_" + Date.now().toString().slice(-8),
                 password: "111111"
             };
             const result = await this.ctx.service.security.user.loginGuest(params);
