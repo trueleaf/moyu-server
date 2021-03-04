@@ -1,39 +1,44 @@
 <div align="center" width="130px" height="130px">
-    <img src="http://jobtool.cn/imgs/logo.png" alt="logo"/>
+    <img src="https://online.jobtool.cn/imgs/logo.png" alt="logo"/>
 </div>
 <h1 align="center">摸鱼(服务端)</h1>
 <h3 align="center">一款基于 Vue 和 Electron 的接口文档管理工具</h3>
 <div align="center">
 
-[下载](https://github.com/shuxiaokai3/jobtool-electron/releases) | [完整文档](https://www.yuque.com/shuxiaokai/moyu) | [在线体验](http://47.107.70.26/jobtool)
+[下载](https://github.com/trueleaf/moyu/releases) | [完整文档](https://www.yuque.com/shuxiaokai/moyu) | [在线体验](https://online.jobtool.cn/)
 
 </div>
 <div align="center">
-  <a href="https://github.com/shuxiaokai3/jobtool-electron/releases/latest">
-    <img src="https://img.shields.io/github/v/release/shuxiaokai3/jobtool-electron?style=flat-square" alt="">
+  <a href="https://github.com/trueleaf/moyu/releases/latest">
+    <img src="https://img.shields.io/github/v/release/trueleaf/moyu?style=flat-square" alt="">
   </a>
 
-  <a href="https://github.com/shuxiaokai3/jobtool-electron/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/shuxiaokai3/jobtool-electron" alt="LICENSE">
+  <a href="https://github.com/trueleaf/moyu/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/trueleaf/moyu" alt="LICENSE">
   </a>
 
-  <a href="https://github.com/shuxiaokai3/jobtool-electron/releases/latest">
-    <img alt="GitHub All Releases" src="https://img.shields.io/github/downloads/shuxiaokai3/jobtool-electron/total">
+  <a href="https://github.com/trueleaf/moyu/releases/latest">
+    <img alt="GitHub All Releases" src="https://img.shields.io/github/downloads/trueleaf/moyu/total">
   </a>
 </div>
 
 ## 预览
 <div align="center">
-    <img src="http://jobtool.cn/imgs/a.png" alt="logo"/>
+    <img src="https://online.jobtool.cn/imgs/a.png" alt="logo"/>
 </div>
 <div align="center">
-    <img src="http://jobtool.cn/imgs/c.png" alt="logo"/>
+    <img src="https://online.jobtool.cn/imgs/c.png" alt="logo"/>
 </div>
 <div align="center">
-    <img src="http://jobtool.cn/imgs/b.png" alt="logo"/>
+    <img src="https://online.jobtool.cn/imgs/b.png" alt="logo"/>
 </div>
 
 ## 常用
+
+[完整文档](https://www.yuque.com/happymoyu) 
+
+[在线体验](https://online.jobtool.cn/)(由于浏览器限制，完整版功能需要下载客户端)
+
 [客户端GitHub地址](https://github.com/trueleaf/moyu)
 
 [服务端GitHub地址](https://github.com/trueleaf/moyu-server)
@@ -42,11 +47,12 @@
 
 [服务端Gitee地址](https://gitee.com/shuzhikai/moyu-server)
 
-[客户端下载](https://github.com/shuxiaokai3/jobtool-electron/releases)
+[客户端下载](https://github.com/trueleaf/moyu/releases)
 
-[完整文档](https://www.yuque.com/shuxiaokai/moyu) 
 
-[在线体验](http://47.107.70.26/jobtool)(由于浏览器限制，完整版功能需要下载客户端)
+## QQ交流群
+
+977506603 欢迎加入
 ## 主要功能
 1. 团队协作
 2. 自定义接口规则
@@ -180,10 +186,7 @@ cluster = {
 
 > 更详细的[部署细节](https://www.yuque.com/shuxiaokai/moyu)
 
-## 详细文档
 
-[服务端Git地址](https://github.com/shuxiaokai3/moyu-server)
-[完整的开发和使用文档(语雀)](https://www.yuque.com/shuxiaokai/moyu)
 
 ## License
 MIT
