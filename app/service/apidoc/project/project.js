@@ -162,7 +162,6 @@ class ProjectService extends Service {
         @param {String}      remark 项目备注
         @return       null
     */
-
     async editProject(params) { 
         const { _id, projectName, members, projectType, remark } = params;
         const updateDoc = {};
@@ -208,6 +207,43 @@ class ProjectService extends Service {
         } 
         await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id }, updateDoc);
         return;
+    }
+    /** 
+        @description  根据分享id获取项目详情
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      projectId 项目id
+        @param {String}      shareId 随机id
+        @param {String}      password 密码
+        @return       null
+    */
+    async getOnlineProjectInfo(params) { 
+        const { projectId, shareId, password } = params;
+        const projectShare = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ projectId, shareId }).lean();
+        const projectPassword = projectShare.password;
+        const expire = projectShare.expire;
+        const nowTime = Date.now();
+        let result = null;   
+        if (password !== projectPassword) { //密码错误
+            this.ctx.helper.errorInfo("密码错误", 1006);
+        } else if (nowTime > expire) { //文档过期
+            this.ctx.helper.errorInfo("文档已过期", 1006);
+        } else if (password === projectPassword && nowTime < expire) { //密码相同并且
+            const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
+            const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, enabled: true }).lean();
+            const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById({ projectId });
+            const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList({ projectId })
+            result = {
+                type: "moyu",
+                info: {
+                    projectName: projectInfo.projectName,
+                },
+                rules: porjectRules,
+                docs,
+                hosts
+            };
+        }
+        return result;
     }
 }
 

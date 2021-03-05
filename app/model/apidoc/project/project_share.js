@@ -7,7 +7,10 @@
 module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
-    const docsOnlineSchema = new Schema({
+    const projectShareSchema = new Schema({
+        shareId: { //随机生成的id
+            type: String
+        },
         projectId: { //项目id
             type: String,
         },
@@ -17,7 +20,10 @@ module.exports = app => {
         expire: { //过期时间，时间戳
             type: Number,
         },
+        eTag: { //标识文档是否更新
+            type: String,
+        }
     }, { timestamps: true });
 
-    return mongoose.model("docs_online", docsOnlineSchema);
+    return mongoose.model("project_share", projectShareSchema);
 };

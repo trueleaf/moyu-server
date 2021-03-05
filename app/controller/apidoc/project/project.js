@@ -208,6 +208,40 @@ class ProjectController extends Controller {
             return;
         }
     }
+
+    /** 
+        @description  根据分享id获取项目详情
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      projectId 项目id
+        @param {String}      shareId 随机id
+        @param {String}      password 密码
+        @return       null
+    */
+    async getOnlineProjectInfo() { 
+        try {
+            const params = this.ctx.request.query;
+            const reqRule = {
+                projectId: {
+                    type: "string",
+                },
+                shareId: {
+                    type: "string",
+                },
+                password: {
+                    type: "string",
+                    required: false
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.project.project.getOnlineProjectInfo(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    
 }
 
 module.exports = ProjectController;

@@ -16,6 +16,8 @@ module.exports = app => {
     router.put("/api/project/visited", controller.security.user.addLastVisit); // 记录用户访问项目记录
     router.put("/api/project/star", controller.security.user.starProject); // 收藏项目
     router.put("/api/project/unstar", controller.security.user.unStarProject); // 取消收藏项目
+    router.get("/api/project/share", controller.apidoc.project.project.getOnlineProjectInfo); // 根据分享id获取项目详情(在线链接)
+
     
     //项目规则
     router.put("/api/apidoc/project/project_rules", controller.apidoc.project.projectRules.updateProjectRules); //修改项目规则

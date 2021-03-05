@@ -127,14 +127,14 @@ class docsOperationService extends Service {
      */
     async exportAsOnlineDoc(params) { 
         const { projectId, password, maxAge } = params;
-        const shareId = this.ctx.helper.uuid();
+        const shareId = this.ctx.helper.uuid().slice(0, 6);
         let expire = Date.now();
         if (!maxAge || maxAge > 31536000 * 5) {
             expire += 31536000 * 5; //五年后过期
         } else {
             expire += maxAge
         }
-        await this.ctx.model.Apidoc.Docs.DocsOnline.findOneAndUpdate({ projectId }, {
+        await this.ctx.model.Apidoc.Project.ProjectShare.findOneAndUpdate({ _id: projectId }, {
             $set: {
                 shareId,
                 projectId,
