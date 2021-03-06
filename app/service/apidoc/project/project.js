@@ -223,12 +223,11 @@ class ProjectService extends Service {
         const projectPassword = projectShare.password;
         const expire = projectShare.expire;
         const nowTime = Date.now();
+        const isExpire = nowTime > expire;
+        const hasPassword = projectPassword != null;
+        const passwordIsEqual = password === projectPassword;
         let result = null;   
-        if (password !== projectPassword) { //密码错误
-            this.ctx.helper.errorInfo("密码错误", 1006);
-        } else if (nowTime > expire) { //文档过期
-            this.ctx.helper.errorInfo("文档已过期", 1006);
-        } else if (password === projectPassword && nowTime < expire) { //密码相同并且
+        if ((hasPassword && passwordIsEqual && !isExpire) || (!hasPassword && !isExpire)) {
             const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
             const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, enabled: true }).lean();
             const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById({ projectId });
@@ -242,7 +241,11 @@ class ProjectService extends Service {
                 docs,
                 hosts
             };
-        }
+        } else if (hasPassword && !passwordIsEqual) { //密码错误
+            this.ctx.helper.errorInfo("密码错误", 1006);
+        } else if (isExpire) { //文档过期
+            this.ctx.helper.errorInfo("文档已过期", 1006);
+        } 
         return result;
     }
 }
