@@ -220,6 +220,9 @@ class ProjectService extends Service {
     async getOnlineProjectInfo(params) { 
         const { projectId, shareId, password } = params;
         const projectShare = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ projectId, shareId }).lean();
+        if (!projectShare) {
+            this.ctx.helper.errorInfo("文档已过期", 101002);
+        }
         const projectPassword = projectShare.password;
         const expire = projectShare.expire;
         const nowTime = Date.now();
@@ -242,9 +245,9 @@ class ProjectService extends Service {
                 hosts
             };
         } else if (hasPassword && !passwordIsEqual) { //密码错误
-            this.ctx.helper.errorInfo("密码错误", 1006);
+            this.ctx.helper.errorInfo("密码错误", 101001);
         } else if (isExpire) { //文档过期
-            this.ctx.helper.errorInfo("文档已过期", 1006);
+            this.ctx.helper.errorInfo("文档已过期", 101002);
         } 
         return result;
     }
