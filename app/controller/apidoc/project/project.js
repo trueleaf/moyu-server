@@ -209,11 +209,11 @@ class ProjectController extends Controller {
         }
     }
 
+    
     /** 
         @description  根据分享id获取项目详情
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {String}      projectId 项目id
         @param {String}      shareId 随机id
         @param {String}      password 密码
         @return       null
@@ -222,9 +222,6 @@ class ProjectController extends Controller {
         try {
             const params = this.ctx.request.query;
             const reqRule = {
-                projectId: {
-                    type: "string",
-                },
                 shareId: {
                     type: "string",
                 },

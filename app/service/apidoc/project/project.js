@@ -212,17 +212,17 @@ class ProjectService extends Service {
         @description  根据分享id获取项目详情
         @author       shuxiaokai
         @create        2020-10-08 22:10
-        @param {String}      projectId 项目id
         @param {String}      shareId 随机id
         @param {String}      password 密码
         @return       null
     */
     async getOnlineProjectInfo(params) { 
-        const { projectId, shareId, password } = params;
-        const projectShare = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ projectId, shareId }).lean();
+        const { shareId, password } = params;
+        const projectShare = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ shareId }).lean();
         if (!projectShare) {
-            this.ctx.helper.errorInfo("文档已过期", 101002);
+            this.ctx.helper.errorInfo("不存在当前文档", 101003);
         }
+        const { projectId } = projectShare;
         const projectPassword = projectShare.password;
         const expire = projectShare.expire;
         const nowTime = Date.now();

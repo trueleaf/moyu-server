@@ -36,7 +36,7 @@ class docsOperationService extends Service {
         };
         let file = await fs.readFile(path.resolve(this.app.baseDir, "app/public/share-doc/index.html"), "utf-8");
         file = file.replace(/window.SHARE_DATA = null/, `window.SHARE_DATA = ${JSON.stringify(result)}`);
-        file = file.replace(/window.PROJECT_ID = null/, `window.PROJECT_ID = "${projectId}"`);
+        file = file.replace(/window.IS_OFFLINE = null/, `window.IS_OFFLINE = true`);
         file = file.replace(/<title>[^<]*<\/title>/, `<title>${projectInfo.projectName}<\/title>`);
         this.ctx.set("content-type", "application/force-download");
         this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.html`)}`);
@@ -127,7 +127,7 @@ class docsOperationService extends Service {
      */
     async exportAsOnlineDoc(params) { 
         const { projectId, password, maxAge } = params;
-        const shareId = this.ctx.helper.uuid().slice(0, 6);
+        const shareId = this.ctx.helper.uuid();
         let expire = Date.now();
         if (!maxAge || maxAge > 31536000 * 5) {
             expire += 31536000 * 5; //五年后过期
