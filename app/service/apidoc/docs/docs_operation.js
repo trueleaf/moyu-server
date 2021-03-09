@@ -126,7 +126,7 @@ class docsOperationService extends Service {
      * @return {String}    返回在线链接
      */
     async exportAsOnlineDoc(params) { 
-        const { projectId, password, maxAge } = params;
+        const { projectId, password, maxAge = 86400000 } = params;
         const shareId = this.ctx.helper.uuid();
         let expire = Date.now();
         if (!maxAge || maxAge > 31536000 * 5) {
@@ -134,10 +134,12 @@ class docsOperationService extends Service {
         } else {
             expire += maxAge
         }
+        const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId }, { projectName: 1 }).lean();
         await this.ctx.model.Apidoc.Project.ProjectShare.findOneAndUpdate({ _id: projectId }, {
             $set: {
                 shareId,
                 projectId,
+                projectName: projectInfo.projectName,
                 password,
                 expire,
             }

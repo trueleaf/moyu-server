@@ -216,7 +216,7 @@ class ProjectService extends Service {
         @param {String}      password 密码
         @return       null
     */
-    async getOnlineProjectInfo(params) { 
+    async getOnlineProjectDetail(params) { 
         const { shareId, password } = params;
         const projectShare = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ shareId }).lean();
         if (!projectShare) {
@@ -229,8 +229,12 @@ class ProjectService extends Service {
         const isExpire = nowTime > expire;
         const hasPassword = projectPassword != null;
         const passwordIsEqual = password === projectPassword;
-        let result = null;   
-        if ((hasPassword && passwordIsEqual && !isExpire) || (!hasPassword && !isExpire)) {
+        let result = null; 
+        if (hasPassword && !passwordIsEqual) { //密码错误
+            this.ctx.helper.errorInfo("密码错误", 101001);
+        }  else if (isExpire) { //文档过期
+            this.ctx.helper.errorInfo("文档已过期", 101002);
+        } else if ((hasPassword && passwordIsEqual && !isExpire) || (!hasPassword && !isExpire)) {
             const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
             const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, enabled: true }).lean();
             const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById({ projectId });
@@ -244,13 +248,25 @@ class ProjectService extends Service {
                 docs,
                 hosts
             };
-        } else if (hasPassword && !passwordIsEqual) { //密码错误
-            this.ctx.helper.errorInfo("密码错误", 101001);
-        } else if (isExpire) { //文档过期
-            this.ctx.helper.errorInfo("文档已过期", 101002);
-        } 
+        }
         return result;
     }
+    /** 
+        @description  根据分享id获取项目基本信息
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      shareId 随机id
+        @return       null
+    */
+    async getOnlineProjectInfo(params) { 
+        const { shareId } = params;
+        const projectShare = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ shareId }, { projectId: 1, projectName: 1 }).lean();
+        if (!projectShare) {
+            this.ctx.helper.errorInfo("不存在当前文档", 101003);
+        }
+        return projectShare;
+    }
+
 }
 
 module.exports = ProjectService;
