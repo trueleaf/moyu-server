@@ -208,7 +208,29 @@ class ProjectController extends Controller {
             return;
         }
     }
-
+    /** 
+        @description  根据分享id获取项目基本信息
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      shareId 随机id
+        @return       null
+    */
+    async getOnlineProjectInfo() { 
+        try {
+            const params = this.ctx.request.query;
+            const reqRule = {
+                shareId: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.project.project.getOnlineProjectInfo(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
     
     /** 
         @description  根据分享id获取项目详情
@@ -218,7 +240,7 @@ class ProjectController extends Controller {
         @param {String}      password 密码
         @return       null
     */
-    async getOnlineProjectInfo() { 
+    async getOnlineProjectDetail() { 
         try {
             const params = this.ctx.request.query;
             const reqRule = {
@@ -231,7 +253,7 @@ class ProjectController extends Controller {
                 },
             };
             this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.project.getOnlineProjectInfo(params);
+            const result = await this.ctx.service.apidoc.project.project.getOnlineProjectDetail(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);
