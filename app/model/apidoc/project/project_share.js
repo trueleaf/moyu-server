@@ -14,6 +14,9 @@ module.exports = app => {
         projectId: { //项目id
             type: String,
         },
+        projectName: { //项目名称
+            type: String,
+        },
         password: { //密码
             type: String,
         },
