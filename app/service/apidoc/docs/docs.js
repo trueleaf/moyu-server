@@ -263,6 +263,7 @@ class DocsService extends Service {
             pid: 1,
             info: 1,
             "item.method": 1,
+            "item.url": 1,
             isFolder: 1,
             sort: 1,
         }).sort({
@@ -270,15 +271,31 @@ class DocsService extends Service {
             sort: 1
         }).lean();
         const mapedData =  docsInfo.map(val => {
-            return {
-                ...val.item,
-                ...val.info,
-                _id: val._id,
-                pid: val.pid,
-                sort: val.sort,
-                isFolder: val.isFolder,
-                children: val.children,
-            };
+            if (val.isFolder) {
+                return {
+                    _id: val._id,
+                    pid: val.pid,
+                    sort: val.sort,
+                    name: val.info.name,
+                    type: val.info.type,
+                    creator: val.info.creator,
+                    isFolder: val.isFolder,
+                    children: val.children,
+                };
+            } else {
+                return {
+                    _id: val._id,
+                    pid: val.pid,
+                    sort: val.sort,
+                    name: val.info.name,
+                    type: val.info.type,
+                    method: val.item.method,
+                    url: val.item.url ? val.item.url.path : "",
+                    creator: val.info.creator,
+                    isFolder: val.isFolder,
+                    children: val.children,
+                };                
+            }
         })
         for (let i = 0; i < mapedData.length; i++) {
             const docInfo = mapedData[i];

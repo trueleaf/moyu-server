@@ -68,11 +68,11 @@ class docsOperationService extends Service {
             docs,
             hosts
         };
-        result.docs.forEach(doc => {
-            if (doc.isFolder) {
-                delete doc.item;
-            }
-        })
+        // result.docs.forEach(doc => {
+        //     if (doc.isFolder) {
+        //         delete doc.item;
+        //     }
+        // })
         return JSON.stringify(result);
     }
     /**
@@ -87,7 +87,7 @@ class docsOperationService extends Service {
     async importAsMoyuDoc(params) { 
         const { projectId, cover, moyuData = {} } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const { rules, docs, hosts } = moyuData;
+        const { rules, docs = [], hosts = [] } = moyuData;
         const convertDocs = docs.map((docInfo) => {
             const newId = this.app.mongoose.Types.ObjectId()
             const oldId = docInfo._id.toString();
@@ -98,6 +98,7 @@ class docsOperationService extends Service {
             })
             docInfo.projectId = projectId;
             docInfo._id = newId;
+            docInfo
             return docInfo;
         })
         const convertHosts = hosts.map(host => {
@@ -109,6 +110,7 @@ class docsOperationService extends Service {
             await this.ctx.model.Apidoc.Docs.Docs.updateMany({ projectId }, { $set: { enabled: false } })
             await this.ctx.model.Apidoc.Docs.DocsServices.updateMany({ projectId }, { $set: { enabled: false } });
         }
+        console.log(convertDocs[0].item.responseParams[0].values)
         await this.ctx.model.Apidoc.Docs.DocsServices.create(convertHosts);
         await this.ctx.model.Apidoc.Docs.Docs.create(convertDocs)
         const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
