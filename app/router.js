@@ -49,10 +49,10 @@ module.exports = app => {
     router.get("/api/project/doc_mock", controller.apidoc.docs.docs.getMockData); //获取文档mock数据
     
     //=====================================文档操作相关====================================//
-    router.get("/api/project/doc_offline_data", controller.apidoc.docs.docsOperation.getDocOfflineData); //获取文档全部离线数据
-    router.get("/api/project/export/moyu", controller.apidoc.docs.docsOperation.exportAsMoyuDoc); //导出为摸鱼数据
+    router.post("/api/project/export/html", controller.apidoc.docs.docsOperation.exportAsHTML); //获取文档全部离线数据
+    router.post("/api/project/export/moyu", controller.apidoc.docs.docsOperation.exportAsMoyuDoc); //导出为摸鱼数据
     router.post("/api/project/import/moyu", controller.apidoc.docs.docsOperation.importAsMoyuDoc); //导入摸鱼数据
-    router.get("/api/project/export/online", controller.apidoc.docs.docsOperation.exportAsOnlineDoc); //生成在线链接
+    router.post("/api/project/export/online", controller.apidoc.docs.docsOperation.exportAsOnlineDoc); //生成在线链接
     // router.get("/api/project/export/online", controller.apidoc.docs.docs.exportAsOnlineDoc); //生成在线链接
 
     //=====================================内置请求返回参数相关路由====================================//

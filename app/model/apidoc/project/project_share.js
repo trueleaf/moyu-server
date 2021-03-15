@@ -25,7 +25,11 @@ module.exports = app => {
         },
         eTag: { //标识文档是否更新
             type: String,
-        }
+        },
+        selectedDocs: { //允许用户查看的文档，如果没有当前字段则代表所有数据都允许查看
+            type: Array,
+            default: null
+        },
     }, { timestamps: true });
 
     return mongoose.model("project_share", projectShareSchema);

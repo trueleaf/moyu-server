@@ -219,6 +219,7 @@ class ProjectService extends Service {
     async getOnlineProjectDetail(params) { 
         const { shareId, password } = params;
         const projectShare = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ shareId }).lean();
+        const selectedDocs = projectShare.selectedDocs;
         if (!projectShare) {
             this.ctx.helper.errorInfo("不存在当前文档", 101003);
         }
@@ -236,9 +237,21 @@ class ProjectService extends Service {
             this.ctx.helper.errorInfo("文档已过期", 101002);
         } else if ((hasPassword && passwordIsEqual && !isExpire) || (!hasPassword && !isExpire)) {
             const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
-            const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, enabled: true }).lean();
             const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById({ projectId });
             const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList({ projectId })
+            let docs = [];
+            if (selectedDocs.length > 0) { //选择导出
+                docs = await this.ctx.model.Apidoc.Docs.Docs.find({
+                    projectId,
+                    enabled: true,
+                    _id: { $in: selectedDocs }
+                }).lean();
+            } else { //直接导出
+                docs = await this.ctx.model.Apidoc.Docs.Docs.find({
+                    projectId,
+                    enabled: true,
+                }).lean();
+            }
             result = {
                 type: "moyu",
                 info: {

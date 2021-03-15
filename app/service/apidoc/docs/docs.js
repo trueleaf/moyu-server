@@ -347,8 +347,9 @@ class DocsService extends Service {
         }
         const searchName = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, "item.url.path": new RegExp(escapeStringRegexp(url), "i") }, { _id: 1, "info.name": 1 });
         const searchUrl = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, "info.name": new RegExp(escapeStringRegexp(url), "i") }, { _id: 1, "info.name": 1 });
+        const searchCreator = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, "info.creator": new RegExp(escapeStringRegexp(url), "i") }, { _id: 1, "info.name": 1 });
 
-        const result = [].concat(searchName, searchUrl).map(val => ({
+        const result = [].concat(searchName, searchUrl, searchCreator).map(val => ({
             _id: val._id,
             name: val.info.name,
         }));

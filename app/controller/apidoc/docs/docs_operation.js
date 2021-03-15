@@ -8,22 +8,27 @@ const Controller = require("egg").Controller;
 
 class docsOperationController extends Controller {
     /** 
-     * @description        获取所有接口离线数据
+     * @description        导出为html
      * @author              shuxiaokai
      * @create             2020-11-13 09:24
      * @param  {String}    projectId 项目id
+     * @param  {Array}     selectedNodes 被选择的需要导出的节点
      * @return {String}    返回字符串
      */
-    async getDocOfflineData() {
+    async exportAsHTML() {
         try {
-            const params = this.ctx.request.query;
+            const params = this.ctx.request.body;
             const reqRule = {
                 projectId: {
                     type: "string"
                 },
+                selectedNodes: {
+                    type: "array",
+                    required: false,
+                },
             };
             this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsOperation.getDocOfflineData(params);
+            const result = await this.ctx.service.apidoc.docs.docsOperation.exportAsHTML(params);
             this.ctx.body = result;
         } catch (error) {
             this.ctx.helper.throwError(error);
@@ -35,14 +40,19 @@ class docsOperationController extends Controller {
      * @author              shuxiaokai
      * @create             2020-11-13 09:24
      * @param  {String}    projectId 项目id
+     * @param  {Array}     selectedNodes 被选择的需要导出的节点
      * @return {String}    返回字符串
      */
     async exportAsMoyuDoc() {
         try {
-            const params = this.ctx.request.query;
+            const params = this.ctx.request.body;
             const reqRule = {
                 projectId: {
                     type: "string"
+                },
+                selectedNodes: {
+                    type: "array",
+                    required: false,
                 },
             };
             this.ctx.validate(reqRule, params);
@@ -92,11 +102,12 @@ class docsOperationController extends Controller {
      * @param  {String}    projectId 项目id
      * @param  {String?}   password 密码
      * @param  {String?}   maxAge 过期时间
+     * @param  {Array}     selectedDocs 被选择的需要导出的节点
      * @return {String}    返回在线链接
      */
     async exportAsOnlineDoc() {
         try {
-            const params = this.ctx.request.query;
+            const params = this.ctx.request.body;
             const reqRule = {
                 projectId: {
                     type: "string"
@@ -109,6 +120,10 @@ class docsOperationController extends Controller {
                     type: "number",
                     convertType: "number",
                     required: false
+                },
+                selectedDocs: {
+                    type: "array",
+                    required: false,
                 },
             };
             this.ctx.validate(reqRule, params);

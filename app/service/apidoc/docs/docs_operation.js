@@ -10,19 +10,32 @@ const path = require("path")
 
 class docsOperationService extends Service {
      /** 
-     * @description        获取所有接口离线数据
+     * @description        导出为html
      * @author              shuxiaokai
      * @create             2020-11-13 09:24
      * @param  {String}    projectId 项目id
+     * @param  {Array}     selectedNodes 被选择的需要导出的节点
      * @return {String}    返回字符串
      */
-    async getDocOfflineData(params) { 
-        const { projectId } = params;
+    async exportAsHTML(params) { 
+        const { projectId, selectedNodes = [] } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
-        const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, enabled: true }).lean();
         const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById(params);
         const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList(params)
+        let docs = [];
+        if (selectedNodes.length > 0) { //选择导出
+            docs = await this.ctx.model.Apidoc.Docs.Docs.find({
+                projectId,
+                enabled: true,
+                _id: { $in: selectedNodes }
+            }).lean();
+        } else { //直接导出
+            docs = await this.ctx.model.Apidoc.Docs.Docs.find({
+                projectId,
+                enabled: true,
+            }).lean();
+        }
         this.ctx.set("content-type", "application/force-download");
         this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.json`)}`);
         const result = {
@@ -48,15 +61,28 @@ class docsOperationService extends Service {
      * @author              shuxiaokai
      * @create             2020-11-13 09:24
      * @param  {String}    projectId 项目id
+     * @param  {Array}     selectedNodes 被选择的需要导出的节点
      * @return {String}    返回字符串
      */
     async exportAsMoyuDoc(params) { 
-        const { projectId } = params;
+        const { projectId, selectedNodes = [] } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
-        const docs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, enabled: true }).lean();
         const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById(params);
-        const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList(params)
+        const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList(params);
+        let docs = [];
+        if (selectedNodes.length > 0) { //选择导出
+            docs = await this.ctx.model.Apidoc.Docs.Docs.find({
+                projectId,
+                enabled: true,
+                _id: { $in: selectedNodes }
+            }).lean();
+        } else { //直接导出
+            docs = await this.ctx.model.Apidoc.Docs.Docs.find({
+                projectId,
+                enabled: true,
+            }).lean();
+        }
         this.ctx.set("content-type", "application/force-download");
         this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.json`)}`);
         const result = {
@@ -125,10 +151,11 @@ class docsOperationService extends Service {
      * @param  {String}    projectId 项目id
      * @param  {String?}   password 密码
      * @param  {String?}   maxAge 过期时间
+     * @param  {Array}     selectedDocs 被选择的需要导出的节点
      * @return {String}    返回在线链接
      */
     async exportAsOnlineDoc(params) { 
-        const { projectId, password, maxAge = 86400000 } = params;
+        const { projectId, password, maxAge = 86400000, selectedDocs = [] } = params;
         const shareId = this.ctx.helper.uuid();
         let expire = Date.now();
         if (!maxAge || maxAge > 31536000 * 5) {
@@ -144,6 +171,7 @@ class docsOperationService extends Service {
                 projectName: projectInfo.projectName,
                 password,
                 expire,
+                selectedDocs
             }
         }, {
             upsert: true,
