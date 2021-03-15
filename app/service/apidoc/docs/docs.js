@@ -11,7 +11,7 @@ const Service = require("egg").Service;
 const officegen = require("officegen");
 const fs = require("fs-extra");
 const xss = require("xss");
-
+const escapeStringRegexp = require("escape-string-regexp");
 class DocsService extends Service {
     /** 
      * @description        检查是否有权限操作接口
@@ -290,7 +290,9 @@ class DocsService extends Service {
                     name: val.info.name,
                     type: val.info.type,
                     method: val.item.method,
-                    url: val.item.url ? val.item.url.path : "",
+                    url: {
+                        path: val.item.url ? val.item.url.path : "",
+                    },
                     creator: val.info.creator,
                     isFolder: val.isFolder,
                     children: val.children,
@@ -343,8 +345,8 @@ class DocsService extends Service {
         if (!url) {
             return [];
         }
-        const searchName = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, "item.url.path": new RegExp(url, "i") }, { _id: 1, "info.name": 1 });
-        const searchUrl = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, "info.name": new RegExp(url, "i") }, { _id: 1, "info.name": 1 });
+        const searchName = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, "item.url.path": new RegExp(escapeStringRegexp(url), "i") }, { _id: 1, "info.name": 1 });
+        const searchUrl = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, "info.name": new RegExp(escapeStringRegexp(url), "i") }, { _id: 1, "info.name": 1 });
 
         const result = [].concat(searchName, searchUrl).map(val => ({
             _id: val._id,
