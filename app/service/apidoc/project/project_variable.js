@@ -20,12 +20,20 @@ class ProjectVariableService extends Service {
 
     async addProjectVariable(params) {
         const { name, type, value, projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const doc = {};
         doc.name = name;
         doc.type = type;
         doc.value = value;
         doc.projectId = projectId;
         doc.creator = this.ctx.session.userInfo.realName;
+        const hasName = await this.ctx.model.Apidoc.Project.ProjectVariable.findOne({ 
+            projectId,
+            name, 
+        });
+        if (hasName) {
+            this.ctx.helper.errorInfo("变量名称重复", 1003);
+        }
         await this.ctx.model.Apidoc.Project.ProjectVariable.create(doc);
         return;
     }
@@ -38,11 +46,13 @@ class ProjectVariableService extends Service {
         @param {String}      name 变量名称
         @param {String}      type 变量类型
         @param {String}      value 变量值
+        @param {String}            projectId 项目id
         @return       null
     */
 
     async editProjectVariable(params) { 
-        const { _id, name, type, value } = params;
+        const { _id, name, type, value, projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const updateDoc = {};
         if (name) {
             updateDoc.name = name; 
@@ -53,6 +63,14 @@ class ProjectVariableService extends Service {
         if (value) {
             updateDoc.value = value; 
         }
+        const hasName = await this.ctx.model.Apidoc.Project.ProjectVariable.findOne({
+            projectId,
+            _id: { $ne: _id },
+            name, 
+        });
+        if (hasName) {
+            this.ctx.helper.errorInfo("变量名称重复", 1003);
+        }
         await this.ctx.model.Apidoc.Project.ProjectVariable.findByIdAndUpdate({ _id }, updateDoc);
         return;
     }
@@ -61,11 +79,13 @@ class ProjectVariableService extends Service {
         @author        shuxiaokai
         @create        2020-10-08 22:10
         @param {Array<String>}      ids id数组
+        @param {String}            projectId 项目id
         @return       null
     */
    
     async deleteProjectVariable(params) {
-        const { ids } = params;
+        const { ids, projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const result = await this.ctx.model.Apidoc.Project.ProjectVariable.deleteMany({ _id: { $in: ids }});
         return result;
     }
@@ -73,7 +93,7 @@ class ProjectVariableService extends Service {
         @description  获取项目全局变量
         @author        shuxiaokai
         @create        2020-10-08 22:10
-        @param {String}           projectId 项目id
+        @param {String}            projectId 项目id
         @param {Number?}           pageNum 当前页码
         @param {Number?}           pageSize 每页大小   
         @param {number?}           startTime 创建日期     @remark 默认精确到毫秒       
@@ -83,6 +103,7 @@ class ProjectVariableService extends Service {
    
     async getProjectVariableList(params) {
         const { pageNum, pageSize, startTime, endTime, projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const query = {
             projectId
         };
@@ -107,6 +128,7 @@ class ProjectVariableService extends Service {
         @description  获取项目全局变量枚举值
         @author        shuxiaokai
         @create        2020-10-08 22:10
+        @param {String}            projectId 项目id
         @return       null
     */
    
