@@ -14,6 +14,7 @@ class docHistoryService extends Service {
         @param {String}            projectId 项目id
         @param {Object}            docInfo 文档信息
         @param {String}            operation 文档操作
+        "addFolder", "addDoc", "copyDoc", "copyFolder", "deleteFolder", "deleteDoc", "deleteMany", "editDoc", "position", "import", "export", "rename", "addUser", "deleteUser", "changeUserPermission"
         @return       null
     */
 

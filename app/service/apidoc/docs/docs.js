@@ -64,9 +64,18 @@ class DocsService extends Service {
         }
         const result = await this.ctx.model.Apidoc.Docs.Docs.create(doc);
         const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
+        //添加历史记录
+        const record = {
+            operation: "addFolder", //添加文件夹
+            projectId,
+            docInfo: [],
+            operator: userInfo.realName || userInfo.loginName,
+        };
         if (type !== "folder") {
+            record.operation = "addDoc"; //添加文档
             await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }});
         }
+        await this.ctx.service.apidoc.docs.docsHistory.addDocHistory(record);
         return {
             ...result.item,
             ...result.info,

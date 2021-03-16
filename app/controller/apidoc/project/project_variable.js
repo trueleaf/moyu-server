@@ -63,6 +63,9 @@ class ProjectVariableController extends Controller {
                     type: "array",
                     itemType: "string"
                 },
+                projectId: {
+                    type: "string"
+                },
             };
             this.ctx.validate(reqRule, params);
             const result = await this.ctx.service.apidoc.project.projectVariable.deleteProjectVariable(params);
@@ -103,6 +106,9 @@ class ProjectVariableController extends Controller {
                 value: {
                     type: "string",
                     required: false
+                },
+                projectId: {
+                    type: "string"
                 },
             };
             this.ctx.validate(reqRule, params);

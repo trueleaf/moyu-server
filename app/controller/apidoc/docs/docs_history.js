@@ -31,7 +31,7 @@ class docHistoryController extends Controller {
                 },
                 operation: { //copy 拷贝文档，import 文档导入
                     type: "string",
-                    values: ["addFolder", "addDoc", "copyDoc", "copyFolder", "deleteFolder", "deleteDoc", "deleteMany", "editDoc", "position", "import", "rename"]
+                    values: ["addFolder", "addDoc", "copyDoc", "copyFolder", "deleteFolder", "deleteDoc", "deleteMany", "editDoc", "position", "import", "export", "rename", "addUser", "deleteUser", "changeUserPermission"]
                 },
             };
             this.ctx.validate(reqRule, params);
