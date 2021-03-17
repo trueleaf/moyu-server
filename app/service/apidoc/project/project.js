@@ -178,12 +178,12 @@ class ProjectService extends Service {
             updateDoc.members = members; 
         }
         //项目名称是否重复
-        const hasName = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: { $ne: _id }, projectName });
-        if (hasName) {
-            const error = new Error("项目名称重复");
-            error.code = 1003;
-            throw error;
-        }
+        // const hasName = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: { $ne: _id }, projectName });
+        // if (hasName) {
+        //     const error = new Error("项目名称重复");
+        //     error.code = 1003;
+        //     throw error;
+        // }
         //是否拥有权限
         const query = {
             _id,
