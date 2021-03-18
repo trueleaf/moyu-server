@@ -68,14 +68,17 @@ class DocsService extends Service {
         const record = {
             operation: "addFolder", //添加文件夹
             projectId,
-            docInfo: [],
+            recordInfo: {
+                nodeName: name,
+                nodeId: result._id,
+            },
             operator: userInfo.realName || userInfo.loginName,
         };
         if (type !== "folder") {
             record.operation = "addDoc"; //添加文档
             await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }});
         }
-        await this.ctx.service.apidoc.docs.docsHistory.addDocHistory(record);
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
         return {
             ...result.item,
             ...result.info,
@@ -86,6 +89,125 @@ class DocsService extends Service {
             children: result.children,
         };
     }
+    /** 
+        @description  修改文档名称
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}    _id 当前文档id      
+        @param {String}    name 当前文档名称      
+        @return       null
+    */
+    async changeDocName(params) { 
+        const { _id, name, projectId } = params;
+        const userInfo = this.ctx.session.userInfo;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const originDoc = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { "info.name": name }});
+        //添加历史记录
+        const record = {
+            operation: "rename", //重命名
+            projectId,
+            recordInfo: {
+                nodeName: name,
+                nodeId: _id,
+                orginNodeName: originDoc.info.name
+            },
+            operator: userInfo.realName || userInfo.loginName,
+        };
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
+
+        return { _id };
+    }
+    /** 
+        @description  修改文档在文档树中的位置
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      _id 当前文档id
+        @param {String}      pid 父文档id
+        @param {String}      sort 排序
+        @param {String}      projectId 项目id
+        @param {Object}      dropInfo 项目id
+                            -nodeName 
+                            -nodeId 
+                            -dropNodeName
+                            -dropNodeId
+                            -type,
+        @return       null
+    */
+    async changeDocPosition(params) { 
+        const { _id, pid, sort, projectId, dropInfo } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const userInfo = this.ctx.session.userInfo;
+        const updateDoc = { $set: {}};
+        let parentDoc = null;
+        let isFolder = null;
+        updateDoc.$set.pid = pid;
+        updateDoc.$set.sort = sort;
+        if (pid) {
+            parentDoc = await this.ctx.model.Apidoc.Docs.Docs.findById({ _id: pid });
+            isFolder = parentDoc.isFolder;
+        }
+        if (parentDoc && !isFolder) {
+            this.ctx.helper.errorInfo("操作不被允许，pid对应的父元素不是文件夹", 4001);
+        }
+        await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, updateDoc);
+        //添加历史记录
+        const record = {
+            operation: "position", //改变位置信息
+            projectId,
+            recordInfo: {
+                nodeName: dropInfo.nodeName,
+                nodeId: dropInfo.nodeId,
+                dropNodeId: dropInfo.dropNodeId,
+                dropNodeName: dropInfo.dropNodeName,
+                dropType: dropInfo.dropType,
+            },
+            operator: userInfo.realName || userInfo.loginName,
+        };
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
+        return;
+    }
+
+    /** 
+        @description  更新文档详细信息
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {pbjectID}         _id 文档id
+        @param {object}           info 接口基本信息 
+        @param {object}           item 录入参数 
+        @param {number}           spendTime 录入时长
+        @param {string}           projectId 项目id 
+        @return       null
+    */
+    async fillDoc(params) {
+        const { _id, info, item, projectId, spendTime = 0 } = params;
+        const userInfo = this.ctx.session.userInfo;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const description = xss(info.description);
+        const result = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { 
+            $set: { 
+                item, 
+                "info.description": description 
+            },
+            $inc: {
+                "info.spendTime": spendTime
+            }
+        });
+        //添加历史记录
+        const record = {
+            operation: "editDoc", //更新文档
+            projectId,
+            recordInfo: {
+                nodeName: result.info.name,
+                nodeId: _id,
+                nodeSnapshot: item,
+            },
+            operator: userInfo.realName || userInfo.loginName,
+        };
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
+        return;
+    }
+
+
     /** 
      * @description        拷贝一个节点
      * @author              shuxiaokai
@@ -99,6 +221,7 @@ class DocsService extends Service {
     async copyDoc(params) {
         const { _id, projectId } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const userInfo = this.ctx.session.userInfo;
         let doc = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id }).lean();
         doc.info.name = "副本-" + doc.info.name;
         doc._id = this.app.mongoose.Types.ObjectId();
@@ -107,6 +230,17 @@ class DocsService extends Service {
         if (!doc.isFolder) {
             await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: doc.projectId }, { $inc: { docNum: 1 }});
         }
+         //添加历史记录
+         const record = {
+            operation: "copyDoc", //更新文档
+            projectId,
+            recordInfo: {
+                nodeName: doc.info.name.replace(/^副本-/, ""),
+                nodeId: _id,
+            },
+            operator: userInfo.realName || userInfo.loginName,
+        };
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
         return {
             ...result.item,
             ...result.info,
@@ -117,7 +251,41 @@ class DocsService extends Service {
             children: result.children,
         };
     }
-
+    /** 
+        @description  删除文档
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {ObjectID}           _id 文档id
+        @return       null
+    */
+    async deleteDoc(params) { 
+        const { ids, projectId } = params;
+        const userInfo = this.ctx.session.userInfo;
+        const result = await this.ctx.model.Apidoc.Docs.Docs.updateMany({ projectId, _id: { $in: ids }}, { $set: { enabled: false }}); //文档祖先包含删除元素，那么该文档也需要被删除
+        const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
+        await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }}); //删除文档
+        const deleteDocs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, _id: { $in: ids }});
+        //添加历史记录
+        const record = {
+            operation: deleteDocs.length > 1 ? "deleteMany" : (deleteDocs[0].isFolder ? "deleteFolder" : "deleteDoc"),
+            projectId,
+            recordInfo: {
+                deleteNodes: []
+            },
+            operator: userInfo.realName || userInfo.loginName,
+        };
+        deleteDocs.forEach(val => {
+            record.recordInfo.deleteNodes.push({
+                nodeName: val.info.name,
+                nodeId: val._id,
+                isFolder: val.isFolder,
+                method: val.item && val.item.method,
+                url: val.item.url.path,
+            });
+        });
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
+        return result;
+    }
     /** 
         @description  新增多个空白文档
         @author       shuxiaokai
@@ -189,69 +357,6 @@ class DocsService extends Service {
             });
         });
         await this.ctx.service.apidoc.docs.docsHistory.addDocHistory(record);
-        return;
-    }
-
-    /** 
-        @description  修改文档在文档树中的位置
-        @author       shuxiaokai
-        @create        2020-10-08 22:10
-        @param {String}      _id 当前文档id
-        @param {String}      pid 父文档id
-        @param {String}      sort 排序
-        @return       null
-    */
-
-    async changeDocPosition(params) { 
-        const { _id, pid, sort } = params;
-        const updateDoc = { $set: {}};
-        let parentDoc = null;
-        let isFolder = null;
-        updateDoc.$set.pid = pid;
-        updateDoc.$set.sort = sort;
-        if (pid) {
-            parentDoc = await this.ctx.model.Apidoc.Docs.Docs.findById({ _id: pid });
-            isFolder = parentDoc.isFolder;
-        }
-        if (parentDoc && !isFolder) {
-            this.ctx.helper.errorInfo("操作不被允许，pid对应的父元素不是文件夹", 4001);
-        }
-        await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, updateDoc);
-        return;
-    }
-
-    /** 
-        @description  修改文档名称
-        @author       shuxiaokai
-        @create        2020-10-08 22:10
-        @param {String}    _id 当前文档id      
-        @param {String}    name 当前文档名称      
-        @return       null
-    */
-    async changeDocName(params) { 
-        const { _id, name, projectId } = params;
-        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { "info.name": name }});
-        return { _id };
-    }
-    /** 
-        @description  新增文档详细信息
-        @author       shuxiaokai
-        @create        2020-10-08 22:10
-        @param {pbjectID}         _id 文档id
-        @param {object}           info 接口基本信息 
-        @param {object}           item 录入参数 
-        @param {number}           spendTime 录入时长
-        @param {string}           projectId 项目id 
-        @return       null
-    */
-
-    async fillDoc(params) {
-        const { _id, info, item, projectId, spendTime = 0 } = params;
-        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const description = xss(info.description);
-        await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { item, "info.description": description } });
-        await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $inc: { "info.spendTime": spendTime } });
         return;
     }
     /** 
@@ -364,40 +469,6 @@ class DocsService extends Service {
         }));
         return result;
     }
-    
-
-
-    /** 
-        @description  删除文档
-        @author       shuxiaokai
-        @create        2020-10-08 22:10
-        @param {ObjectID}           _id 文档id
-        @return       null
-    */
-
-    async deleteDoc(params) { 
-        const { ids, projectId } = params;
-        const result = await this.ctx.model.Apidoc.Docs.Docs.updateMany({ projectId, _id: { $in: ids }}, { $set: { enabled: false }}); //文档祖先包含删除元素，那么该文档也需要被删除
-        const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
-        await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }}); //删除文档
-        const deleteDocs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, _id: { $in: ids }});
-        const record = {
-            operation: deleteDocs.length > 1 ? "deleteMany" : (deleteDocs[0].isFolder ? "deleteFolder" : "deleteDoc"),
-            projectId: deleteDocs[0].projectId,
-            docInfo: []
-        };
-        deleteDocs.forEach(val => {
-            record.docInfo.push({
-                docName: val.docName,
-                isFolder: val.isFolder,
-                method: val.item && val.item.methods,
-                url: val.item && val.item.url && val.item.url.path,
-            });
-        });
-        await this.ctx.service.apidoc.docs.docsHistory.addDocHistory(record);
-        return result;
-    }
-
     /**
         @description  生成文件word
         @author       shuxiaokai

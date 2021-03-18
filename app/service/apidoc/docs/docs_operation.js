@@ -11,7 +11,7 @@ const path = require("path")
 class docsOperationService extends Service {
      /** 
      * @description        导出为html
-     * @author              shuxiaokai
+     * @author             shuxiaokai
      * @create             2020-11-13 09:24
      * @param  {String}    projectId 项目id
      * @param  {Array}     selectedNodes 被选择的需要导出的节点
@@ -53,6 +53,18 @@ class docsOperationService extends Service {
         file = file.replace(/<title>[^<]*<\/title>/, `<title>${projectInfo.projectName}<\/title>`);
         this.ctx.set("content-type", "application/force-download");
         this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.html`)}`);
+
+        //添加历史记录
+        const userInfo = this.ctx.session.userInfo;
+        const record = {
+            operation: "export", //导出为html
+            projectId,
+            recordInfo: {
+                exportType: "html"
+            },
+            operator: userInfo.realName || userInfo.loginName,
+        };
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
         return file;
     }
 
@@ -67,6 +79,7 @@ class docsOperationService extends Service {
     async exportAsMoyuDoc(params) { 
         const { projectId, selectedNodes = [] } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const userInfo = this.ctx.session.userInfo;
         const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
         const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById(params);
         const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList(params);
@@ -94,11 +107,17 @@ class docsOperationService extends Service {
             docs,
             hosts
         };
-        // result.docs.forEach(doc => {
-        //     if (doc.isFolder) {
-        //         delete doc.item;
-        //     }
-        // })
+        
+        //添加历史记录
+        const record = {
+            operation: "export", //导出为moyu
+            projectId,
+            recordInfo: {
+                exportType: "moyu"
+            },
+            operator: userInfo.realName || userInfo.loginName,
+        };
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
         return JSON.stringify(result);
     }
     /**
@@ -113,7 +132,7 @@ class docsOperationService extends Service {
     async importAsMoyuDoc(params) { 
         const { projectId, cover, moyuData = {} } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const { rules, docs = [], hosts = [] } = moyuData;
+        const { docs = [], hosts = [] } = moyuData;
         const convertDocs = docs.map((docInfo) => {
             const newId = this.app.mongoose.Types.ObjectId()
             const oldId = docInfo._id.toString();
@@ -136,11 +155,22 @@ class docsOperationService extends Service {
             await this.ctx.model.Apidoc.Docs.Docs.updateMany({ projectId }, { $set: { enabled: false } })
             await this.ctx.model.Apidoc.Docs.DocsServices.updateMany({ projectId }, { $set: { enabled: false } });
         }
-        console.log(convertDocs[0].item.responseParams[0].values)
         await this.ctx.model.Apidoc.Docs.DocsServices.create(convertHosts);
         await this.ctx.model.Apidoc.Docs.Docs.create(convertDocs)
         const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
         await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }});
+        //文档导入
+        const userInfo = this.ctx.session.userInfo;
+        const record = {
+            operation: "import",
+            projectId,
+            recordInfo: {
+                importNum: docs.length,
+                importIsCover: cover
+            },
+            operator: userInfo.realName || userInfo.loginName,
+        };
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
         return;
     }
 
@@ -156,6 +186,7 @@ class docsOperationService extends Service {
      */
     async exportAsOnlineDoc(params) { 
         const { projectId, password, maxAge = 86400000, selectedDocs = [] } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const shareId = this.ctx.helper.uuid();
         let expire = Date.now();
         if (!maxAge || maxAge > 31536000 * 5) {
@@ -176,6 +207,17 @@ class docsOperationService extends Service {
         }, {
             upsert: true,
         });
+        //文档导出
+        const userInfo = this.ctx.session.userInfo;
+        const record = {
+            operation: "export", //导出为online
+            projectId,
+            recordInfo: {
+                exportType: "online"
+            },
+            operator: userInfo.realName || userInfo.loginName,
+        };
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
         return shareId;
     }
 }

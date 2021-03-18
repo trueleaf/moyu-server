@@ -265,7 +265,7 @@ class userService extends Service {
             },
         );
         await this.ctx.model.Security.User.findByIdAndUpdate(
-            { _id: userInfo._id }, 
+            { _id: userInfo._id },
             { 
                 $inc: { loginTimes: 1 },
                 $set: { lastLogin: new Date() }, 

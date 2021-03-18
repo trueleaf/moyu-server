@@ -9,39 +9,6 @@
 const Controller = require("egg").Controller;
 
 class docHistoryController extends Controller {
-    /**
-        @description  新增文档历史记录
-        @author        shuxiaokai
-        @create        2020-10-08 22:10
-        @param {String}            projectId 项目id
-        @param {Object}            docInfo 文档信息
-        @param {String}            operation 文档操作
-        @return       null
-    */
-
-    async addDocHistory() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                projectId: {
-                    type: "string"
-                },
-                docInfo: {
-                    type: "object"
-                },
-                operation: { //copy 拷贝文档，import 文档导入
-                    type: "string",
-                    values: ["addFolder", "addDoc", "copyDoc", "copyFolder", "deleteFolder", "deleteDoc", "deleteMany", "editDoc", "position", "import", "export", "rename", "addUser", "deleteUser", "changeUserPermission"]
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsHistory.addDocHistory(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
 
     /**
         @description  获取文档历史记录
@@ -56,7 +23,6 @@ class docHistoryController extends Controller {
         @param {string?}           operator 操作者
         @param {enum?}             operationType 操作类型
         @param {string}            projectId 项目id
-        @param {number?}            days 查询天数
         @return       null
     */
 

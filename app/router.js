@@ -65,7 +65,6 @@ module.exports = app => {
 
 
     //======文档历史记录
-    router.post("/api/docs/docs_history", controller.apidoc.docs.docsHistory.addDocHistory); //新增历史记录
     router.get("/api/docs/docs_history", controller.apidoc.docs.docsHistory.getDocHistoryList); //获取项目文档操作历史记录
     router.get("/api/docs/docs_records", controller.apidoc.docs.docsRecords.getDocsRecordsList); //获取文档修改记录
 

@@ -155,6 +155,13 @@ class DocsController extends Controller {
         @param {String}      _id 当前文档id
         @param {String?}     pid 父文档id,当将文档拖入到
         @param {Number}      sort 文档排序
+        @param {String}      projectId 项目id
+        @param {Object}      dropInfo 项目id
+                            -nodeName 
+                            -nodeId 
+                            -dropNodeName
+                            -dropNodeId
+                            -type,
         @return       null
     */
     async changeDocPosition() { 
@@ -171,7 +178,13 @@ class DocsController extends Controller {
                 },
                 sort: {
                     type: "number"
-                }
+                },
+                projectId: { //项目id
+                    type: "string"
+                },
+                dropInfo: { //拖拽信息
+                    type: "object",
+                },
             };
             this.ctx.validate(reqRule, params);
             const result = await this.ctx.service.apidoc.docs.docs.changeDocPosition(params);

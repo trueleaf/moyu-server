@@ -8,30 +8,6 @@ const Service = require("egg").Service;
 const escapeStringRegexp = require("escape-string-regexp");
 class docHistoryService extends Service {
     /**
-        @description  新增文档历史记录
-        @author        shuxiaokai
-        @create        2020-10-08 22:10
-        @param {String}            projectId 项目id
-        @param {Object}            docInfo 文档信息
-        @param {String}            operation 文档操作
-        "addFolder", "addDoc", "copyDoc", "copyFolder", "deleteFolder", "deleteDoc", "deleteMany", "editDoc", "position", "import", "export", "rename", "addUser", "deleteUser", "changeUserPermission"
-        @return       null
-    */
-
-    async addDocHistory(params) {
-        const { projectId, docInfo, operation, docId, item } = params;
-        const doc = {};
-        doc.projectId = projectId;
-        doc.docInfo = docInfo;
-        doc.operation = operation;
-        doc.docId = docId;
-        doc.operator = this.ctx.session.userInfo.realName;
-        doc.item = item;
-        await this.ctx.model.Apidoc.Docs.DocsHistory.create(doc);
-        return;
-    }
-
-    /**
         @description  获取文档历史记录
         @author        shuxiaokai
         @create        2020-10-08 22:10
@@ -49,7 +25,7 @@ class docHistoryService extends Service {
     */
 
     async getDocHistoryList(params) {
-        const { pageNum, pageSize, startTime, endTime, url, docName, operator, operationType, projectId, days, docId } = params;
+        const { pageNum, pageSize, startTime, endTime, operator, operationType, projectId, days } = params;
         const query = {};
         let skipNum = 0;
         let limit = 100;
@@ -62,32 +38,23 @@ class docHistoryService extends Service {
         if (startTime != null && endTime != null) {
             query.createdAt = { $gt: startTime, $lt: endTime };
         }
-        if (url) {
-            query.url = new RegExp(escapeStringRegexp(url));
-        }
-        if (docName) {
-            query["docInfo.docName"] = new RegExp(escapeStringRegexp(docName));
-        }
+        // if (url) {
+        //     query.url = new RegExp(escapeStringRegexp(url));
+        // }
+        // if (docName) {
+        //     query["docInfo.docName"] = new RegExp(escapeStringRegexp(docName));
+        // }
         if (operator) {
             query.operator = new RegExp(escapeStringRegexp(operator));
         }
         if (operationType) {
             query.operation = operationType;
         }
-        if (docId) {
-            query.docId = docId;
-        }
         const rows = await this.ctx.model.Apidoc.Docs.DocsHistory.find(
             query,
-            { 
-                operation: 1,
-                createdAt: 1,
-                operator: 1,
-                docId: 1,
-                "docInfo.docName": 1,
-                "docInfo.isFolder": 1,
-                "docInfo.method": 1,
-                "docInfo.url": 1,
+            {
+                projectId: 0,
+                updatedAt: 0
             }
         ).skip(skipNum).sort({ createdAt: -1 }).limit(limit);
         const total = await this.ctx.model.Apidoc.Docs.DocsHistory.find(query).countDocuments();
