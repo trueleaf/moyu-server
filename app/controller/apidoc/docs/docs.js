@@ -295,6 +295,30 @@ class DocsController extends Controller {
         }
     }
     /** 
+        @description  获取文档导航(仅获取文件夹信息，用于一个项目向另一个项目导入)
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {string}           projectId 项目id
+        @return       null
+    */
+    async getDocTreeFolderNode() { 
+        try {
+            const params = this.ctx.request.query;
+            const reqRule = {
+                projectId: {
+                    type: "string",
+                    required: true
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docs.getDocTreeFolderNode(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    /** 
         @description  根据url过滤文档信息
         @author       shuxiaokai
         @create        2020-10-08 22:10

@@ -432,6 +432,61 @@ class DocsService extends Service {
         return result;
     }
     /** 
+        @description  获取文档导航(仅获取文件夹信息，用于一个项目向另一个项目导入)
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {string}           projectId 项目id
+        @return       null
+    */
+    async getDocTreeFolderNode(params) { 
+        const { projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const result = [];
+        const docsInfo = await this.ctx.model.Apidoc.Docs.Docs.find({
+            projectId: projectId,
+            enabled: true,
+            isFolder: 1,
+        }, {
+            pid: 1,
+            info: 1,
+            isFolder: 1,
+            sort: 1,
+        }).sort({
+            isFolder: -1,
+            sort: 1
+        }).lean();
+        const mapedData =  docsInfo.map(val => {
+            return {
+                _id: val._id,
+                pid: val.pid,
+                sort: val.sort,
+                name: val.info.name,
+                type: val.info.type,
+                isFolder: val.isFolder,
+                children: val.children,
+            };
+        })
+        for (let i = 0; i < mapedData.length; i++) {
+            const docInfo = mapedData[i];
+            if (!docInfo.pid) { //根元素
+                docInfo.children = [];
+                result.push(docInfo);
+            }
+            const id = docInfo._id.toString();
+            for (let j = 0; j < mapedData.length; j++) {
+                if (id === mapedData[j].pid) { //项目中新增的数据使用标准id
+                    if (docInfo.children == null) {
+                        docInfo.children = [];
+                    }
+                    docInfo.children.push(mapedData[j]);
+                }
+            }
+        }
+        return result;
+    }
+
+
+    /** 
         @description  获取文档详细信息
         @author       shuxiaokai
         @create        2020-10-08 22:10

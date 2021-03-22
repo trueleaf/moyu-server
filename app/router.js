@@ -43,6 +43,7 @@ module.exports = app => {
     router.post("/api/project/doc_multi", controller.apidoc.docs.docs.addMultiDocs); //新增多个文档
     router.post("/api/project/fill_doc", controller.apidoc.docs.docs.fillDoc); //填写文档
     router.get("/api/project/doc_tree_node", controller.apidoc.docs.docs.getDocTreeNode); //获取文档导航
+    router.get("/api/project/doc_tree_folder_node", controller.apidoc.docs.docs.getDocTreeFolderNode); //获取文档导航(仅获取文件夹信息，用于一个项目向另一个项目导入)
     router.get("/api/project/doc_detail", controller.apidoc.docs.docs.getDocDetail); //获取文档详情
     router.get("/api/project/filter_doc", controller.apidoc.docs.docs.filterDoc); //根据url获取文档id，用于菜单筛选
     router.get("/api/project/doc_word", controller.apidoc.docs.docs.convertDocToWord); //将文档导出为word
