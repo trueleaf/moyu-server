@@ -235,6 +235,8 @@ class DocsService extends Service {
             operation: "copyDoc", //更新文档
             projectId,
             recordInfo: {
+                url: doc.item.url.path,
+                method: doc.item.method,
                 nodeName: doc.info.name.replace(/^副本-/, ""),
                 nodeId: _id,
             },
