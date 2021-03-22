@@ -5,6 +5,8 @@
  * @create             2020-07-25 11:25
  */
 
+const { STS } = require("ali-oss");
+
 module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
@@ -18,6 +20,12 @@ module.exports = app => {
             },
             nodeName: { //被操作节点名称
                 type: String,
+            },
+            method: { //请求方法
+                type: String
+            },
+            url: { //请求url
+                type: String
             },
             nodeSnapshot: { //修改文档，节点保存期快照
                 type: Object,

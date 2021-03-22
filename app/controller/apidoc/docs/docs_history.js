@@ -20,15 +20,15 @@ class docHistoryController extends Controller {
         @param {number?}           endTime 结束日期       @remark 默认精确到毫秒
         @param {string?}           url 请求url
         @param {string?}           docName 文档名称
-        @param {string?}           operator 操作者
-        @param {enum?}             operationType 操作类型
+        @param {array?}            operators 操作者
+        @param {array?}            operationTypes 操作类型
         @param {string}            projectId 项目id
         @return       null
     */
 
     async getDocHistoryList() { 
         try {
-            const params = this.ctx.query;
+            const params = this.ctx.request.body;
             const reqRule = {
                 pageNum: {
                     type: "number",
@@ -58,29 +58,44 @@ class docHistoryController extends Controller {
                     type: "string",
                     required: false,
                 },
-                operator: {
-                    type: "string",
+                operators: {
+                    type: "array",
                     required: false
                 },
-                operationType: {
-                    type: "string",
+                operationTypes: {
+                    type: "array",
                     required: false
                 },
                 projectId: {
                     type: "string",
                 },
-                docId: {
-                    type: "string",
-                    required: false
-                },
-                days: {
-                    type: "number",
-                    required: false,
-                    default: 0
-                }
             };
             this.ctx.validate(reqRule, params);
             const result = await this.ctx.service.apidoc.docs.docsHistory.getDocHistoryList(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+
+    /**
+     * @description        获取文档操作人员枚举信息
+     * @author             shuxiaokai
+     * @create             2021-03-21 12:15
+     * @param {string}     projectId - 项目id
+     * @return {String}    返回字符串
+     */
+    async getHistoryOperatorEnum() {
+        try {
+            const params = this.ctx.query;
+            const reqRule = {
+                projectId: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docsHistory.getHistoryOperatorEnum(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);

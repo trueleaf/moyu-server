@@ -65,8 +65,9 @@ module.exports = app => {
 
 
     //======文档历史记录
-    router.get("/api/docs/docs_history", controller.apidoc.docs.docsHistory.getDocHistoryList); //获取项目文档操作历史记录
+    router.post("/api/docs/docs_history", controller.apidoc.docs.docsHistory.getDocHistoryList); //获取项目文档操作历史记录
     router.get("/api/docs/docs_records", controller.apidoc.docs.docsRecords.getDocsRecordsList); //获取文档修改记录
+    router.get("/api/docs/docs_history_operator_enum", controller.apidoc.docs.docsHistory.getHistoryOperatorEnum); //获取文档操作人员基本信息
 
     
     //======全局变量

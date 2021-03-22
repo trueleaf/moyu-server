@@ -17,20 +17,18 @@ class docHistoryService extends Service {
         @param {number?}           endTime 结束日期       @remark 默认精确到毫秒
         @param {string?}           url 请求url
         @param {string?}           docName 文档名称
-        @param {string?}           operator 操作者
-        @param {enum?}             operationType 操作类型
+        @param {array?}            operators 操作者
+        @param {array?}            operationTypes 操作类型
         @param {string}            projectId 项目id
-        @param {number?}           days 查询天数
         @return       null
     */
 
     async getDocHistoryList(params) {
-        const { pageNum, pageSize, startTime, endTime, operator, operationType, projectId, days } = params;
+        const { pageNum, pageSize, startTime, endTime, operators, operationTypes, projectId, url, docName } = params;
         const query = {};
         let skipNum = 0;
         let limit = 100;
         query.projectId = projectId;
-        // query.createdAt = { $gt: new Date(new Date().toDateString()) }; //只取今天数据
         if (pageSize != null && pageNum != null) {
             skipNum = (pageNum - 1) * pageSize;
             limit = pageSize;
@@ -38,23 +36,29 @@ class docHistoryService extends Service {
         if (startTime != null && endTime != null) {
             query.createdAt = { $gt: startTime, $lt: endTime };
         }
-        // if (url) {
-        //     query.url = new RegExp(escapeStringRegexp(url));
-        // }
-        // if (docName) {
-        //     query["docInfo.docName"] = new RegExp(escapeStringRegexp(docName));
-        // }
-        if (operator) {
-            query.operator = new RegExp(escapeStringRegexp(operator));
+        if (url) {
+            query.url = new RegExp(escapeStringRegexp(url));
         }
-        if (operationType) {
-            query.operation = operationType;
+        if (docName) {
+            query["info.name"] = new RegExp(escapeStringRegexp(docName));
         }
+        if (operators && operators.length > 0) {
+            query.operator = {
+                $in: operators,
+            };
+        }
+        if (operationTypes && operationTypes.length > 0) {
+            query.operation = {
+                $in: operationTypes,
+            }
+        }
+        console.log(query)
         const rows = await this.ctx.model.Apidoc.Docs.DocsHistory.find(
             query,
             {
                 projectId: 0,
-                updatedAt: 0
+                updatedAt: 0,
+                __v: 0,
             }
         ).skip(skipNum).sort({ createdAt: -1 }).limit(limit);
         const total = await this.ctx.model.Apidoc.Docs.DocsHistory.find(query).countDocuments();
@@ -63,6 +67,34 @@ class docHistoryService extends Service {
         result.total = total;
         return result;
     }
+
+    /**
+        @description  获取文档所有操作人员
+        @author        shuxiaokai
+        @create        2020-10-08 22:10
+        @param {string}            projectId 项目id
+        @return       null
+    */
+    async getHistoryOperatorEnum(params) {
+        const { projectId } = params;
+        const docInfo = await this.ctx.model.Apidoc.Project.Project.findOne(
+            { 
+                _id: projectId,
+                enabled: true 
+            }, { 
+                members: 1,
+                owner: 1,
+                _id: 0
+            }
+        ).sort({ createdAt: 1 }).lean();
+        const members = docInfo.members.map(doc => {
+            return doc.realName || doc.loginName;
+        });
+        const owner = [docInfo.owner.name]
+        const result = owner.concat(members)
+        return result;
+    }
+    
 }
 
 module.exports = docHistoryService;
