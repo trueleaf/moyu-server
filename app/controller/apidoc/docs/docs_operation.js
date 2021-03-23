@@ -134,6 +134,42 @@ class docsOperationController extends Controller {
             return;
         }
     }
+
+    /** 
+     * @description        fork项目中部分文档
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    sourceProjectId 源项目id
+     * @param  {String}    targetProjectId 目标项目id
+     * @param  {String}    targetMountedDocId 挂载点文档id
+     * @param  {Array}     selectedDocs 被选择的需要导出的节点
+     * @return {String}    返回字符串
+     */
+    async forkDocs() {
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                sourceProjectId: {
+                    type: "string"
+                },
+                targetProjectId: {
+                    type: "string",
+                },
+                targetMountedDocId: {
+                    type: "string"
+                },
+                selectedDocs: {
+                    type: "array",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docsOperation.forkDocs(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
 }
 
 module.exports = docsOperationController;

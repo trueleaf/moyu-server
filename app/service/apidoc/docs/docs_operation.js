@@ -220,6 +220,37 @@ class docsOperationService extends Service {
         await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
         return shareId;
     }
+
+     /** 
+     * @description        fork项目中部分文档
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    sourceProjectId 源项目id
+     * @param  {String}    targetProjectId 目标项目id
+     * @param  {String}    targetMountedDocId 挂载点文档id
+     * @param  {Array}     selectedDocs 被选择的需要导出的节点
+     * @return {String}    返回字符串
+     */
+    async forkDocs(params) { 
+        const { sourceProjectId, targetProjectId, selectedDocs, targetMountedDocId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(sourceProjectId);
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(targetProjectId);
+        await this.ctx.service.apidoc.docs.docs.find({ _id: { $in: selectedDocs } }).lean();
+        //文档导出
+        const userInfo = this.ctx.session.userInfo;
+        const record = {
+            operation: "export",
+            projectId,
+            recordInfo: {
+                exportType: "fork"
+            },
+            operator: userInfo.realName || userInfo.loginName,
+        };
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
+        return;
+    }
+
+
 }
 
 module.exports = docsOperationService;
