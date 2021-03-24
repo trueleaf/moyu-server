@@ -447,26 +447,35 @@ class DocsService extends Service {
         const docsInfo = await this.ctx.model.Apidoc.Docs.Docs.find({
             projectId: projectId,
             enabled: true,
-            isFolder: 1,
-        }, {
-            pid: 1,
-            info: 1,
-            isFolder: 1,
-            sort: 1,
         }).sort({
             isFolder: -1,
             sort: 1
         }).lean();
         const mapedData =  docsInfo.map(val => {
-            return {
-                _id: val._id,
-                pid: val.pid,
-                sort: val.sort,
-                name: val.info.name,
-                type: val.info.type,
-                isFolder: val.isFolder,
-                children: val.children,
-            };
+            if (val.isFolder) {
+                return {
+                    _id: val._id,
+                    pid: val.pid,
+                    sort: val.sort,
+                    name: val.info.name,
+                    type: val.info.type,
+                    creator: val.info.creator,
+                    isFolder: val.isFolder,
+                    children: val.children,
+                };
+            } else {
+                return {
+                    _id: val._id,
+                    pid: val.pid,
+                    sort: val.sort,
+                    name: val.info.name,
+                    type: val.info.type,
+                    method: val.item.method,
+                    creator: val.info.creator,
+                    isFolder: val.isFolder,
+                    children: val.children,
+                };                
+            }
         })
         for (let i = 0; i < mapedData.length; i++) {
             const docInfo = mapedData[i];

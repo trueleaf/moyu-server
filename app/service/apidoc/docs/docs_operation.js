@@ -143,7 +143,6 @@ class docsOperationService extends Service {
             })
             docInfo.projectId = projectId;
             docInfo._id = newId;
-            docInfo
             return docInfo;
         })
         const convertHosts = hosts.map(host => {
@@ -224,30 +223,49 @@ class docsOperationService extends Service {
      /** 
      * @description        fork项目中部分文档
      * @author             shuxiaokai
-     * @create             2020-11-13 09:24
+     * @create             2020-11-13 21:24
      * @param  {String}    sourceProjectId 源项目id
      * @param  {String}    targetProjectId 目标项目id
-     * @param  {String}    targetMountedDocId 挂载点文档id
-     * @param  {Array}     selectedDocs 被选择的需要导出的节点
+     * @param  {String}    targetMountedId 挂载点文档id
+     * @param  {Number}    targetNodeSort 目标节点排序
+     * @param  {Array}     selectedDocIds 被选择的需要导出的节点
+     * @param  {String}    sourceRootId 源节点根元素id
      * @return {String}    返回字符串
      */
     async forkDocs(params) { 
-        const { sourceProjectId, targetProjectId, selectedDocs, targetMountedDocId } = params;
+        const { sourceProjectId, targetProjectId, targetMountedId, selectedDocIds, sourceRootId, targetNodeSort } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(sourceProjectId);
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(targetProjectId);
-        await this.ctx.service.apidoc.docs.docs.find({ _id: { $in: selectedDocs } }).lean();
+
+        const sourceDocs = await this.ctx.model.Apidoc.Docs.Docs.find({ _id: { $in: selectedDocIds }, projectId: sourceProjectId }).lean();
+        console.log(targetNodeSort)
+        const sourceRootDoc = sourceDocs.find(doc => doc._id.toString() === sourceRootId);
+        sourceRootDoc.sort = targetNodeSort;
+        sourceRootDoc.pid = targetMountedId;
+        sourceDocs.forEach(doc => {
+            const newId = this.app.mongoose.Types.ObjectId()
+            const oldId = doc._id.toString();
+            sourceDocs.forEach(originDoc => {
+                if (originDoc.pid === oldId) {
+                    originDoc.pid = newId
+                }
+            })
+            doc._id = newId;
+            doc.projectId = targetProjectId;
+        })
+        await this.ctx.model.Apidoc.Docs.Docs.insertMany(sourceDocs);
         //文档导出
-        const userInfo = this.ctx.session.userInfo;
-        const record = {
-            operation: "export",
-            projectId,
-            recordInfo: {
-                exportType: "fork"
-            },
-            operator: userInfo.realName || userInfo.loginName,
-        };
-        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
-        return;
+        // const userInfo = this.ctx.session.userInfo;
+        // const record = {
+        //     operation: "export",
+        //     projectId,
+        //     recordInfo: {
+        //         exportType: "fork"
+        //     },
+        //     operator: userInfo.realName || userInfo.loginName,
+        // };
+        // await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
+        return sourceDocs;
     }
 
 

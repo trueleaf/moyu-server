@@ -138,11 +138,13 @@ class docsOperationController extends Controller {
     /** 
      * @description        fork项目中部分文档
      * @author             shuxiaokai
-     * @create             2020-11-13 09:24
+     * @create             2020-11-13 21:24
      * @param  {String}    sourceProjectId 源项目id
      * @param  {String}    targetProjectId 目标项目id
-     * @param  {String}    targetMountedDocId 挂载点文档id
-     * @param  {Array}     selectedDocs 被选择的需要导出的节点
+     * @param  {String}    targetMountedId 挂载点文档id
+     * @param  {Number}    targetNodeSort 目标节点排序
+     * @param  {Array}     selectedDocIds 被选择的需要导出的节点
+     * @param  {String}    sourceRootId 源节点根元素id
      * @return {String}    返回字符串
      */
     async forkDocs() {
@@ -155,11 +157,17 @@ class docsOperationController extends Controller {
                 targetProjectId: {
                     type: "string",
                 },
-                targetMountedDocId: {
+                targetMountedId: {
                     type: "string"
                 },
-                selectedDocs: {
+                selectedDocIds: {
                     type: "array",
+                },
+                sourceRootId: {
+                    type: "string"
+                },
+                targetNodeSort: {
+                    type: "number"
                 },
             };
             this.ctx.validate(reqRule, params);
