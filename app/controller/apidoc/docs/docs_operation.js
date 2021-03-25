@@ -158,7 +158,8 @@ class docsOperationController extends Controller {
                     type: "string",
                 },
                 targetMountedId: {
-                    type: "string"
+                    type: "string",
+                    required: false
                 },
                 selectedDocIds: {
                     type: "array",

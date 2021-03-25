@@ -199,6 +199,7 @@ class DocsService extends Service {
             recordInfo: {
                 nodeName: result.info.name,
                 nodeId: _id,
+                method: item.method,
                 nodeSnapshot: item,
             },
             operator: userInfo.realName || userInfo.loginName,

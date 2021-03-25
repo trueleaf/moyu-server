@@ -241,7 +241,7 @@ class docsOperationService extends Service {
         console.log(targetNodeSort)
         const sourceRootDoc = sourceDocs.find(doc => doc._id.toString() === sourceRootId);
         sourceRootDoc.sort = targetNodeSort;
-        sourceRootDoc.pid = targetMountedId;
+        sourceRootDoc.pid = targetMountedId || "";
         sourceDocs.forEach(doc => {
             const newId = this.app.mongoose.Types.ObjectId()
             const oldId = doc._id.toString();
