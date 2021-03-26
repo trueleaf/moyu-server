@@ -32,7 +32,7 @@ class ProjectVariableService extends Service {
             name, 
         });
         if (hasName) {
-            this.ctx.helper.errorInfo("变量名称重复", 1003);
+            this.ctx.helper.throwCustomError("变量名称重复", 1003);
         }
         await this.ctx.model.Apidoc.Project.ProjectVariable.create(doc);
         return;
@@ -69,7 +69,7 @@ class ProjectVariableService extends Service {
             name, 
         });
         if (hasName) {
-            this.ctx.helper.errorInfo("变量名称重复", 1003);
+            this.ctx.helper.throwCustomError("变量名称重复", 1003);
         }
         await this.ctx.model.Apidoc.Project.ProjectVariable.findByIdAndUpdate({ _id }, updateDoc);
         return;

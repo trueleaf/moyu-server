@@ -29,7 +29,7 @@ class roleService extends Service {
         doc.remark = remark;
         const hasRole = await this.ctx.model.Security.Role.findOne({ roleName });
         if (hasRole) {
-            this.ctx.helper.errorInfo("角色名称已经存在", 1003);
+            this.ctx.helper.throwCustomError("角色名称已经存在", 1003);
         }
         await this.ctx.model.Security.Role.create(doc);
         return;

@@ -58,7 +58,7 @@ module.exports = app => {
         },
         operation: { //针对文档的操作,copy 拷贝文档，import 文档导入
             type: String,
-            enum: ["addFolder", "addDoc", "copyDoc", "copyFolder", "deleteFolder", "deleteDoc", "deleteMany", "editDoc", "position",  "rename", "import", "export"]
+            enum: ["addFolder", "addDoc", "copyDoc", "copyFolder", "deleteFolder", "deleteDoc", "deleteMany", "editDoc", "position",  "rename", "import", "export", "addServer", "deleteServer", "editServer"]
         },
         operator: { //操作者
             type: String

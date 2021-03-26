@@ -24,11 +24,11 @@ class DocsService extends Service {
         const userInfo = this.ctx.session.userInfo;
         const projectInfo = await this.ctx.model.Apidoc.Project.Project.findById({ _id: projectId });
         if (!projectInfo) {
-            this.ctx.helper.errorInfo("暂无当前项目权限", 4002);
+            this.ctx.helper.throwCustomError("暂无当前项目权限", 4002);
         }
         const accessUsers = projectInfo.members.concat([projectInfo.owner])
         if (!accessUsers.find(user => user.userId === userInfo.id || user.id === userInfo.id)) {
-            this.ctx.helper.errorInfo("暂无当前项目权限", 4002);
+            this.ctx.helper.throwCustomError("暂无当前项目权限", 4002);
         }
     }
     /** 
@@ -48,7 +48,7 @@ class DocsService extends Service {
         if (pid) { //不允许在非folder类型文档下面插入文档
             const parentDoc = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id: pid });
             if (parentDoc.info.type !== "folder") {
-                this.ctx.helper.errorInfo("操作不被允许，文件下面不允许嵌套文件夹", 4001);
+                this.ctx.helper.throwCustomError("操作不被允许，文件下面不允许嵌套文件夹", 4001);
             }
         }
         const doc = {
@@ -147,7 +147,7 @@ class DocsService extends Service {
             isFolder = parentDoc.isFolder;
         }
         if (parentDoc && !isFolder) {
-            this.ctx.helper.errorInfo("操作不被允许，pid对应的父元素不是文件夹", 4001);
+            this.ctx.helper.throwCustomError("操作不被允许，pid对应的父元素不是文件夹", 4001);
         }
         await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, updateDoc);
         //添加历史记录
@@ -383,6 +383,7 @@ class DocsService extends Service {
             "item.url": 1,
             isFolder: 1,
             sort: 1,
+            updatedAt: 1,
         }).sort({
             isFolder: -1,
             sort: 1
@@ -396,6 +397,7 @@ class DocsService extends Service {
                     name: val.info.name,
                     type: val.info.type,
                     creator: val.info.creator,
+                    updatedAt: val.updatedAt,
                     isFolder: val.isFolder,
                     children: val.children,
                 };
@@ -411,6 +413,7 @@ class DocsService extends Service {
                         path: val.item.url ? val.item.url.path : "",
                     },
                     creator: val.info.creator,
+                    updatedAt: val.updatedAt,
                     isFolder: val.isFolder,
                     children: val.children,
                 };                

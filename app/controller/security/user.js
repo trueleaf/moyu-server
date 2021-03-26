@@ -519,7 +519,7 @@ class userController extends Controller {
             const fileType = file.mimeType;
             const filePath = file.filepath;
             if (fileType !== "application/vnd.ms-excel" && fileType !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
-                this.ctx.helper.errorInfo("文件格式不正确", 1006);
+                this.ctx.helper.throwCustomError("文件格式不正确", 1006);
             }
             const result = await this.ctx.service.security.user.addUserByExcel({ filePath });
             this.ctx.helper.successResponseData(result);

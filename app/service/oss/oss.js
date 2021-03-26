@@ -106,7 +106,7 @@ class ossService extends Service {
         const fullPath = `${rootDir}${parentFolder}${folderName}`;
         const currentList = await this.getFileList({ folder: parentFolder });
         if (currentList.find(val => val.name === name && val.type === "folder")) {
-            this.ctx.helper.errorInfo("当前文件夹已经存在", 1003);
+            this.ctx.helper.throwCustomError("当前文件夹已经存在", 1003);
         }
         await client.put(fullPath, new Buffer(""));
         return;

@@ -17,6 +17,9 @@ module.exports = app => {
         example: { //例子
             type: String,
         },
+        refer: { //标准参考链接
+            type: String
+        },
         remark: { //备注信息
             type: String,
         },

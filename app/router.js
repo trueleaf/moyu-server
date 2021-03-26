@@ -192,4 +192,9 @@ module.exports = app => {
 
     router.get("/api/ssh/logs", controller.eoms.logs.getLogsFileList); //日志文件列表
     router.get("/api/ssh/logs_detail", controller.eoms.logs.getLogDetail); //日志文件详情
+    //=====================================字典(词典)====================================//
+    router.post("/api/dictionary/dictionary", controller.dictionary.dictionary.addDictionary); //新增词汇
+    router.get("/api/dictionary/dictionary_list", controller.dictionary.dictionary.getDictionaryList); //获取词汇列表
+    // router.put("/api/dictionary/dictionary", controller.eoms.logs.getDictionaryList); //词汇列表
+    // router.delete("/api/dictionary/dictionary", controller.eoms.logs.getDictionaryList); //词汇列表
 };

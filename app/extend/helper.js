@@ -59,7 +59,7 @@ module.exports = {
      * @param {number}     code - 任意类型变量       
      */
 
-    errorInfo(msg = "", code) {
+    throwCustomError(msg = "", code) {
         const error = new Error(msg);
         error.code = code;
         throw error;

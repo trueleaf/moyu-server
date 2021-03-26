@@ -14,12 +14,12 @@ module.exports = options => {
                 return;
             }
             if (!ctx.session.userInfo) { 
-                ctx.helper.errorInfo("登录过期", 4100);
+                ctx.helper.throwCustomError("登录过期", 4100);
             }
             const loginName = ctx.session.userInfo.loginName;
             const userInfo = await ctx.model.Security.User.findOne({ loginName });
             if (!userInfo) {
-                ctx.helper.errorInfo("登录过期", 4100);
+                ctx.helper.throwCustomError("登录过期", 4100);
             }
             const allServerRoutes = await ctx.model.Security.ServerRoutes.find({}, { path: 1, method: 1 });
             const roleIds = userInfo.roleIds;
@@ -39,7 +39,7 @@ module.exports = options => {
                 return val.method === reqMethod && val.path === requestUrl;
             });
             if (!hasPermission) {
-                ctx.helper.errorInfo("暂无权限", 4002);
+                ctx.helper.throwCustomError("暂无权限", 4002);
             }
             await next();            
         } catch (error) {

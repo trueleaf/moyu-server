@@ -29,10 +29,10 @@ class ServicesService extends Service {
         const hasService = await this.ctx.model.Apidoc.Docs.DocsServices.findOne({ projectId, url });
         const serviceNum = await this.ctx.model.Apidoc.Docs.DocsServices.countDocuments({ projectId });
         if (hasService) {
-            this.ctx.helper.errorInfo("当前url已经存在", 1003);
+            this.ctx.helper.throwCustomError("当前url已经存在", 1003);
         }
         if (serviceNum > 5) {
-            this.ctx.helper.errorInfo("每个项目只允许最多5个地址", 1005);
+            this.ctx.helper.throwCustomError("每个项目只允许最多5个地址", 1005);
         }
         await this.ctx.model.Apidoc.Docs.DocsServices.create(doc);
         return;

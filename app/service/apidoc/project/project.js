@@ -203,7 +203,7 @@ class ProjectService extends Service {
         ];
         const hasPermission = await this.ctx.model.Apidoc.Project.Project.findOne(query);
         if (!hasPermission) {
-            this.ctx.helper.errorInfo("暂无权限", 4002);
+            this.ctx.helper.throwCustomError("暂无权限", 4002);
         } 
         await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id }, updateDoc);
         return;
@@ -221,7 +221,7 @@ class ProjectService extends Service {
         const projectShare = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ shareId }).lean();
         const selectedDocs = projectShare.selectedDocs;
         if (!projectShare) {
-            this.ctx.helper.errorInfo("不存在当前文档", 101003);
+            this.ctx.helper.throwCustomError("不存在当前文档", 101003);
         }
         const { projectId } = projectShare;
         const projectPassword = projectShare.password;
@@ -232,9 +232,9 @@ class ProjectService extends Service {
         const passwordIsEqual = password === projectPassword;
         let result = null; 
         if (hasPassword && !passwordIsEqual) { //密码错误
-            this.ctx.helper.errorInfo("密码错误", 101001);
+            this.ctx.helper.throwCustomError("密码错误", 101001);
         }  else if (isExpire) { //文档过期
-            this.ctx.helper.errorInfo("文档已过期", 101002);
+            this.ctx.helper.throwCustomError("文档已过期", 101002);
         } else if ((hasPassword && passwordIsEqual && !isExpire) || (!hasPassword && !isExpire)) {
             const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
             const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById({ projectId });
@@ -275,7 +275,7 @@ class ProjectService extends Service {
         const { shareId } = params;
         const projectShare = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ shareId }, { projectId: 1, projectName: 1 }).lean();
         if (!projectShare) {
-            this.ctx.helper.errorInfo("不存在当前文档", 101003);
+            this.ctx.helper.throwCustomError("不存在当前文档", 101003);
         }
         return projectShare;
     }

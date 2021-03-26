@@ -31,7 +31,7 @@ class DocsInternalParamsService extends Service {
             enabled: true
         });
         if (hasKey) {
-            this.ctx.helper.errorInfo("参数名称已经存在", 1003);
+            this.ctx.helper.throwCustomError("参数名称已经存在", 1003);
         }
         const doc = {};
         doc.key = key;
@@ -153,7 +153,7 @@ class DocsInternalParamsService extends Service {
             key
         });
         if (hasKey) {
-            this.ctx.helper.errorInfo("参数名称已经存在", 1003);
+            this.ctx.helper.throwCustomError("参数名称已经存在", 1003);
         }
         await this.ctx.model.Apidoc.DocsInternalParams.findByIdAndUpdate({
             _id

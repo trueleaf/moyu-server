@@ -26,7 +26,7 @@ class clientRoutesService extends Service {
 
         const hasPath = await this.ctx.model.Security.ClientRoutes.findOne({ path });
         if (hasPath) {
-            this.ctx.helper.errorInfo("路由已经存在", 1003);
+            this.ctx.helper.throwCustomError("路由已经存在", 1003);
         }
         await this.ctx.model.Security.ClientRoutes.create(doc);
         return;
@@ -77,7 +77,7 @@ class clientRoutesService extends Service {
         }
         const hasPath = await this.ctx.model.Security.ClientRoutes.findOne({ _id: { $ne: _id }, path });
         if (hasPath) {
-            this.ctx.helper.errorInfo("路由已经存在", 1003);
+            this.ctx.helper.throwCustomError("路由已经存在", 1003);
         }
         await this.ctx.model.Security.ClientRoutes.findByIdAndUpdate({ _id }, updateDoc);
         return;

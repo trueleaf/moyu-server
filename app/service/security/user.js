@@ -64,28 +64,28 @@ class userService extends Service {
 
 
         if (loginName.match(/guest/)) {
-            this.ctx.helper.errorInfo("用户名不能以包含guest", 2010);
+            this.ctx.helper.throwCustomError("用户名不能以包含guest", 2010);
         }
         if (isExpire) {
-            this.ctx.helper.errorInfo("验证码失效", 2002);
+            this.ctx.helper.throwCustomError("验证码失效", 2002);
         }
         if (!hasSmsPhone) {
-            this.ctx.helper.errorInfo("验证码不正确", 2003);
+            this.ctx.helper.throwCustomError("验证码不正确", 2003);
         }
         if (smsInfo.smsCode !== smsCode) {
-            this.ctx.helper.errorInfo("验证码不正确", 2003);
+            this.ctx.helper.throwCustomError("验证码不正确", 2003);
         }
         if (phone !== smsInfo.phone) { //注册手机号与接受验证码手机号不一致
-            this.ctx.helper.errorInfo("注册手机号与接受验证码手机号不一致", 2001);
+            this.ctx.helper.throwCustomError("注册手机号与接受验证码手机号不一致", 2001);
         }
         
         const hasUser = await this.ctx.model.Security.User.findOne({ loginName }); 
         const hasPhone = await this.ctx.model.Security.User.findOne({ phone }); 
         if (hasUser) {
-            this.ctx.helper.errorInfo("账号已存在", 1003);
+            this.ctx.helper.throwCustomError("账号已存在", 1003);
         }
         if (hasPhone) {
-            this.ctx.helper.errorInfo("该手机号已经绑定", 1003);
+            this.ctx.helper.throwCustomError("该手机号已经绑定", 1003);
         }
 
         const doc = {};
@@ -187,13 +187,13 @@ class userService extends Service {
         const hasUser = await this.ctx.model.Security.User.findOne({ loginName }); 
         const hasPhone = await this.ctx.model.Security.User.findOne({ phone }); 
         if (loginName.match(/guest/)) {
-            this.ctx.helper.errorInfo("用户名不能以包含guest", 2010);
+            this.ctx.helper.throwCustomError("用户名不能以包含guest", 2010);
         }
         if (hasUser) {
-            this.ctx.helper.errorInfo("账号已存在", 1003);
+            this.ctx.helper.throwCustomError("账号已存在", 1003);
         }
         if (hasPhone) {
-            this.ctx.helper.errorInfo("该手机号已经绑定", 1003);
+            this.ctx.helper.throwCustomError("该手机号已经绑定", 1003);
         }
         const doc = {};
         const hash = crypto.createHash("md5");
@@ -231,19 +231,19 @@ class userService extends Service {
         //验证码是否正确
         if (loginRecord && loginRecord.loginTimes > 3 && this.ctx.session.captcha && this.ctx.session.captcha.toLowerCase() !== captcha.toLowerCase()) {
             await this.addLoginTimes();
-            this.ctx.helper.errorInfo("验证码错误", 2003);
+            this.ctx.helper.throwCustomError("验证码错误", 2003);
         }
         //用户不存在
         if (!userInfo) {
             await this.addLoginTimes();
             if (loginRecord && loginRecord.loginTimes > 3) {
-                this.ctx.helper.errorInfo("需要填写验证码", 2006);
+                this.ctx.helper.throwCustomError("需要填写验证码", 2006);
             } else {
-                this.ctx.helper.errorInfo("用户名或密码错误", 2004);
+                this.ctx.helper.throwCustomError("用户名或密码错误", 2004);
             }
         }
         if (!userInfo.enable) {
-            this.ctx.helper.errorInfo("用户被锁定", 2008);    
+            this.ctx.helper.throwCustomError("用户被锁定", 2008);    
         }
         //判断密码
         const hash = crypto.createHash("md5");
@@ -252,9 +252,9 @@ class userService extends Service {
         if (userInfo.password !== hashPassword) {
             await this.addLoginTimes();
             if (loginRecord && loginRecord.loginTimes > 3) {
-                this.ctx.helper.errorInfo("需要填写验证码", 2006);
+                this.ctx.helper.throwCustomError("需要填写验证码", 2006);
             } else {
-                this.ctx.helper.errorInfo("用户名或密码错误", 2004);
+                this.ctx.helper.throwCustomError("用户名或密码错误", 2004);
             }
         }
         //登录成功
@@ -295,7 +295,7 @@ class userService extends Service {
     async checkIsLockIP() {
         const loginRecord = await this.ctx.model.Security.LoginRecord.findOne({ ip: this.ctx.ip });
         if (loginRecord && loginRecord.loginTimes > 10) { //登录次数超过4次
-            this.ctx.helper.errorInfo("ip锁定", 2007);
+            this.ctx.helper.throwCustomError("ip锁定", 2007);
         }
         return loginRecord;
     }
@@ -332,15 +332,15 @@ class userService extends Service {
         const smsInfo = await this.ctx.model.Security.Sms.findOne({ phone });
         console.log(smsInfo, smsCode)
         if (!smsInfo) {
-            this.ctx.helper.errorInfo("请输入正确的手机号码", 2005);
+            this.ctx.helper.throwCustomError("请输入正确的手机号码", 2005);
         }
         if (smsInfo.smsCode !== smsCode) {
-            this.ctx.helper.errorInfo("短信验证码错误", 2003);
+            this.ctx.helper.throwCustomError("短信验证码错误", 2003);
         }
 
         const userInfo = await this.ctx.model.Security.User.findOne({ phone });
         if (!userInfo) {
-            this.ctx.helper.errorInfo("当前用户不存在", 2004);
+            this.ctx.helper.throwCustomError("当前用户不存在", 2004);
         }
 
         Object.assign(result, {
@@ -489,10 +489,10 @@ class userService extends Service {
         const matchNumber = /\d/;
         const inValidKey = /[^\w\d!@#]/;
         if (newPassword.match(inValidKey)) {
-            this.ctx.helper.errorInfo("密码存在非法字段", 1007);
+            this.ctx.helper.throwCustomError("密码存在非法字段", 1007);
         }
         if (!newPassword.match(matchString) || !newPassword.match(matchNumber) || newPassword.length < 8) {
-            this.ctx.helper.errorInfo("密码长度和格式不正确", 1007);
+            this.ctx.helper.throwCustomError("密码长度和格式不正确", 1007);
         }
         //=========================================================================//        
         const userInfo = await this.ctx.model.Security.User.findOne({ _id });
@@ -500,7 +500,7 @@ class userService extends Service {
         hash.update((oldPassword + userInfo.salt).slice(2));
         const hashPassword = hash.digest("hex");
         if (userInfo.password !== hashPassword) {
-            this.ctx.helper.errorInfo("原密码错误", 2009);
+            this.ctx.helper.throwCustomError("原密码错误", 2009);
         }
 
         const hash2 = crypto.createHash("md5");
@@ -632,7 +632,7 @@ class userService extends Service {
             const user = sheetJson[i];
             const loginName = user["登录名称"];
             if (loginName.match(/guest/)) {
-                this.ctx.helper.errorInfo("用户名不能以包含guest", 2010);
+                this.ctx.helper.throwCustomError("用户名不能以包含guest", 2010);
             }
             const phone = user["手机号码"];
             const realName = user["真实姓名"];

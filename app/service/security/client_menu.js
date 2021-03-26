@@ -28,7 +28,7 @@ class clientMenuService extends Service {
         }
         const hasClientMenu = await this.ctx.model.Security.ClientMenu.findOne({ name });
         if (hasClientMenu) {
-            this.ctx.helper.errorInfo("当前菜单名称已存在", 1003);
+            this.ctx.helper.throwCustomError("当前菜单名称已存在", 1003);
         }
         const result = await this.ctx.model.Security.ClientMenu.create(doc);
         return { _id: result._id };
@@ -59,7 +59,7 @@ class clientMenuService extends Service {
         }
         const hasClientMenu = await this.ctx.model.Security.ClientMenu.findOne({ _id: { $ne: _id }, name });
         if (hasClientMenu) {
-            this.ctx.helper.errorInfo("当前菜单名称已存在", 1003);
+            this.ctx.helper.throwCustomError("当前菜单名称已存在", 1003);
         }
         await this.ctx.model.Security.ClientMenu.findByIdAndUpdate({ _id }, updateDoc);
         return;

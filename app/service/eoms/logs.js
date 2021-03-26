@@ -20,7 +20,7 @@ class logsService extends Service {
         const logsPath = info.options.dir;
         const hasLogsFolder = fs.existsSync(logsPath);
         if (!hasLogsFolder) {
-            this.ctx.helper.errorInfo("目录不存在", 10001);
+            this.ctx.helper.throwCustomError("目录不存在", 10001);
         }
         const fileList = await shell.ls("-l", logsPath);
         return fileList.map(fileInfo => {
@@ -48,7 +48,7 @@ class logsService extends Service {
         const fileName = path.resolve(logsDirPath, name);
         const hasFile = fs.existsSync(fileName);
         if (!hasFile) {
-            this.ctx.helper.errorInfo("文件不存在", 10002);
+            this.ctx.helper.throwCustomError("文件不存在", 10002);
         }
         const fd = await fs.open(fileName, "r");
         const buffer = Buffer.alloc(length);
