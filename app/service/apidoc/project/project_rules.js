@@ -8,6 +8,9 @@
 const Service = require("egg").Service;
 const escapeStringRegexp = require("escape-string-regexp");
 const BASE_RULES = {
+    requireDescription: false, //备注是否必填
+    requireValue: false, //参数值是否必填
+    enableCollapseAnimation: false, //是否开启折叠动画
     fileInFolderLimit: 8, //单个文件夹默认限制文件个数
     dominLimit: 5, //每个项目限制配置域名个数
     contentType: [ //支持传参方式
