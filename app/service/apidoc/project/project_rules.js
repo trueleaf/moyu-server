@@ -102,10 +102,13 @@ class ProjectRulesService extends Service {
     /**
         @description    修改项目规则
         @author         shuxiaokai
-        @create         2020/12/2 上午9:50:36
-        @param {String}        projectId 数据id
+        @create         2020/12/2 上午9:46:59
+        @param {String}        projectId 项目id
         @param {number?}       fileInFolderLimit 单个文件夹默认限制文件个数
         @param {number?}       dominLimit 每个项目限制配置域名个数
+        @param {boolean?}      requireDescription 备注是否必填
+        @param {boolean?}      requireValue 参数值是否必填
+        @param {boolean?}      enableCollapseAnimation 是否开启折叠动画
         @param {array?}        contentType contentType
         @param {array?}        requestMethods 请求方法
         @return    null
@@ -117,6 +120,9 @@ class ProjectRulesService extends Service {
             dominLimit,
             contentType,
             requestMethods,
+            requireDescription,
+            requireValue,
+            enableCollapseAnimation,
         } = params;
         let doc = {};
         doc.projectId = projectId;
@@ -124,6 +130,9 @@ class ProjectRulesService extends Service {
         doc.dominLimit = dominLimit || BASE_RULES.dominLimit;
         doc.contentType = contentType || BASE_RULES.contentType;
         doc.requestMethods = requestMethods || BASE_RULES.requestMethods;
+        doc.requireDescription = requireDescription || BASE_RULES.requireDescription;
+        doc.requireValue = requireValue || BASE_RULES.requireValue;
+        doc.enableCollapseAnimation = enableCollapseAnimation || BASE_RULES.enableCollapseAnimation;
         await this.ctx.model.Apidoc.Project.ProjectRules.updateOne({
             projectId
         }, doc, {

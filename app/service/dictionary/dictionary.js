@@ -21,18 +21,25 @@ class dictionaryService extends Service {
         @return       null
     */
     async addDictionary(params) {
-        const { cnName, enName, example, refer, remark, tags } = params;
+        const { cnName, synonym, enName, example, refer, remark, tags } = params;
         const userInfo = this.ctx.session.userInfo;
         const doc = {};
         doc.cnName = cnName;
         doc.enName = enName;
         doc.example = example;
         doc.refer = refer;
+        doc.synonym = synonym;
         doc.remark = this.ctx.helper.escape(remark);
         doc.tags = tags;
         doc.creator = userInfo.realName || userInfo.loginName;
         doc.maintainer = userInfo.realName || userInfo.loginName;
-        const hasCnName = await this.ctx.model.Dictionary.Dictionary.findOne({ cnName });
+        const hasCnName = await this.ctx.model.Dictionary.Dictionary.findOne({ $or: [{
+            cnName
+        }, {
+            synonym: {
+                $in: synonym
+            }
+        }] });
         if (hasCnName) {
             this.ctx.helper.throwCustomError("中文名称已存在", 1003);;
         }
@@ -48,13 +55,37 @@ class dictionaryService extends Service {
         @return       null
     */
     async editDictionary(params) { 
-        const { _id, name } = params;
+        const { _id, cnName, synonym, enName, example, refer, remark, tags } = params;
         const updateDoc = {};
-        if (name) {
-            updateDoc.name = name; 
+        if (cnName) {
+            doc.cnName = cnName;
         }
-        const hasClientMenu = await this.ctx.model.Security.ClientMenu.findOne({ _id: { $ne: _id }, name });
-        if (hasClientMenu) {
+        if (enName) {
+            doc.enName = enName;
+        }
+        if (example) {
+            doc.example = example;
+        }
+        if (refer) {
+            doc.refer = refer;
+        }
+        if (synonym && synonym.length > 0) {
+            doc.synonym = synonym;
+        }
+        if (remark) {
+            doc.remark = this.ctx.helper.escape(remark);
+        }
+        if (tags) {
+            doc.tags = tags;
+        }
+        const hasCnName = await this.ctx.model.Dictionary.Dictionary.findOne({ _id: { $ne: _id }, $or: [{
+            cnName
+        }, {
+            synonym: {
+                $in: synonym
+            }
+        }] });
+        if (hasCnName) {
             this.ctx.helper.throwCustomError("当前菜单名称已存在", 1003);
         }
         await this.ctx.model.Dictionary.Dictionary.findByIdAndUpdate({ _id }, updateDoc);

@@ -29,7 +29,8 @@ class dictionaryController extends Controller {
                     type: "string"
                 },
                 enName: {
-                    type: "string"
+                    type: "string",
+                    required: false,
                 },
                 example: {
                     type: "string",

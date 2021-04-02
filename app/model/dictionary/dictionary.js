@@ -11,6 +11,9 @@ module.exports = app => {
         cnName: { //中文名称
             type: String,
         },
+        synonym: { //同义词
+            type: Array
+        },
         enName: { //英文名称
             type: String,
         },
