@@ -18,6 +18,7 @@ module.exports = app => {
     router.put("/api/project/unstar", controller.security.user.unStarProject); // 取消收藏项目
     router.get("/api/project/share_info", controller.apidoc.project.project.getOnlineProjectInfo); // 根据分享id获取项目基本信息
     router.get("/api/project/share", controller.apidoc.project.project.getOnlineProjectDetail); // 根据分享id获取项目详情(在线链接)
+    router.post("/api/project/import", controller.apidoc.project.project.importAsProject); // 直接导入项目
 
     
     //项目规则

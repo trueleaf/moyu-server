@@ -127,8 +127,6 @@ class ProjectService extends Service {
         const doc = {};
         doc.projectName = projectName;
         doc.remark = remark;
-        doc.apidoc = [];
-        doc.apiNum = 0;
         doc.members = members;
         doc.owner = {
             id: this.ctx.session.userInfo.id,
@@ -279,7 +277,60 @@ class ProjectService extends Service {
         }
         return projectShare;
     }
-
+    /** 
+        @description  导入生成项目
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      projectName 项目名称
+        @param {Object}       moyuData 文档信息
+        @return       null
+    */
+    async importAsProject(params) { 
+        const { projectName, moyuData } = params;
+        const project = {};
+        project.projectName = projectName;
+        project.docNum = moyuData.docs.length;
+        project.owner = {
+            id: this.ctx.session.userInfo.id,
+            name: this.ctx.session.userInfo.realName || this.ctx.session.userInfo.loginName
+        };
+        const projectInfo = await this.ctx.model.Apidoc.Project.Project.create(project);
+        const { docs = [], hosts = [] } = moyuData;
+        const convertDocs = docs.map((docInfo) => {
+            const newId = this.app.mongoose.Types.ObjectId()
+            const oldId = docInfo._id.toString();
+            docs.forEach(originDoc => {
+                if (originDoc.pid === oldId) {
+                    originDoc.pid = newId
+                }
+            })
+            docInfo.projectId = projectInfo._id;
+            docInfo._id = newId;
+            return docInfo;
+        })
+        const convertHosts = hosts.map(host => {
+            host._id = this.app.mongoose.Types.ObjectId();
+            host.projectId = projectInfo._id;
+            return host;
+        })
+        await this.ctx.model.Apidoc.Docs.DocsServices.create(convertHosts);
+        await this.ctx.model.Apidoc.Docs.Docs.create(convertDocs)
+        //添加历史记录
+        const userInfo = this.ctx.session.userInfo;
+        const record = {
+            operation: "import",
+            projectId: projectInfo._id,
+            recordInfo: {
+                importNum: moyuData.length,
+            },
+            operator: userInfo.realName || userInfo.loginName,
+        };
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
+        return {
+            id: projectInfo._id,
+            name: projectName
+        };
+    }
 }
 
 module.exports = ProjectService;
