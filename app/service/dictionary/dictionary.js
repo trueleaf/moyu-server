@@ -48,10 +48,17 @@ class dictionaryService extends Service {
     }
 
     /**
-        @description  修改字典(词库)
+        @description  修改字典(词典)
         @author        shuxiaokai
         @create       2019-10-06 12:44"
-        @param {String}      id 项目id
+        @param {String}      _id 词典id
+        @param {String}      cnName 中文名称
+        @param {String}      enName  英文名称
+        @param {String}      synonym 同义词
+        @param {String}      example 例子
+        @param {String}      refer 标准参考连接
+        @param {String}      remark 备注信息
+        @param {String}      tags 标签信息
         @return       null
     */
     async editDictionary(params) { 
@@ -100,7 +107,8 @@ class dictionaryService extends Service {
     */
     async deleteDictionary(params) {
         const { ids } = params;
-        const result = await this.ctx.model.Dictionary.Dictionary.deleteMany({ _id: { $in: ids }});
+        console.log(ids)
+        const result = await this.ctx.model.Dictionary.Dictionary.updateMany({ _id: { $in: ids }}, {  $set: { enabled: false } });
         return result;
     }
     /**
@@ -111,15 +119,17 @@ class dictionaryService extends Service {
         @param {Number?}           pageSize 每页大小   
         @param {String?}           cnName 中文名称   
         @param {String?}           enName 英文名称   
-        @param {Array<String>?}    creators 创建者   
+        @param {String}            creator 创建者   
         @param {Array<String>?}    maintainers 维护者信息   
         @param {number?}           startTime 创建日期     @remark 默认精确到毫秒       
         @param {number?}           endTime 结束日期       @remark 默认精确到毫秒
         @return       null
     */
     async getDictionaryList(params) {
-        const { pageNum, pageSize, startTime, endTime, cnName, enName, creators, maintainers } = params;
-        const query = {};
+        const { pageNum, pageSize, startTime, endTime, cnName, enName, creator, maintainers } = params;
+        const query = {
+            enabled: true
+        };
         let skipNum = 0;
         let limit = 100;
         if (pageSize != null && pageNum != null) {
@@ -135,17 +145,33 @@ class dictionaryService extends Service {
         if (enName) {
             query.enName = new RegExp(escapeStringRegexp(enName), "i");
         }
-        if (creators && creators.length > 0) {
-            query.creator = { $in: creators };
+        if (creator) {
+            query.creator = new RegExp(escapeStringRegexp(creator), "i");;
         }
         if (maintainers && maintainers.length > 0) {
             query.maintainer = { $in: maintainers };
         }
-        const rows = await this.ctx.model.Dictionary.Dictionary.find(query, { remark: 0 }).skip(skipNum).limit(limit);
+        const rows = await this.ctx.model.Dictionary.Dictionary.find(query, { remark: 0 }).sort({ updatedAt: -1 }).skip(skipNum).limit(limit);
         const total = await this.ctx.model.Dictionary.Dictionary.find(query).countDocuments();
         const result = {};
         result.rows = rows;
         result.total = total;
+        return result;
+    }
+    /**
+     * @description        根据id获取词汇详情
+     * @author             shuxiaokai
+     * @create             2021-04-13 10:20
+     * @param {string}     id - 词汇id
+     * @return {String}    返回字符串
+     */
+    async getDictionaryById(params) {
+        const { id } = params;
+        const query = {
+            enabled: true,
+            _id: id
+        };
+        const result = await this.ctx.model.Dictionary.Dictionary.findOne(query, { cnName: 1, remark: 1, synonym: 1, tags: 1 })
         return result;
     }
 }
