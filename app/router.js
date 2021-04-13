@@ -6,6 +6,7 @@
 
 module.exports = app => {
     const { router, controller } = app;
+    router.get("/test", controller.test.test.test); // 获取项目列表
     //=====================================项目相关====================================//
     router.post("/api/project/add_project", controller.apidoc.project.project.addProject); // 新增项目
     router.get("/api/project/project_list", controller.apidoc.project.project.getProjectList); // 获取项目列表
@@ -196,6 +197,8 @@ module.exports = app => {
     //=====================================字典(词典)====================================//
     router.post("/api/dictionary/dictionary", controller.dictionary.dictionary.addDictionary); //新增词汇
     router.get("/api/dictionary/dictionary_list", controller.dictionary.dictionary.getDictionaryList); //获取词汇列表
+    router.get("/api/dictionary/dictionary_by_id", controller.dictionary.dictionary.getDictionaryById); //根据id获取词汇信息
+    router.delete("/api/dictionary/dictionary", controller.dictionary.dictionary.deleteDictionary); //删除词汇
     // router.put("/api/dictionary/dictionary", controller.eoms.logs.getDictionaryList); //词汇列表
     // router.delete("/api/dictionary/dictionary", controller.eoms.logs.getDictionaryList); //词汇列表
 };

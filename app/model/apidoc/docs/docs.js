@@ -86,10 +86,6 @@ module.exports = app => {
                 default: 0,
             },
         },
-        enabled: { //使能
-            type: Boolean,
-            default: true
-        },
         item: {
             method: { //请求方法
                 type: String,
@@ -135,6 +131,10 @@ module.exports = app => {
                 enum: ["application/json", "application/x-www-form-urlencoded", "multipart/form-data"],
                 default: "application/json"  
             },
+        },
+        enabled: { //使能
+            type: Boolean,
+            default: true
         },
     }, { timestamps: true });
     return mongoose.model("doc", docSchema);
