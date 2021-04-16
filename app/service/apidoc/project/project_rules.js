@@ -14,6 +14,11 @@ const BASE_RULES = {
     fileInFolderLimit: 8, //单个文件夹默认限制文件个数
     dominLimit: 5, //每个项目限制配置域名个数
     contentType: [ //支持传参方式
+        { //restful
+            name: "path",
+            value: "path",
+            enabled: true
+        },
         {
             name: "params",
             value: "params",
@@ -34,6 +39,21 @@ const BASE_RULES = {
             value: "x-www-form-urlencoded",
             enabled: true
         },
+        {
+            name: "text/plain",
+            value: "text/plain",
+            enabled: true
+        },
+        {
+            name: "text/html",
+            value: "text/html",
+            enabled: true
+        },
+        {
+            name: "application/xml",
+            value: "application/xml",
+            enabled: true
+        },
     ], 
     requestMethods: [
         {
@@ -41,21 +61,21 @@ const BASE_RULES = {
             value: "get",
             enabled: true, //是否启用
             iconColor: "#28a745", //请求方式颜色
-            enabledContenType: ["params"], //当前请求方式允许的ContentType
+            enabledContenType: ["path", "params"], //当前请求方式允许的ContentType
         },
         {
             name: "POST",
             value: "post",
             enabled: true, //是否启用
             iconColor: "#ffc107",
-            enabledContenType: ["json", "formData"],
+            enabledContenType: ["params", "json", "formData"],
         },
         {
             name: "PUT",
             value: "put",
             enabled: true, //是否启用
             iconColor: "#409EFF",
-            enabledContenType: ["json"],
+            enabledContenType: ["params", "json"],
         },
         {
             name: "DEL",
@@ -69,14 +89,14 @@ const BASE_RULES = {
             value: "options",
             enabled: false, 
             iconColor: "#17a2b8",
-            enabledContenType: ["json"],
+            enabledContenType: ["params", "json"],
         },
         {
             name: "PATCH",
             value: "patch",
             enabled: true, 
             iconColor: "#17a2b8",
-            enabledContenType: ["json"],
+            enabledContenType: ["params", "json"],
         },
     ],
 };
