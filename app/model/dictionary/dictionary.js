@@ -11,6 +11,9 @@ module.exports = app => {
         cnName: { //中文名称
             type: String,
         },
+        synonym: { //同义词
+            type: Array
+        },
         enName: { //英文名称
             type: String,
         },
@@ -32,6 +35,10 @@ module.exports = app => {
         maintainer: { //更新人员维护人员
             type: String
         },
+        enabled: { //使能
+            type: Boolean,
+            default: true
+        }
     }, { timestamps: true });
 
     return mongoose.model("dictionary", dictionarySchema);

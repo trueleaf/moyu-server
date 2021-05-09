@@ -22,6 +22,7 @@ module.exports = appInfo => {
     const permission = {
         whiteList: [
             "/mock",
+            "/test",
             "/ssh",
             "/api/security/register",
             "/api/project/share",

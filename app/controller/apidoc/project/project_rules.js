@@ -37,6 +37,9 @@ class ProjectRulesController extends Controller {
         @param {String}        projectId 项目id
         @param {number?}       fileInFolderLimit 单个文件夹默认限制文件个数
         @param {number?}       dominLimit 每个项目限制配置域名个数
+        @param {boolean?}      requireDescription 备注是否必填
+        @param {boolean?}      requireValue 参数值是否必填
+        @param {boolean?}      enableCollapseAnimation 是否开启折叠动画
         @param {array?}        contentType contentType
         @param {array?}        requestMethods 请求方法
         @return    null
@@ -54,6 +57,18 @@ class ProjectRulesController extends Controller {
                 },
                 dominLimit: {
                     type: "number",
+                    required: false
+                },
+                requireDescription: {
+                    type: "boolean",
+                    required: false
+                },
+                requireValue: {
+                    type: "boolean",
+                    required: false
+                },
+                enableCollapseAnimation: {
+                    type: "boolean",
                     required: false
                 },
                 contentType: {

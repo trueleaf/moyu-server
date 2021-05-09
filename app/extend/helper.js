@@ -47,7 +47,7 @@ module.exports = {
 
         this.ctx.body = {
             code: 5000,
-            msg: "内部错误",
+            msg: process.env.NODE_ENV === "production" ? "内部错误" : error.message,
         };
     },
 

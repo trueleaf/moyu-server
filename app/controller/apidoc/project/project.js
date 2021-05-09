@@ -260,7 +260,33 @@ class ProjectController extends Controller {
             return;
         }
     }
-    
+    /** 
+        @description  导入生成项目
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      projectName 项目名称
+        @param {Object}       moyuData 文档信息
+        @return       null
+    */
+    async importAsProject() { 
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                projectName: {
+                    type: "string",
+                },
+                moyuData: {
+                    type: "object",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.project.project.importAsProject(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
 }
 
 module.exports = ProjectController;

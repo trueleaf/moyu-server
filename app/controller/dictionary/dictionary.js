@@ -29,7 +29,8 @@ class dictionaryController extends Controller {
                     type: "string"
                 },
                 enName: {
-                    type: "string"
+                    type: "string",
+                    required: false,
                 },
                 example: {
                     type: "string",
@@ -86,7 +87,14 @@ class dictionaryController extends Controller {
         @description  修改字典(词典)
         @author        shuxiaokai
         @create       2019-10-06 12:44"
-        @param {String}      _id 
+        @param {String}      _id 词典id
+        @param {String}      cnName 中文名称
+        @param {String}      enName  英文名称
+        @param {String}      synonym 同义词
+        @param {String}      example 例子
+        @param {String}      refer 标准参考连接
+        @param {String}      remark 备注信息
+        @param {String}      tags 标签信息
         @return       null
     */
     async editDictionary() { 
@@ -95,6 +103,34 @@ class dictionaryController extends Controller {
             const reqRule = {
                 _id: {
                     type: "string",
+                },
+                cnName: {
+                    type: "string",
+                    required: false
+                },
+                enName: {
+                    type: "string",
+                    required: false
+                },
+                synonym: {
+                    type: "array",
+                    required: false
+                },
+                example: {
+                    type: "string",
+                    required: false
+                },
+                refer: {
+                    type: "string",
+                    required: false
+                },
+                remark: {
+                    type: "string",
+                    required: false
+                },
+                tags: {
+                    type: "array",
+                    required: false
                 },
             };
             this.ctx.validate(reqRule, params);
@@ -163,6 +199,31 @@ class dictionaryController extends Controller {
             };
             this.ctx.validate(reqRule, params);
             const result = await this.ctx.service.dictionary.dictionary.getDictionaryList(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+
+    /**
+     * @description        根据id获取词汇详情
+     * @author             shuxiaokai
+     * @create             2021-04-13 10:20
+     * @param {string}     id - 词汇id
+     * @return {String}    返回字符串
+     */
+     async getDictionaryById() { 
+        try {
+            const params = this.ctx.query;
+            const reqRule = {
+                id: {
+                    type: "string",
+                    required: false,
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.dictionary.dictionary.getDictionaryById(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);

@@ -6,6 +6,7 @@
 
 module.exports = app => {
     const { router, controller } = app;
+    router.get("/test", controller.test.test.test); // 获取项目列表
     //=====================================项目相关====================================//
     router.post("/api/project/add_project", controller.apidoc.project.project.addProject); // 新增项目
     router.get("/api/project/project_list", controller.apidoc.project.project.getProjectList); // 获取项目列表
@@ -18,6 +19,7 @@ module.exports = app => {
     router.put("/api/project/unstar", controller.security.user.unStarProject); // 取消收藏项目
     router.get("/api/project/share_info", controller.apidoc.project.project.getOnlineProjectInfo); // 根据分享id获取项目基本信息
     router.get("/api/project/share", controller.apidoc.project.project.getOnlineProjectDetail); // 根据分享id获取项目详情(在线链接)
+    router.post("/api/project/import", controller.apidoc.project.project.importAsProject); // 直接导入项目
 
     
     //项目规则
@@ -49,14 +51,20 @@ module.exports = app => {
     router.get("/api/project/doc_word", controller.apidoc.docs.docs.convertDocToWord); //将文档导出为word
     router.get("/api/project/doc_mock", controller.apidoc.docs.docs.getMockData); //获取文档mock数据
     
+
+
+
     //=====================================文档操作相关====================================//
     router.post("/api/project/export/html", controller.apidoc.docs.docsOperation.exportAsHTML); //获取文档全部离线数据
     router.post("/api/project/export/fork", controller.apidoc.docs.docsOperation.forkDocs); //导出部分文档到别的项目
     router.post("/api/project/export/moyu", controller.apidoc.docs.docsOperation.exportAsMoyuDoc); //导出为摸鱼数据
     router.post("/api/project/import/moyu", controller.apidoc.docs.docsOperation.importAsMoyuDoc); //导入摸鱼数据
     router.post("/api/project/export/online", controller.apidoc.docs.docsOperation.exportAsOnlineDoc); //生成在线链接
-
-    // router.get("/api/project/export/online", controller.apidoc.docs.docs.exportAsOnlineDoc); //生成在线链接
+    //==========文档标签
+    router.get("/api/docs/docs_tag_enum", controller.apidoc.docs.docsTag.getDocsTagEnum); //获取文档标签枚举
+    router.put("/api/docs/docs_tag", controller.apidoc.docs.docsTag.editDocsTag); //修改文档标签
+    router.post("/api/docs/docs_tag", controller.apidoc.docs.docsTag.addDocsTag); //新增文档标签
+    router.delete("/api/docs/docs_tag", controller.apidoc.docs.docsTag.deleteDocsTag); //删除文档标签
 
     //=====================================内置请求返回参数相关路由====================================//
     router.post("/api/apidoc/docs/docs_internal_params", controller.apidoc.docs.docsInternalParams.createDocsInternalParams); //新增内置请求返回参数
@@ -195,6 +203,8 @@ module.exports = app => {
     //=====================================字典(词典)====================================//
     router.post("/api/dictionary/dictionary", controller.dictionary.dictionary.addDictionary); //新增词汇
     router.get("/api/dictionary/dictionary_list", controller.dictionary.dictionary.getDictionaryList); //获取词汇列表
+    router.get("/api/dictionary/dictionary_by_id", controller.dictionary.dictionary.getDictionaryById); //根据id获取词汇信息
+    router.delete("/api/dictionary/dictionary", controller.dictionary.dictionary.deleteDictionary); //删除词汇
     // router.put("/api/dictionary/dictionary", controller.eoms.logs.getDictionaryList); //词汇列表
     // router.delete("/api/dictionary/dictionary", controller.eoms.logs.getDictionaryList); //词汇列表
 };

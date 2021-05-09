@@ -8,9 +8,17 @@
 const Service = require("egg").Service;
 const escapeStringRegexp = require("escape-string-regexp");
 const BASE_RULES = {
+    requireDescription: false, //备注是否必填
+    requireValue: false, //参数值是否必填
+    enableCollapseAnimation: false, //是否开启折叠动画
     fileInFolderLimit: 8, //单个文件夹默认限制文件个数
     dominLimit: 5, //每个项目限制配置域名个数
     contentType: [ //支持传参方式
+        { //restful
+            name: "path",
+            value: "path",
+            enabled: true
+        },
         {
             name: "params",
             value: "params",
@@ -31,6 +39,21 @@ const BASE_RULES = {
             value: "x-www-form-urlencoded",
             enabled: true
         },
+        {
+            name: "text/plain",
+            value: "text/plain",
+            enabled: true
+        },
+        {
+            name: "text/html",
+            value: "text/html",
+            enabled: true
+        },
+        {
+            name: "application/xml",
+            value: "application/xml",
+            enabled: true
+        },
     ], 
     requestMethods: [
         {
@@ -38,21 +61,21 @@ const BASE_RULES = {
             value: "get",
             enabled: true, //是否启用
             iconColor: "#28a745", //请求方式颜色
-            enabledContenType: ["params"], //当前请求方式允许的ContentType
+            enabledContenType: ["path", "params"], //当前请求方式允许的ContentType
         },
         {
             name: "POST",
             value: "post",
             enabled: true, //是否启用
             iconColor: "#ffc107",
-            enabledContenType: ["json", "formData"],
+            enabledContenType: ["params", "json", "formData"],
         },
         {
             name: "PUT",
             value: "put",
             enabled: true, //是否启用
             iconColor: "#409EFF",
-            enabledContenType: ["json"],
+            enabledContenType: ["params", "json"],
         },
         {
             name: "DEL",
@@ -66,14 +89,14 @@ const BASE_RULES = {
             value: "options",
             enabled: false, 
             iconColor: "#17a2b8",
-            enabledContenType: ["json"],
+            enabledContenType: ["params", "json"],
         },
         {
             name: "PATCH",
             value: "patch",
             enabled: true, 
             iconColor: "#17a2b8",
-            enabledContenType: ["json"],
+            enabledContenType: ["params", "json"],
         },
     ],
 };
@@ -99,10 +122,13 @@ class ProjectRulesService extends Service {
     /**
         @description    修改项目规则
         @author         shuxiaokai
-        @create         2020/12/2 上午9:50:36
-        @param {String}        projectId 数据id
+        @create         2020/12/2 上午9:46:59
+        @param {String}        projectId 项目id
         @param {number?}       fileInFolderLimit 单个文件夹默认限制文件个数
         @param {number?}       dominLimit 每个项目限制配置域名个数
+        @param {boolean?}      requireDescription 备注是否必填
+        @param {boolean?}      requireValue 参数值是否必填
+        @param {boolean?}      enableCollapseAnimation 是否开启折叠动画
         @param {array?}        contentType contentType
         @param {array?}        requestMethods 请求方法
         @return    null
@@ -114,6 +140,9 @@ class ProjectRulesService extends Service {
             dominLimit,
             contentType,
             requestMethods,
+            requireDescription,
+            requireValue,
+            enableCollapseAnimation,
         } = params;
         let doc = {};
         doc.projectId = projectId;
@@ -121,6 +150,9 @@ class ProjectRulesService extends Service {
         doc.dominLimit = dominLimit || BASE_RULES.dominLimit;
         doc.contentType = contentType || BASE_RULES.contentType;
         doc.requestMethods = requestMethods || BASE_RULES.requestMethods;
+        doc.requireDescription = requireDescription || BASE_RULES.requireDescription;
+        doc.requireValue = requireValue || BASE_RULES.requireValue;
+        doc.enableCollapseAnimation = enableCollapseAnimation || BASE_RULES.enableCollapseAnimation;
         await this.ctx.model.Apidoc.Project.ProjectRules.updateOne({
             projectId
         }, doc, {

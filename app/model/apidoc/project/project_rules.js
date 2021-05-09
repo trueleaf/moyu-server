@@ -25,6 +25,15 @@ module.exports = app => {
             max: 20,
             required: true,
         },
+        requireDescription: { //参数是否必填
+            type: Boolean
+        },
+        requireValue: { //参数值是否必填
+            type: Boolean
+        },
+        enableCollapseAnimation: { //是否开启折叠动画
+            type: Boolean
+        },
         contentType: [{ //contentType
             value: { //contentType值
                 type: String,
