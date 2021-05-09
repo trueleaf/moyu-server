@@ -450,6 +450,7 @@ class DocsService extends Service {
         const result = [];
         const docsInfo = await this.ctx.model.Apidoc.Docs.Docs.find({
             projectId: projectId,
+            isFolder: true,
             enabled: true,
         }).sort({
             isFolder: -1,
