@@ -186,7 +186,8 @@ class DocsService extends Service {
         const result = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { 
             $set: { 
                 item, 
-                "info.description": description 
+                "info.description": description,
+                "info.tag": info.tag 
             },
             $inc: {
                 "info.spendTime": spendTime
