@@ -26,8 +26,12 @@ class DocsTagService extends Service {
         doc.color = color;
         doc.creator = userInfo.realName || userInfo.loginName;
         doc.maintainer = userInfo.realName || userInfo.loginName;
-        await this.ctx.model.Apidoc.Docs.DocsTag.create(doc);
-        return;
+        const result = await this.ctx.model.Apidoc.Docs.DocsTag.create(doc);
+        return {
+            name: result.name,
+            color: result.color,
+            _id: result._id,
+        };
     }
 
     /**
@@ -41,7 +45,8 @@ class DocsTagService extends Service {
         @return       null
     */
     async editDocsTag(params) { 
-        const { _id, name } = params;
+        const { _id, name, projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const updateDoc = {};
         if (name) {
             updateDoc.name = name; 
@@ -62,7 +67,8 @@ class DocsTagService extends Service {
         @return       null
     */
     async deleteDocsTag(params) {
-        const { ids } = params;
+        const { ids, projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const result = await this.ctx.model.Apidoc.Docs.DocsTag.deleteMany({ _id: { $in: ids }});
         return result;
     }

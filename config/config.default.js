@@ -71,7 +71,7 @@ module.exports = appInfo => {
     // session
     const session = {
         key: "jobtool_session",
-        maxAge: 24 * 3600 * 1000 * 30, // 1个月
+        maxAge: 24 * 3600 * 1000 * 7, // 7天
         httpOnly: true,
         encrypt: true,
         path: "/"
