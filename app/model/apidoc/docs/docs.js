@@ -73,7 +73,15 @@ module.exports = app => {
                 enum: ["folder", "api", "markdown"]
             },
             tag: { //文档标签
-                type: String,
+                name: { //名称
+                    type: String,
+                },
+                color: { //颜色
+                    type: String,
+                },
+                _id: { //唯一id
+                    type: String,
+                }
             },
             creator: { //创建者
                 type: String,

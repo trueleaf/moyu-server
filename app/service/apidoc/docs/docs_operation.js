@@ -238,7 +238,6 @@ class docsOperationService extends Service {
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(targetProjectId);
 
         const sourceDocs = await this.ctx.model.Apidoc.Docs.Docs.find({ _id: { $in: selectedDocIds }, projectId: sourceProjectId }).lean();
-        console.log(targetNodeSort)
         const sourceRootDoc = sourceDocs.find(doc => doc._id.toString() === sourceRootId);
         sourceRootDoc.sort = targetNodeSort;
         sourceRootDoc.pid = targetMountedId || "";
