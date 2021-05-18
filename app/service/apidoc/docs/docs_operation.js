@@ -145,7 +145,7 @@ class docsOperationService extends Service {
             docInfo._id = newId;
             return docInfo;
         })
-        const convertHosts = hosts.map(host => {
+        const convertHosts = hosts && hosts.map(host => {
             host._id = this.app.mongoose.Types.ObjectId();
             host.projectId = projectId;
             return host;
