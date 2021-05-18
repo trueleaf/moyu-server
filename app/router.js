@@ -14,6 +14,11 @@ module.exports = app => {
     router.get("/api/project/project_enum", controller.apidoc.project.project.getProjectEnum); // 获取项目列表枚举
     router.delete("/api/project/delete_project", controller.apidoc.project.project.deleteProjectList); // 删除项目
     router.put("/api/project/edit_project", controller.apidoc.project.project.editProject); // 修改项目
+
+    router.post("/api/project/add_user", controller.apidoc.project.project.addUser); // 项目新增用户
+    router.delete("/api/project/delete_user", controller.apidoc.project.project.deleteUser); // 项目删除用户
+    router.put("/api/project/change_permission", controller.apidoc.project.project.changePermission); // 改变用户权限
+
     router.put("/api/project/visited", controller.security.user.addLastVisit); // 记录用户访问项目记录
     router.put("/api/project/star", controller.security.user.starProject); // 收藏项目
     router.put("/api/project/unstar", controller.security.user.unStarProject); // 取消收藏项目

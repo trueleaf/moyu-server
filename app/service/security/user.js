@@ -148,11 +148,12 @@ class userService extends Service {
             ...originProject,
             projectName: "快乐摸鱼",
             _id: projectId,
-            members: [],
-            owner: {
-                name: loginName,
-                id: createdUser._id,
-            },
+            members: [{
+                loginName,
+                realName: loginName,
+                userId: createdUser._id,
+                permission: "admin"
+            }],
         };
         const convertDocs = originDocs.map((docInfo) => {
             const newId = this.app.mongoose.Types.ObjectId()
