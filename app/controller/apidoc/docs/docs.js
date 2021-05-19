@@ -76,42 +76,26 @@ class DocsController extends Controller {
     }
 
     /** 
-        @description  新增多个空白文档
+        @description  粘贴挂载文档
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @param {String}        projectId 项目id
-        @param {String}        pid 文档父元素
-        @param {String}        name 接口名称
-        @param {String}        host 接口host
-        @param {String}        url 接口url
-        @param {String}        templateId 模板id 
+        @param {Array<Doc>}    docs 文档 
     */
 
-    async newMultiDoc() { 
+    async pasteDocs() { 
         try {
             const params = this.ctx.request.body;
             const reqRule = {
                 projectId: {
                     type: "string"
                 },
-                pid: {
-                    type: "string",
-                },
-                name: {
-                    type: "string"
-                },
-                host: {
-                    type: "string"
-                },
-                url: {
-                    type: "string"
-                },
-                templateId: {
-                    type: "string"
+                docs: {
+                    type: "array"
                 },
             };
             this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.newMultiDoc(params);
+            const result = await this.ctx.service.apidoc.docs.docs.pasteDocs(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);

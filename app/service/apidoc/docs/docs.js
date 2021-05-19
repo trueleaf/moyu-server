@@ -303,7 +303,7 @@ class DocsService extends Service {
         @return       null
     */
 
-    async newMultiDoc(params) {
+    async pasteDocs(params) {
         const { projectId, pid, name, host, url, templateId } = params;
         // const doc = {
         //     docName: name,
