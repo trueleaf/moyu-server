@@ -54,7 +54,7 @@ module.exports = app => {
     router.get("/api/project/filter_doc", controller.apidoc.docs.docs.filterDoc); //根据url获取文档id，用于菜单筛选
     router.get("/api/project/doc_word", controller.apidoc.docs.docs.convertDocToWord); //将文档导出为word
     router.get("/api/project/doc_mock", controller.apidoc.docs.docs.getMockData); //获取文档mock数据
-    router.get("/api/project/paste_docs", controller.apidoc.docs.docs.pasteDocs); //粘贴文档
+    router.post("/api/project/paste_docs", controller.apidoc.docs.docs.pasteDocs); //粘贴文档
     
 
 

@@ -291,37 +291,46 @@ class DocsService extends Service {
         return result;
     }
     /** 
-        @description  新增多个空白文档
+        @description  粘贴挂载文档
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @param {String}        projectId 项目id
-        @param {String}        pid 文档父元素
-        @param {String}        name 接口名称
-        @param {String}        host 接口host
-        @param {String}        url 接口url
-        @param {String}        templateId 模板id 
-        @return       null
+        @param {String?}       mountedId 挂载id
+        @param {Array<Doc>}    docs 文档 
     */
-
     async pasteDocs(params) {
-        const { projectId, pid, name, host, url, templateId } = params;
-        // const doc = {
-        //     docName: name,
-        //     isFolder: false,
-        //     pid,
-        //     projectId,
-        //     ancestors: [...ancestors],
-        //     sort: Date.now(),
-        //     item: item || {}
-        // };        
-        // for (let i = 0; i < 4; i++) {
-            
-        // }
-
-
-
-        const result = await this.ctx.model.Apidoc.Docs.DocsRestfulTemplate.findOne({ _id: templateId });
-        return result;
+        const { projectId, docs, mountedId = "" } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const docIds = docs.map(v => v._id);
+        const matchedDocs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, _id: { $in: docIds } }).lean();
+        const idMap = [];
+        //先重新绑定pid
+        matchedDocs.forEach((docInfo) => {
+            const newId = this.app.mongoose.Types.ObjectId();
+            const oldId = docInfo._id.toString();
+            const oldPid = docInfo.pid;
+            const mapInfo = {
+                oldId,
+                newId,
+                oldPid,
+            };
+            matchedDocs.forEach((docInfo2) => {
+                const pid2 = docInfo2.pid;
+                if (pid2 === oldId) { //说明这个是子元素
+                    docInfo2.pid = newId;
+                    mapInfo.newPid = newId;
+                }
+            })
+            const hasParent = matchedDocs.find((v) => v._id === docInfo.pid);
+            if (!hasParent) {
+                docInfo.pid = mountedId;
+                mapInfo.newPid = mountedId;
+            }
+            idMap.push(mapInfo);
+            docInfo._id = newId;
+        })
+        await this.ctx.model.Apidoc.Docs.Docs.insertMany(matchedDocs);
+        return idMap;
     }
 
     /** 

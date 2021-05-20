@@ -80,15 +80,19 @@ class DocsController extends Controller {
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @param {String}        projectId 项目id
+        @param {String?}       mountedId 挂载id
         @param {Array<Doc>}    docs 文档 
     */
-
     async pasteDocs() { 
         try {
             const params = this.ctx.request.body;
             const reqRule = {
                 projectId: {
                     type: "string"
+                },
+                mountedId: {
+                    type: "string",
+                    required: false,
                 },
                 docs: {
                     type: "array"
