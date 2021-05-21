@@ -466,6 +466,68 @@ class DocsController extends Controller {
             return;
         }
     }
+    /**
+        @description   获取文档回收站记录
+        @author        shuxiaokai
+        @create        2020-10-08 22:10
+        @param {Number?}           pageNum 当前页码
+        @param {Number?}           pageSize 每页大小   
+        @param {number?}           startTime 创建日期     @remark 默认精确到毫秒       
+        @param {number?}           endTime 结束日期       @remark 默认精确到毫秒
+        @param {string?}           url 请求url
+        @param {string?}           docName 文档名称
+        @param {array?}            operators 操作者
+        @param {string}            projectId 项目id
+        @return       null
+    */
+    async getDocDeletedList() { 
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                pageNum: {
+                    type: "number",
+                    convertType: "number",
+                    required: false
+                },
+                pageSize: {
+                    type: "number",
+                    convertType: "number",
+                    required: false
+                },
+                startTime: {
+                    type: "number",
+                    convertType: "number",
+                    required: false
+                },
+                endTime: {
+                    type: "number",
+                    convertType: "number",
+                    required: false
+                },
+                url: {
+                    type: "string",
+                    required: false
+                },
+                docName: {
+                    type: "string",
+                    required: false,
+                },
+                operators: {
+                    type: "array",
+                    required: false
+                },
+                projectId: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docs.getDocDeletedList(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
 }
 
 module.exports = DocsController;

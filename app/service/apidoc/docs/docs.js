@@ -187,6 +187,7 @@ class DocsService extends Service {
             $set: { 
                 item, 
                 "info.description": description,
+                "info.maintainer": userInfo.realName || userInfo.loginName,
                 "info.tag": info.tag 
             },
             $inc: {
@@ -265,7 +266,15 @@ class DocsService extends Service {
     async deleteDoc(params) { 
         const { ids, projectId } = params;
         const userInfo = this.ctx.session.userInfo;
-        const result = await this.ctx.model.Apidoc.Docs.Docs.updateMany({ projectId, _id: { $in: ids }}, { $set: { enabled: false }}); //文档祖先包含删除元素，那么该文档也需要被删除
+        const result = await this.ctx.model.Apidoc.Docs.Docs.updateMany({ 
+            projectId,
+            _id: { $in: ids }
+        }, { 
+            $set: { 
+                enabled: false,
+                "info.deletePerson": userInfo.realName || userInfo.loginName
+            }
+        }); //文档祖先包含删除元素，那么该文档也需要被删除
         const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
         await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }}); //删除文档
         const deleteDocs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, _id: { $in: ids }});
@@ -725,6 +734,76 @@ class DocsService extends Service {
             }
         }
         foo(plainData, result);
+        return result;
+    }
+    /**
+        @description   获取文档回收站记录
+        @author        shuxiaokai
+        @create        2020-10-08 22:10
+        @param {Number?}           pageNum 当前页码
+        @param {Number?}           pageSize 每页大小   
+        @param {number?}           startTime 创建日期     @remark 默认精确到毫秒       
+        @param {number?}           endTime 结束日期       @remark 默认精确到毫秒
+        @param {string?}           url 请求url
+        @param {string?}           docName 文档名称
+        @param {array?}            operators 操作者
+        @param {string}            projectId 项目id
+        @return       null
+    */
+    async getDocDeletedList(params) {
+        const { pageNum, pageSize, startTime, endTime, operators, projectId, url, docName } = params;
+        const query = {
+            enabled: false,
+        };
+        let skipNum = 0;
+        let limit = 100;
+        query.projectId = projectId;
+        if (pageSize != null && pageNum != null) {
+            skipNum = (pageNum - 1) * pageSize;
+            limit = pageSize;
+        }
+        if (startTime != null && endTime != null) {
+            query.updatedAt = { $gt: startTime, $lt: endTime };
+        }
+        if (url) {
+            query["item.url.path"] = new RegExp(escapeStringRegexp(url));
+        }
+        if (docName) {
+            query["info.name"] = new RegExp(escapeStringRegexp(docName));
+        }
+        if (operators && operators.length > 0) {
+            query["info.deletePerson"] = {
+                $in: operators,
+            };
+        }
+        const rows = await this.ctx.model.Apidoc.Docs.Docs.find(
+            query,
+            {
+                "item.url": 1,
+                "item.method": 1,
+                "info.name": 1,
+                "info.type": 1,
+                "info.deletePerson": 1,
+                "updatedAt": 1,
+                isFolder: 1,
+            }
+        ).skip(skipNum).sort({ createdAt: -1 }).limit(limit);
+        const total = await this.ctx.model.Apidoc.Docs.Docs.find(query).countDocuments();
+        const result = {};
+        result.rows = rows.map(data => {
+            return {
+                name: data.info.name,
+                type: data.info.type,
+                deletePerson: data.info.deletePerson,
+                isFolder: data.isFolder,
+                host: data.item.url.host,
+                path: data.item.url.path,
+                method: data.item.method,
+                updatedAt: data.updatedAt,
+                _id: data._id,
+            };
+        });
+        result.total = total;
         return result;
     }
 }

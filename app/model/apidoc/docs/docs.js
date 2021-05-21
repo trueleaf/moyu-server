@@ -89,6 +89,9 @@ module.exports = app => {
             maintainer: { //维护人员，最近一次更新人员
                 type: String,
             },
+            deletePerson: { //删除文档的人
+                type: String
+            },
             spendTime: { //录入接口花费时间
                 type: Number,
                 default: 0,

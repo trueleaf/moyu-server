@@ -85,7 +85,9 @@ module.exports = app => {
     router.get("/api/docs/docs_records", controller.apidoc.docs.docsRecords.getDocsRecordsList); //获取文档修改记录
     router.get("/api/docs/docs_history_operator_enum", controller.apidoc.docs.docsHistory.getHistoryOperatorEnum); //获取文档操作人员基本信息
 
-    
+    //======文档被删除纪录
+    router.post("/api/docs/docs_deleted_list", controller.apidoc.docs.docs.getDocDeletedList); //获取文档修改记录
+
     //======全局变量
     router.post("/api/project/project_variable", controller.apidoc.project.projectVariable.addProjectVariable); //新增预设参数组
     router.delete("/api/project/project_variable", controller.apidoc.project.projectVariable.deleteProjectVariable); //删除预设参数组
