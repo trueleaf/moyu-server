@@ -528,6 +528,39 @@ class DocsController extends Controller {
             return;
         }
     }
+
+    /**
+     * @description        恢复接口或文件夹
+     * @author             shuxiaokai
+     * @create             2021-05-24 14:27
+     * @param {string}     _id 节点id
+     * @param {string}     projectId 项目id
+     * @param {Boolean}    restoreChildren 是否恢复子节点
+     * @return {String}    返回字符串
+     */
+     async restroeNode() { 
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                _id: {
+                    type: "string",
+                },
+                projectId: {
+                    type: "string",
+                },
+                restoreChildren: {
+                    type: "boolean",
+                    required: false,
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docs.restroeNode(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
 }
 
 module.exports = DocsController;

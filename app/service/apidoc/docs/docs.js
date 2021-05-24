@@ -785,6 +785,7 @@ class DocsService extends Service {
                 "info.type": 1,
                 "info.deletePerson": 1,
                 "updatedAt": 1,
+                pid: 1,
                 isFolder: 1,
             }
         ).skip(skipNum).sort({ createdAt: -1 }).limit(limit);
@@ -801,10 +802,41 @@ class DocsService extends Service {
                 method: data.item.method,
                 updatedAt: data.updatedAt,
                 _id: data._id,
+                pid: data.pid,
             };
         });
         result.total = total;
         return result;
+    }
+    /**
+     * @description        恢复接口或文件夹
+     * @author             shuxiaokai
+     * @create             2021-05-24 14:27
+     * @param {string}     _id 节点id
+     * @param {string}     projectId 项目id
+     * @param {Boolean}    restoreChildren 是否恢复子节点
+     * @return {String}    返回字符串
+     */
+     async restroeNode(params) {
+        const { _id, projectId, restoreChildren } = params;
+        const updateIds = [];
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const allDocs = await this.ctx.model.Apidoc.Docs.Docs.find({
+            projectId,
+        }, { pid: 1, enabled: 1 }).lean();
+        const startDoc = allDocs.find((val) => val._id.toString() === _id);
+        let parentDoc = allDocs.find((val) => val._id.toString() === startDoc.pid);
+        updateIds.push(startDoc._id.toString());
+        while (parentDoc && !parentDoc.enabled) {
+            updateIds.push(parentDoc._id.toString());
+            parentDoc = allDocs.find((val) => val._id.toString() === parentDoc.pid);
+        }
+        await this.ctx.model.Apidoc.Docs.Docs.updateMany({ projectId, _id: { $in: updateIds } }, {
+            $set: {
+                enabled: true,
+            },
+        })
+        return;
     }
 }
 
