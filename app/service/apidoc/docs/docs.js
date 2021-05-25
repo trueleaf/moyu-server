@@ -825,7 +825,6 @@ class DocsService extends Service {
             projectId,
         }, { pid: 1, enabled: 1 }).lean();
         const startDoc = allDocs.find((val) => val._id.toString() === _id);
-        const isFolder = startDoc.isFolder;
         let parentDoc = allDocs.find((val) => val._id.toString() === startDoc.pid);
         updateIds.push(startDoc._id.toString());
         while (parentDoc && !parentDoc.enabled) {
