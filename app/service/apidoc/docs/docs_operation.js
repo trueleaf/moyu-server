@@ -236,7 +236,7 @@ class docsOperationService extends Service {
         const { sourceProjectId, targetProjectId, targetMountedId, selectedDocIds, sourceRootId, targetNodeSort } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(sourceProjectId);
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(targetProjectId);
-
+        const docsIdMap = {};
         const sourceDocs = await this.ctx.model.Apidoc.Docs.Docs.find({ _id: { $in: selectedDocIds }, projectId: sourceProjectId }).lean();
         const sourceRootDoc = sourceDocs.find(doc => doc._id.toString() === sourceRootId);
         sourceRootDoc.sort = targetNodeSort;
@@ -244,6 +244,7 @@ class docsOperationService extends Service {
         sourceDocs.forEach(doc => {
             const newId = this.app.mongoose.Types.ObjectId()
             const oldId = doc._id.toString();
+            docsIdMap[oldId] = newId;
             sourceDocs.forEach(originDoc => {
                 if (originDoc.pid === oldId) {
                     originDoc.pid = newId
@@ -264,7 +265,7 @@ class docsOperationService extends Service {
         //     operator: userInfo.realName || userInfo.loginName,
         // };
         // await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
-        return sourceDocs;
+        return docsIdMap;
     }
 
 

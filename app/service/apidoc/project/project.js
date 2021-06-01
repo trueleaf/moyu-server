@@ -91,14 +91,11 @@ class ProjectService extends Service {
         //是否为创建者或者为成员
         query.$or = [
             {
-                "owner.id": this.ctx.session.userInfo.id
-            },
-            {
                 "members.userId": this.ctx.session.userInfo.id
             }
         ];
         const limit = 100;
-        const result = await this.ctx.model.Apidoc.Project.Project.find(query, { projectName: 1 }).limit(limit);
+        const result = await this.ctx.model.Apidoc.Project.Project.find(query, { projectName: 1, enabled: true }).limit(limit);
         return result;
     }
 
