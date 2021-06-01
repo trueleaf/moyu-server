@@ -26,12 +26,14 @@ module.exports = options => {
             
             for (let i = 0; i < roleIds.length; i++) {
                 const roleInfo = await ctx.model.Security.Role.findById({ _id: roleIds[i] });
-                const serverRoutesPathes = roleInfo.serverRoutes.map(val => {
-                    return allServerRoutes.find(val2 => {
-                        return val2._id.toString() === val;
+                if (roleInfo) {
+                    const serverRoutesPathes = roleInfo.serverRoutes.map(val => {
+                        return allServerRoutes.find(val2 => {
+                            return val2._id.toString() === val;
+                        });
                     });
-                });
-                serverRoutes = serverRoutes.concat(serverRoutesPathes);
+                    serverRoutes = serverRoutes.concat(serverRoutesPathes);
+                }
             }
             serverRoutes = ctx.helper.unique(serverRoutes, "id");
             const reqMethod = ctx.request.method.toLowerCase();

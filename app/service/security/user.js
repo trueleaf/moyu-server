@@ -528,20 +528,22 @@ class userService extends Service {
         let clientBannerResult = []; 
         for (let i = 0; i < roleIds.length; i++) {
             const roleInfo = await this.ctx.model.Security.Role.findById({ _id: roleIds[i] });
-            //前端路由
-            const clientRoutes = roleInfo.clientRoutes.map(val => {
-                return allClientRoutes.find(val2 => {
-                    return val2._id.toString() === val;
+            if (roleInfo) {
+                //前端路由
+                const clientRoutes = roleInfo.clientRoutes.map(val => {
+                    return allClientRoutes.find(val2 => {
+                        return val2._id.toString() === val;
+                    });
                 });
-            });
-            clientRoutesResult = clientRoutesResult.concat(clientRoutes);
-            //前端菜单
-            const clientBanner = roleInfo.clientBanner.map(val => {
-                return allClientMenu.find(val2 => {
-                    return val2._id.toString() === val;
+                clientRoutesResult = clientRoutesResult.concat(clientRoutes);
+                //前端菜单
+                const clientBanner = roleInfo.clientBanner.map(val => {
+                    return allClientMenu.find(val2 => {
+                        return val2._id.toString() === val;
+                    });
                 });
-            });
-            clientBannerResult = clientBannerResult.concat(clientBanner);
+                clientBannerResult = clientBannerResult.concat(clientBanner);
+            }
         }
         clientRoutesResult = this.ctx.helper.unique(clientRoutesResult, "id");
         clientBannerResult = this.ctx.helper.unique(clientBannerResult, "id");
