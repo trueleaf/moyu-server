@@ -6,10 +6,14 @@ module.exports = options => {
         const requestUrl = ctx.request.url.replace(/\?.*$/g, "");
         let serverRoutes = []; //用户所拥有得权限列表
         try {
-            if (options.whiteList.find(val => {
+            const isInWhiteList = options.whiteList.find(val => {
                 const reg = new RegExp(val);
                 return requestUrl.match(reg);
-            })) { //路由白名单放行
+            })
+            if (isInWhiteList) { //路由白名单放行
+                await next();
+                return;
+            } else if (options.free) { //free模式全部放行
                 await next();
                 return;
             }

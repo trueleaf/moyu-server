@@ -20,6 +20,7 @@ module.exports = appInfo => {
    
     const mock = {};
     const permission = {
+        free: true, //默认情况取消权限校验，方便用户使用
         whiteList: [
             "/mock",
             "/test",

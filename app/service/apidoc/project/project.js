@@ -282,6 +282,12 @@ class ProjectService extends Service {
             id: this.ctx.session.userInfo.id,
             name: this.ctx.session.userInfo.realName || this.ctx.session.userInfo.loginName
         };
+        project.members = [{
+            userId: this.ctx.session.userInfo.id,
+            loginName: this.ctx.session.userInfo.realName || this.ctx.session.userInfo.loginName,
+            realName: this.ctx.session.userInfo.realName,
+            permission: "admin",
+        }];
         const projectInfo = await this.ctx.model.Apidoc.Project.Project.create(project);
         const { docs = [], hosts = [] } = moyuData;
         const convertDocs = docs.map((docInfo) => {
