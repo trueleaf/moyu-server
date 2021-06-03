@@ -168,8 +168,10 @@ class userService extends Service {
             docInfo.info.creator = loginName;
             return docInfo;
         })
-        await this.ctx.model.Apidoc.Project.Project.create(project);
-        await this.ctx.model.Apidoc.Docs.Docs.create(convertDocs);
+        if (originProject) {
+            await this.ctx.model.Apidoc.Project.Project.create(project);
+            await this.ctx.model.Apidoc.Docs.Docs.create(convertDocs);
+        }
         // console.log(originDocs.map(val => !val.isFolder).length)
         return loginResult;
     }
