@@ -175,7 +175,6 @@ class ProjectController extends Controller {
         @create        2020-10-08 22:10
         @param {String}      id 项目id
         @param {String}      projectName 项目名称
-        @param {Array}       members 成员信息
         @param {String}      remark 项目备注
         @return       null
     */
@@ -195,10 +194,6 @@ class ProjectController extends Controller {
                     type: "string",
                     required: false
                 },
-                members: {
-                    type: "array",
-                    required: false
-                },
             };
             this.ctx.validate(reqRule, params);
             const result = await this.ctx.service.apidoc.project.project.editProject(params);
@@ -208,6 +203,7 @@ class ProjectController extends Controller {
             return;
         }
     }
+
     /** 
         @description  根据分享id获取项目基本信息
         @author       shuxiaokai
@@ -281,6 +277,108 @@ class ProjectController extends Controller {
             };
             this.ctx.validate(reqRule, params);
             const result = await this.ctx.service.apidoc.project.project.importAsProject(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+
+    /**
+     * @description        项目新增用户
+     * @author             shuxiaokai
+     * @create             2021-05-18 22:56
+     * @param {String}     loginName - 登录名称
+     * @param {String?}    realName - 真实名称
+     * @param {Permission} permission - 权限
+     * @param {String}     userId - 用户id
+     * @param {String}     projectId - 项目id
+     * @return {String}    返回字符串
+     */
+    async addUser() { 
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                loginName: {
+                    type: "string",
+                },
+                realName: {
+                    type: "string",
+                    required: false,
+                },
+                permission: {
+                    type: "string",
+                    enum: ["readOnly", "readAndWrite", "admin"],
+                },
+                userId: {
+                    type: "string",
+                },
+                projectId: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.project.project.addUser(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+
+    /**
+     * @description        删除用户
+     * @author             shuxiaokai
+     * @create             2021-05-18 22:56
+     * @param {String}     userId - 用户id
+     * @param {String}     projectId - 项目id
+     * @return {String}    返回字符串
+     */
+     async deleteUser() { 
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                userId: {
+                    type: "string",
+                },
+                projectId: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.project.project.deleteUser(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    /**
+     * @description        更新用户权限
+     * @author             shuxiaokai
+     * @create             2021-05-18 22:56
+     * @param {String}     projectId - 项目id
+     * @param {String}     userId - 用户id
+     * @param {Permission} permission - 权限
+     * @return {String}    返回字符串
+     */
+     async changePermission() { 
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                permission: {
+                    type: "string",
+                    enum: ["readOnly", "readAndWrite", "admin"],
+                },
+                userId: {
+                    type: "string",
+                },
+                projectId: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.project.project.changePermission(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);

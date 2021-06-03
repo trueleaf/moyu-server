@@ -73,13 +73,24 @@ module.exports = app => {
                 enum: ["folder", "api", "markdown"]
             },
             tag: { //文档标签
-                type: String,
+                name: { //名称
+                    type: String,
+                },
+                color: { //颜色
+                    type: String,
+                },
+                _id: { //唯一id
+                    type: String,
+                }
             },
             creator: { //创建者
                 type: String,
             },
             maintainer: { //维护人员，最近一次更新人员
                 type: String,
+            },
+            deletePerson: { //删除文档的人
+                type: String
             },
             spendTime: { //录入接口花费时间
                 type: Number,
@@ -128,7 +139,7 @@ module.exports = app => {
             contentType: { //请求contentType
                 type: String,
                 trim: true,
-                enum: ["application/json", "application/x-www-form-urlencoded", "multipart/form-data"],
+                enum: ["application/json", "application/x-www-form-urlencoded", "multipart/form-data", "text/plain", "application/xml", "text/html"],
                 default: "application/json"  
             },
         },

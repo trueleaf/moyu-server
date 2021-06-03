@@ -148,11 +148,12 @@ class userService extends Service {
             ...originProject,
             projectName: "快乐摸鱼",
             _id: projectId,
-            members: [],
-            owner: {
-                name: loginName,
-                id: createdUser._id,
-            },
+            members: [{
+                loginName,
+                realName: loginName,
+                userId: createdUser._id,
+                permission: "admin"
+            }],
         };
         const convertDocs = originDocs.map((docInfo) => {
             const newId = this.app.mongoose.Types.ObjectId()
@@ -167,8 +168,10 @@ class userService extends Service {
             docInfo.info.creator = loginName;
             return docInfo;
         })
-        await this.ctx.model.Apidoc.Project.Project.create(project);
-        await this.ctx.model.Apidoc.Docs.Docs.create(convertDocs);
+        if (originProject) {
+            await this.ctx.model.Apidoc.Project.Project.create(project);
+            await this.ctx.model.Apidoc.Docs.Docs.create(convertDocs);
+        }
         // console.log(originDocs.map(val => !val.isFolder).length)
         return loginResult;
     }
@@ -527,20 +530,22 @@ class userService extends Service {
         let clientBannerResult = []; 
         for (let i = 0; i < roleIds.length; i++) {
             const roleInfo = await this.ctx.model.Security.Role.findById({ _id: roleIds[i] });
-            //前端路由
-            const clientRoutes = roleInfo.clientRoutes.map(val => {
-                return allClientRoutes.find(val2 => {
-                    return val2._id.toString() === val;
+            if (roleInfo) {
+                //前端路由
+                const clientRoutes = roleInfo.clientRoutes.map(val => {
+                    return allClientRoutes.find(val2 => {
+                        return val2._id.toString() === val;
+                    });
                 });
-            });
-            clientRoutesResult = clientRoutesResult.concat(clientRoutes);
-            //前端菜单
-            const clientBanner = roleInfo.clientBanner.map(val => {
-                return allClientMenu.find(val2 => {
-                    return val2._id.toString() === val;
+                clientRoutesResult = clientRoutesResult.concat(clientRoutes);
+                //前端菜单
+                const clientBanner = roleInfo.clientBanner.map(val => {
+                    return allClientMenu.find(val2 => {
+                        return val2._id.toString() === val;
+                    });
                 });
-            });
-            clientBannerResult = clientBannerResult.concat(clientBanner);
+                clientBannerResult = clientBannerResult.concat(clientBanner);
+            }
         }
         clientRoutesResult = this.ctx.helper.unique(clientRoutesResult, "id");
         clientBannerResult = this.ctx.helper.unique(clientBannerResult, "id");

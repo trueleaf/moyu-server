@@ -7,55 +7,25 @@
 //初始化菜单
 const INITIAL_MENUS = [
     {
-        "_id": "5eddf6a821a5aa26cc316d28",
-        "__v": "0",
-        "enabled": "true",
-        "name": "权限管理",
-        "path": "/v1/permission/permission",
-        "pid": "",
-        "sort": "1591603491200",
-        "type": "inline"
+        _id: "5eddf6a821a5aa26cc316d28",
+        __v: "0",
+        enabled: "true",
+        name: "权限管理",
+        path: "/v1/permission/permission",
+        pid: "",
+        sort: "1591603491200",
+        type: "inline",
     },
     {
-        "_id": "5ee9a5b1cde26b8e24fc8270",
-        "__v": "0",
-        "enabled": "true",
-        "name": "api文档",
-        "path": "/v1/apidoc/doc-list",
-        "pid": "",
-        "sort": "1593001154242",
-        "type": "inline"
+        _id: "602e7c40b4ea582923bcb36f",
+        __v: "0",
+        enabled: "true",
+        name: "api文档",
+        path: "/v1/apidoc/doc-list",
+        pid: "",
+        sort: "1613638151467",
+        type: "inline",
     },
-    {
-        "_id": "5ef3476715dfaa57d0a5ac6f",
-        "__v": "0",
-        "enabled": "true",
-        "name": "文档管理",
-        "path": "/v1/apidoc/doc-edit",
-        "pid": "",
-        "sort": "1593001154241",
-        "type": "inline"
-    },
-    {
-        "_id": "5facab3497968d8338e71b1d",
-        "__v": "0",
-        "enabled": "true",
-        "name": "运维管理",
-        "path": "/v1/ci-cd",
-        "pid": "",
-        "sort": "1591603491199",
-        "type": "inline"
-    },
-    {
-        "_id": "5fb218b8a01bf25ef09880ce",
-        "__v": "0",
-        "enabled": "true",
-        "name": "代码生成",
-        "path": "/v1/easycode",
-        "pid": "",
-        "sort": "1591603491198",
-        "type": "inline"
-    }
 ];
 
 module.exports = (app) => {
@@ -98,7 +68,7 @@ module.exports = (app) => {
     );
     securityClientMenuModel.findOne().then((res) => {
         if (res === null) {
-            console.log("初始化客户端菜单")
+            console.log("初始化客户端菜单");
             securityClientMenuModel.insertMany(INITIAL_MENUS);
         }
     });

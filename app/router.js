@@ -14,6 +14,11 @@ module.exports = app => {
     router.get("/api/project/project_enum", controller.apidoc.project.project.getProjectEnum); // 获取项目列表枚举
     router.delete("/api/project/delete_project", controller.apidoc.project.project.deleteProjectList); // 删除项目
     router.put("/api/project/edit_project", controller.apidoc.project.project.editProject); // 修改项目
+
+    router.post("/api/project/add_user", controller.apidoc.project.project.addUser); // 项目新增用户
+    router.delete("/api/project/delete_user", controller.apidoc.project.project.deleteUser); // 项目删除用户
+    router.put("/api/project/change_permission", controller.apidoc.project.project.changePermission); // 改变用户权限
+
     router.put("/api/project/visited", controller.security.user.addLastVisit); // 记录用户访问项目记录
     router.put("/api/project/star", controller.security.user.starProject); // 收藏项目
     router.put("/api/project/unstar", controller.security.user.unStarProject); // 取消收藏项目
@@ -37,7 +42,6 @@ module.exports = app => {
     //=====================================文档相关====================================//
     router.post("/api/project/new_doc", controller.apidoc.docs.docs.addEmptyDoc); //新增空白文档
     router.post("/api/project/copy_doc", controller.apidoc.docs.docs.copyDoc); //拷贝文档
-    router.post("/api/project/new_doc_multi", controller.apidoc.docs.docs.newMultiDoc); //新增多个空白文档
     router.put("/api/project/change_doc_pos", controller.apidoc.docs.docs.changeDocPosition); //改变文档在位置
     router.put("/api/project/change_doc_info", controller.apidoc.docs.docs.changeDocName); //修改文档树形结构基础信息
     router.put("/api/project/publish_doc", controller.apidoc.docs.docs.publishDoc); //发布文档
@@ -50,6 +54,7 @@ module.exports = app => {
     router.get("/api/project/filter_doc", controller.apidoc.docs.docs.filterDoc); //根据url获取文档id，用于菜单筛选
     router.get("/api/project/doc_word", controller.apidoc.docs.docs.convertDocToWord); //将文档导出为word
     router.get("/api/project/doc_mock", controller.apidoc.docs.docs.getMockData); //获取文档mock数据
+    router.post("/api/project/paste_docs", controller.apidoc.docs.docs.pasteDocs); //粘贴文档
     
 
 
@@ -80,7 +85,10 @@ module.exports = app => {
     router.get("/api/docs/docs_records", controller.apidoc.docs.docsRecords.getDocsRecordsList); //获取文档修改记录
     router.get("/api/docs/docs_history_operator_enum", controller.apidoc.docs.docsHistory.getHistoryOperatorEnum); //获取文档操作人员基本信息
 
-    
+    //======文档被删除纪录
+    router.post("/api/docs/docs_deleted_list", controller.apidoc.docs.docs.getDocDeletedList); //获取文档修改记录
+    router.put("/api/docs/docs_restore", controller.apidoc.docs.docs.restroeNode); //恢复已删除节点
+
     //======全局变量
     router.post("/api/project/project_variable", controller.apidoc.project.projectVariable.addProjectVariable); //新增预设参数组
     router.delete("/api/project/project_variable", controller.apidoc.project.projectVariable.deleteProjectVariable); //删除预设参数组
@@ -193,13 +201,6 @@ module.exports = app => {
     router.delete("/api/oss/file", controller.oss.oss.deleteFile); //删除文件或者文件列表
 
 
-    //=====================================可视化运维====================================//
-    router.get("/api/eoms/pwd", controller.eoms.linux.pwd); //查看当前目录信息
-    router.get("/ssh/connect", controller.eoms.ssh.connect); //连接当前项目
-    router.get("/ssh/exec", controller.eoms.ssh.exec); //执行命令
-
-    router.get("/api/ssh/logs", controller.eoms.logs.getLogsFileList); //日志文件列表
-    router.get("/api/ssh/logs_detail", controller.eoms.logs.getLogDetail); //日志文件详情
     //=====================================字典(词典)====================================//
     router.post("/api/dictionary/dictionary", controller.dictionary.dictionary.addDictionary); //新增词汇
     router.get("/api/dictionary/dictionary_list", controller.dictionary.dictionary.getDictionaryList); //获取词汇列表

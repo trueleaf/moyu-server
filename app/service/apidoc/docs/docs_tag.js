@@ -19,6 +19,10 @@ class DocsTagService extends Service {
     async addDocsTag(params) {
         const { projectId, name, color } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const hasTagName = await this.ctx.model.Apidoc.Docs.DocsTag.findOne({ projectId, name });
+        if (hasTagName) {
+            this.ctx.helper.throwCustomError("标签名称重复", 1003);
+        }
         const userInfo = this.ctx.session.userInfo;
         const doc = {};
         doc.projectId = projectId;
@@ -45,18 +49,25 @@ class DocsTagService extends Service {
         @return       null
     */
     async editDocsTag(params) { 
-        const { _id, name, projectId } = params;
+        const { _id, name, projectId, color } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const updateDoc = {};
         if (name) {
             updateDoc.name = name; 
         }
-        const hasClientMenu = await this.ctx.model.Security.ClientMenu.findOne({ _id: { $ne: _id }, name });
-        if (hasClientMenu) {
-            this.ctx.helper.errorInfo("当前菜单名称已存在", 1003);
+        if (color) {
+            updateDoc.color = color; 
         }
-        await this.ctx.model.Apidoc.Docs.DocsTag.findByIdAndUpdate({ _id }, updateDoc);
-        return;
+        const hasTagName = await this.ctx.model.Apidoc.Docs.DocsTag.findOne({ _id: { $ne: _id }, name });
+        if (hasTagName) {
+            this.ctx.helper.errorInfo("当前标签名称已存在", 1003);
+        }
+        const result = await this.ctx.model.Apidoc.Docs.DocsTag.findByIdAndUpdate({ _id }, updateDoc, { new: true });
+        return {
+            name: result.name,
+            color: result.color,
+            _id: result._id,
+        };
     }
     /**
         @description  删除文档标签

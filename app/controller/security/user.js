@@ -283,7 +283,8 @@ class userController extends Controller {
                     type: "string"
                 },
                 phone: {
-                    type: "string"
+                    type: "string",
+                    required: false,
                 },
                 department: {
                     type: "string",

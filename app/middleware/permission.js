@@ -6,10 +6,14 @@ module.exports = options => {
         const requestUrl = ctx.request.url.replace(/\?.*$/g, "");
         let serverRoutes = []; //用户所拥有得权限列表
         try {
-            if (options.whiteList.find(val => {
+            const isInWhiteList = options.whiteList.find(val => {
                 const reg = new RegExp(val);
                 return requestUrl.match(reg);
-            })) { //路由白名单放行
+            })
+            if (isInWhiteList) { //路由白名单放行
+                await next();
+                return;
+            } else if (options.free) { //free模式全部放行
                 await next();
                 return;
             }
@@ -26,12 +30,14 @@ module.exports = options => {
             
             for (let i = 0; i < roleIds.length; i++) {
                 const roleInfo = await ctx.model.Security.Role.findById({ _id: roleIds[i] });
-                const serverRoutesPathes = roleInfo.serverRoutes.map(val => {
-                    return allServerRoutes.find(val2 => {
-                        return val2._id.toString() === val;
+                if (roleInfo) {
+                    const serverRoutesPathes = roleInfo.serverRoutes.map(val => {
+                        return allServerRoutes.find(val2 => {
+                            return val2._id.toString() === val;
+                        });
                     });
-                });
-                serverRoutes = serverRoutes.concat(serverRoutesPathes);
+                    serverRoutes = serverRoutes.concat(serverRoutesPathes);
+                }
             }
             serverRoutes = ctx.helper.unique(serverRoutes, "id");
             const reqMethod = ctx.request.method.toLowerCase();

@@ -79,6 +79,10 @@ class DocsTagController extends Controller {
         try {
             const params = this.ctx.request.body;
             const reqRule = {
+                projectId: {
+                    type: "string",
+                    required: false,
+                },
                 _id: {
                     type: "string",
                 },

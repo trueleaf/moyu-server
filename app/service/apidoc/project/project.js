@@ -45,9 +45,7 @@ class ProjectService extends Service {
         }
         //是否为创建者或者为成员
         query.$or = [
-            {
-                "owner.id": this.ctx.session.userInfo.id
-            },
+           
             {
                 "members.userId": this.ctx.session.userInfo.id
             }
@@ -93,14 +91,11 @@ class ProjectService extends Service {
         //是否为创建者或者为成员
         query.$or = [
             {
-                "owner.id": this.ctx.session.userInfo.id
-            },
-            {
                 "members.userId": this.ctx.session.userInfo.id
             }
         ];
         const limit = 100;
-        const result = await this.ctx.model.Apidoc.Project.Project.find(query, { projectName: 1 }).limit(limit);
+        const result = await this.ctx.model.Apidoc.Project.Project.find(query, { projectName: 1, enabled: true }).limit(limit);
         return result;
     }
 
@@ -128,6 +123,13 @@ class ProjectService extends Service {
         doc.projectName = projectName;
         doc.remark = remark;
         doc.members = members;
+        //创建者默认为管理员
+        doc.members.unshift({
+            loginName: this.ctx.session.userInfo.loginName,
+            realName: this.ctx.session.userInfo.realName,
+            userId: this.ctx.session.userInfo.id,
+            permission: "admin"
+        });
         doc.owner = {
             id: this.ctx.session.userInfo.id,
             name: this.ctx.session.userInfo.realName || this.ctx.session.userInfo.loginName
@@ -156,12 +158,11 @@ class ProjectService extends Service {
         @param {String}      id 项目id
         @param {String}      projectName 项目名称
         @param {String}      projectType 项目类型
-        @param {Array}       members 成员信息
         @param {String}      remark 项目备注
         @return       null
     */
     async editProject(params) { 
-        const { _id, projectName, members, projectType, remark } = params;
+        const { _id, projectName, projectType, remark } = params;
         const updateDoc = {};
         if (projectName) {
             updateDoc.projectName = projectName; 
@@ -172,24 +173,11 @@ class ProjectService extends Service {
         if (remark) {
             updateDoc.remark = remark; 
         }
-        if (members) {
-            updateDoc.members = members; 
-        }
-        //项目名称是否重复
-        // const hasName = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: { $ne: _id }, projectName });
-        // if (hasName) {
-        //     const error = new Error("项目名称重复");
-        //     error.code = 1003;
-        //     throw error;
-        // }
         //是否拥有权限
         const query = {
             _id,
         };
         query.$or = [
-            {
-                "owner.id": this.ctx.session.userInfo.id
-            },
             {
                 members: { 
                     $elemMatch: {
@@ -294,6 +282,12 @@ class ProjectService extends Service {
             id: this.ctx.session.userInfo.id,
             name: this.ctx.session.userInfo.realName || this.ctx.session.userInfo.loginName
         };
+        project.members = [{
+            userId: this.ctx.session.userInfo.id,
+            loginName: this.ctx.session.userInfo.realName || this.ctx.session.userInfo.loginName,
+            realName: this.ctx.session.userInfo.realName,
+            permission: "admin",
+        }];
         const projectInfo = await this.ctx.model.Apidoc.Project.Project.create(project);
         const { docs = [], hosts = [] } = moyuData;
         const convertDocs = docs.map((docInfo) => {
@@ -330,6 +324,144 @@ class ProjectService extends Service {
             id: projectInfo._id,
             name: projectName
         };
+    }
+   /**
+     * @description        项目新增用户
+     * @author             shuxiaokai
+     * @create             2021-05-18 22:56
+     * @param {String}     loginName - 登录名称
+     * @param {String?}    realName - 真实名称
+     * @param {Permission} permission - 权限
+     * @param {String}     userId - 用户id
+     * @param {String}     projectId - 项目id
+     * @return {String}    返回字符串
+     */
+    async addUser(params) { 
+        const { projectId, loginName, realName, permission, userId } = params;
+        const userInfo = {
+            loginName,
+            realName,
+            userId,
+            permission,
+        };
+        //是否拥有权限
+        const query = {
+            _id: projectId,
+        };
+        query.$or = [
+            {
+                members: { 
+                    $elemMatch: {
+                        userId: this.ctx.session.userInfo.id,
+                        permission: "admin",
+                    }
+                }
+            }
+        ];
+        const hasPermission = await this.ctx.model.Apidoc.Project.Project.findOne(query);
+        if (!hasPermission) {
+            this.ctx.helper.throwCustomError("管理员才允许修改权限", 4002);
+        } 
+        await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, {
+            $push: { members: userInfo }
+        });
+    }
+    /**
+     * @description        删除用户
+     * @author             shuxiaokai
+     * @create             2021-05-18 22:56
+     * @param {String}     projectId - 项目id
+     * @param {String}     userId - 用户id
+     * @return {String}    返回字符串
+     */
+    async deleteUser(params) { 
+        const { projectId, userId } = params;
+        const isDeleteSelf = userId === this.ctx.session.userInfo.id;
+        //是否拥有权限
+        const query = {
+            _id: projectId,
+        };
+        query.$or = [
+            {
+                members: { 
+                    $elemMatch: {
+                        userId: this.ctx.session.userInfo.id,
+                        permission: "admin",
+                    }
+                }
+            }
+        ];
+        //是否为admin，只有admin拥有删除权限
+        const hasPermission = await this.ctx.model.Apidoc.Project.Project.findOne(query);
+        if (!hasPermission && !isDeleteSelf) {
+            this.ctx.helper.throwCustomError("管理员才允许删除用户", 4002);
+        } 
+        //一个团队至少保留一个管理员
+        const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId }, { members: 1 });
+        const members = projectInfo.members;
+        const hasAdmin = members.find((memberInfo) => {
+            if (memberInfo.userId !== userId && memberInfo.permission === "admin") {
+                return true
+            }
+            return false;
+        });
+        if (!hasAdmin) {
+            this.ctx.helper.throwCustomError("一个团队至少保留一个管理员", 4002);
+        }
+        await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, {
+            $pull: {
+                members: { userId },
+            }
+        });
+        return;
+    }
+    /**
+     * @description        更新用户权限
+     * @author             shuxiaokai
+     * @create             2021-05-18 22:56
+     * @param {String}     projectId - 项目id
+     * @param {String}     userId - 用户id
+     * @param {Permission} permission - 权限
+     * @return {String}    返回字符串
+     */
+    async changePermission(params) { 
+        const { projectId, userId, permission } = params;
+        //是否拥有权限
+        const query = {
+            _id: projectId,
+        };
+        query.$or = [
+            {
+                members: { 
+                    $elemMatch: {
+                        userId: this.ctx.session.userInfo.id,
+                        permission: "admin",
+                    }
+                }
+            }
+        ];
+        const hasPermission = await this.ctx.model.Apidoc.Project.Project.findOne(query);
+        if (!hasPermission) {
+            this.ctx.helper.throwCustomError("管理员才允许修改权限", 4002);
+        } 
+        //一个团队至少保留一个管理员
+        const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId }, { members: 1 });
+        const members = projectInfo.members;
+        const hasAdmin = members.find((memberInfo) => {
+            if (permission === "admin") {
+                return true;
+            }
+            if (memberInfo.userId !== userId && memberInfo.permission === "admin") {
+                return true
+            }
+            return false;
+        });
+        if (!hasAdmin) {
+            this.ctx.helper.throwCustomError("一个团队至少保留一个管理员", 4002);
+        }
+        await this.ctx.model.Apidoc.Project.Project.updateOne({ _id: projectId, "members.userId": userId }, {
+            $set: { "members.$.permission": permission }
+        });
     }
 }
 

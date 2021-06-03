@@ -186,7 +186,9 @@ class DocsService extends Service {
         const result = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { 
             $set: { 
                 item, 
-                "info.description": description 
+                "info.description": description,
+                "info.maintainer": userInfo.realName || userInfo.loginName,
+                "info.tag": info.tag 
             },
             $inc: {
                 "info.spendTime": spendTime
@@ -264,10 +266,19 @@ class DocsService extends Service {
     async deleteDoc(params) { 
         const { ids, projectId } = params;
         const userInfo = this.ctx.session.userInfo;
-        const result = await this.ctx.model.Apidoc.Docs.Docs.updateMany({ projectId, _id: { $in: ids }}, { $set: { enabled: false }}); //文档祖先包含删除元素，那么该文档也需要被删除
+        const result = await this.ctx.model.Apidoc.Docs.Docs.updateMany({ 
+            projectId,
+            _id: { $in: ids }
+        }, { 
+            $set: { 
+                enabled: false,
+                "info.deletePerson": userInfo.realName || userInfo.loginName
+            }
+        }); //文档祖先包含删除元素，那么该文档也需要被删除
         const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
         await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }}); //删除文档
         const deleteDocs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, _id: { $in: ids }});
+        console.log(deleteDocs, ids, 222)
         //添加历史记录
         const record = {
             operation: deleteDocs.length > 1 ? "deleteMany" : (deleteDocs[0].isFolder ? "deleteFolder" : "deleteDoc"),
@@ -290,37 +301,46 @@ class DocsService extends Service {
         return result;
     }
     /** 
-        @description  新增多个空白文档
+        @description  粘贴挂载文档
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @param {String}        projectId 项目id
-        @param {String}        pid 文档父元素
-        @param {String}        name 接口名称
-        @param {String}        host 接口host
-        @param {String}        url 接口url
-        @param {String}        templateId 模板id 
-        @return       null
+        @param {String?}       mountedId 挂载id
+        @param {Array<Doc>}    docs 文档 
     */
-
-    async newMultiDoc(params) {
-        const { projectId, pid, name, host, url, templateId } = params;
-        // const doc = {
-        //     docName: name,
-        //     isFolder: false,
-        //     pid,
-        //     projectId,
-        //     ancestors: [...ancestors],
-        //     sort: Date.now(),
-        //     item: item || {}
-        // };        
-        // for (let i = 0; i < 4; i++) {
-            
-        // }
-
-
-
-        const result = await this.ctx.model.Apidoc.Docs.DocsRestfulTemplate.findOne({ _id: templateId });
-        return result;
+    async pasteDocs(params) {
+        const { projectId, docs, mountedId = "" } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const docIds = docs.map(v => v._id);
+        const matchedDocs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, _id: { $in: docIds } }).lean();
+        const idMap = [];
+        //先重新绑定pid
+        matchedDocs.forEach((docInfo) => {
+            const newId = this.app.mongoose.Types.ObjectId();
+            const oldId = docInfo._id.toString();
+            const oldPid = docInfo.pid;
+            const mapInfo = {
+                oldId,
+                newId,
+                oldPid,
+            };
+            matchedDocs.forEach((docInfo2) => {
+                const pid2 = docInfo2.pid;
+                if (pid2 === oldId) { //说明这个是子元素
+                    docInfo2.pid = newId;
+                    mapInfo.newPid = newId;
+                }
+            })
+            const hasParent = matchedDocs.find((v) => v._id === docInfo.pid);
+            if (!hasParent) {
+                docInfo.pid = mountedId;
+                mapInfo.newPid = mountedId;
+            }
+            idMap.push(mapInfo);
+            docInfo._id = newId;
+        })
+        await this.ctx.model.Apidoc.Docs.Docs.insertMany(matchedDocs);
+        return idMap;
     }
 
     /** 
@@ -513,7 +533,7 @@ class DocsService extends Service {
     async getDocDetail(params) { 
         const { _id, projectId } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const result = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id, enabled: true }, { pid: 0, isFolder: 0, sort: 0, enabled: 0 });
+        const result = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id }, { pid: 0, isFolder: 0, sort: 0, enabled: 0 });
         return result;
     }
     /** 
@@ -716,6 +736,108 @@ class DocsService extends Service {
         }
         foo(plainData, result);
         return result;
+    }
+    /**
+        @description   获取文档回收站记录
+        @author        shuxiaokai
+        @create        2020-10-08 22:10
+        @param {Number?}           pageNum 当前页码
+        @param {Number?}           pageSize 每页大小   
+        @param {number?}           startTime 创建日期     @remark 默认精确到毫秒       
+        @param {number?}           endTime 结束日期       @remark 默认精确到毫秒
+        @param {string?}           url 请求url
+        @param {string?}           docName 文档名称
+        @param {array?}            operators 操作者
+        @param {string}            projectId 项目id
+        @return       null
+    */
+    async getDocDeletedList(params) {
+        const { pageNum, pageSize, startTime, endTime, operators, projectId, url, docName } = params;
+        const query = {
+            enabled: false,
+        };
+        let skipNum = 0;
+        let limit = 100;
+        query.projectId = projectId;
+        if (pageSize != null && pageNum != null) {
+            skipNum = (pageNum - 1) * pageSize;
+            limit = pageSize;
+        }
+        if (startTime != null && endTime != null) {
+            query.updatedAt = { $gt: startTime, $lt: endTime };
+        }
+        if (url) {
+            query["item.url.path"] = new RegExp(escapeStringRegexp(url));
+        }
+        if (docName) {
+            query["info.name"] = new RegExp(escapeStringRegexp(docName));
+        }
+        if (operators && operators.length > 0) {
+            query["info.deletePerson"] = {
+                $in: operators,
+            };
+        }
+        const rows = await this.ctx.model.Apidoc.Docs.Docs.find(
+            query,
+            {
+                "item.url": 1,
+                "item.method": 1,
+                "info.name": 1,
+                "info.type": 1,
+                "info.deletePerson": 1,
+                "updatedAt": 1,
+                pid: 1,
+                isFolder: 1,
+            }
+        ).skip(skipNum).sort({ createdAt: -1 }).limit(limit);
+        const total = await this.ctx.model.Apidoc.Docs.Docs.find(query).countDocuments();
+        const result = {};
+        result.rows = rows.map(data => {
+            return {
+                name: data.info.name,
+                type: data.info.type,
+                deletePerson: data.info.deletePerson,
+                isFolder: data.isFolder,
+                host: data.item.url.host,
+                path: data.item.url.path,
+                method: data.item.method,
+                updatedAt: data.updatedAt,
+                _id: data._id,
+                pid: data.pid,
+            };
+        });
+        result.total = total;
+        return result;
+    }
+    /**
+     * @description        恢复接口或文件夹
+     * @author             shuxiaokai
+     * @create             2021-05-24 14:27
+     * @param {string}     _id 节点id
+     * @param {string}     projectId 项目id
+     * @param {Boolean}    restoreChildren 是否恢复子节点
+     * @return {String}    返回字符串
+     */
+     async restroeNode(params) {
+        const { _id, projectId, restoreChildren } = params;
+        const updateIds = [];
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const allDocs = await this.ctx.model.Apidoc.Docs.Docs.find({
+            projectId,
+        }, { pid: 1, enabled: 1 }).lean();
+        const startDoc = allDocs.find((val) => val._id.toString() === _id);
+        let parentDoc = allDocs.find((val) => val._id.toString() === startDoc.pid);
+        updateIds.push(startDoc._id.toString());
+        while (parentDoc && !parentDoc.enabled) {
+            updateIds.push(parentDoc._id.toString());
+            parentDoc = allDocs.find((val) => val._id.toString() === parentDoc.pid);
+        }
+        await this.ctx.model.Apidoc.Docs.Docs.updateMany({ projectId, _id: { $in: updateIds } }, {
+            $set: {
+                enabled: true,
+            },
+        })
+        return updateIds;
     }
 }
 
