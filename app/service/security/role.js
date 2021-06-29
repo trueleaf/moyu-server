@@ -112,7 +112,7 @@ class roleService extends Service {
 
     async getRoleEnum() {
         const limit = 200;
-        const result = await this.ctx.model.Security.Role.find({}, { roleName: 1 }).limit(limit);
+        const result = await this.ctx.model.Security.Role.find({ enabled: true }, { roleName: 1 }).limit(limit);
         return result;
     }
 
@@ -129,7 +129,7 @@ class roleService extends Service {
             _id,
             enabled: true
         };
-        const result = await this.ctx.model.Security.Role.findOne(query, { createdAt: 0, updatedAt: 0 });
+        const result = await this.ctx.model.Security.Role.findOne(query, { createdAt: 0, updatedAt: 0, enabled: 0 });
         return result;
     }
 }
