@@ -523,6 +523,7 @@ class userService extends Service {
    
     async getUserBaseInfo() {
         const userInfo = this.ctx.session.userInfo;
+        console.log(222, userInfo)
         const roleIds = userInfo.roleIds; //用户所有角色信息
         const allClientRoutes = await this.ctx.model.Security.ClientRoutes.find({}, { name: 1, path: 1 }); //系统所有前端路由
         const allClientMenu = await this.ctx.model.Security.ClientMenu.find({}, { name: 1, path: 1, sort: 1 }); //系统所有前端菜单
