@@ -366,23 +366,19 @@ class userService extends Service {
         @params {String}         _id 
         @params {String}         loginName 
         @params {String}         phone 
-        @params {String}         department 
-        @params {String}         title 
         @params {Array<string>}  roleIds //角色ids
         @params {Array<string>}  roleNames //角色名称
         @return       null
     */
 
     async changeUserPermission(params) { 
-        const { _id, roleIds, roleNames, loginName, phone, department, title, qq } = params;
+        const { _id, roleIds, roleNames, loginName, phone, realName } = params;
         const updateDoc = {};
         updateDoc.roleIds = roleIds;
         updateDoc.roleNames = roleNames;
         updateDoc.loginName = loginName;
         updateDoc.phone = phone;
-        updateDoc.department = department;
-        updateDoc.title = title;
-        updateDoc.qq = qq;
+        updateDoc.realName = realName;
         await this.ctx.model.Security.User.findByIdAndUpdate({ _id }, updateDoc);
         return;
     }

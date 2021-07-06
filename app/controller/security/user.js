@@ -266,8 +266,6 @@ class userController extends Controller {
         @params {String}         _id 
         @params {String}         loginName 
         @params {String}         phone 
-        @params {String}         department 
-        @params {String}         title 
         @params {Array<string>}  roleIds //角色ids
         @params {Array<string>}  roleNames //角色名称
         @return       null
@@ -286,15 +284,7 @@ class userController extends Controller {
                     type: "string",
                     required: false,
                 },
-                department: {
-                    type: "string",
-                    required: false,
-                },
-                qq: {
-                    type: "string",
-                    required: false,
-                },
-                title: {
+                realName: {
                     type: "string",
                     required: false,
                 },
