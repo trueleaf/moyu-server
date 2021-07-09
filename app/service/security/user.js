@@ -227,7 +227,7 @@ class userService extends Service {
 
     async loginWithPassword(params) {
         const loginRecord = await this.checkIsLockIP(); //检查ip是否被锁定
-        const { loginName, password, captcha } = params;
+        const { loginName, password, captcha = "" } = params;
         const userInfo = await this.ctx.model.Security.User.findOne({ loginName });
         const result = {};
        
