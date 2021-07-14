@@ -45,7 +45,6 @@ class ProjectService extends Service {
         }
         //是否为创建者或者为成员
         query.$or = [
-           
             {
                 "members.userId": this.ctx.session.userInfo.id
             }
@@ -53,7 +52,7 @@ class ProjectService extends Service {
         const userInfo = this.ctx.session.userInfo;
         const visitAndStar = await this.ctx.model.Security.User.findOne({ _id: userInfo.id }, { recentVisitProjects: 1, starProjects: 1 }).lean();
         const result = {};
-        result.list = await this.ctx.model.Apidoc.Project.Project.find(query).skip(skipNum).limit(limit).sort({ updatedAt: -1 });;
+        result.list = await this.ctx.model.Apidoc.Project.Project.find(query, { enabled: 0, createdAt: 0 }).skip(skipNum).limit(limit).sort({ updatedAt: -1 });;
         result.recentVisitProjects = visitAndStar.recentVisitProjects || [];
         result.starProjects = visitAndStar.starProjects || [];
         return result;
