@@ -68,6 +68,7 @@ class ProjectService extends Service {
 
     async getProjectInfo(params) {
         const { _id } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(_id);
         const result = await this.ctx.model.Apidoc.Project.Project.findById(
             { _id, enabled: true },
             { createdAt: 0, updatedAt: 0, apidocs: 0, enabled: 0 }

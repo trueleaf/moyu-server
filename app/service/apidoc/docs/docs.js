@@ -26,7 +26,7 @@ class DocsService extends Service {
         if (!projectInfo) {
             this.ctx.helper.throwCustomError("暂无当前项目权限", 4002);
         }
-        const accessUsers = projectInfo.members.concat([projectInfo.owner])
+        const accessUsers = projectInfo.members
         if (!accessUsers.find(user => user.userId === userInfo.id || user.id === userInfo.id)) {
             this.ctx.helper.throwCustomError("暂无当前项目权限", 4002);
         }
