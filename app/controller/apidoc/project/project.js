@@ -89,6 +89,53 @@ class ProjectController extends Controller {
         }
     }
 
+    /**
+        @description  获取项目成员信息
+        @author        shuxiaokai
+        @create        2020-10-08 22:10
+        @param {Number?}     _id 项目id
+        @return       null
+    */
+    async getProjectMembers() { 
+        try {
+            const params = this.ctx.query;
+            const reqRule = {
+                _id: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.project.project.getProjectMembers(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+
+    /**
+        @description  获取项目完整信息
+        @author        shuxiaokai
+        @create        2020-10-08 22:10
+        @param {Number?}     _id 项目id
+        @return       null
+    */
+    async getProjectFullInfo() { 
+        try {
+            const params = this.ctx.query;
+            const reqRule = {
+                _id: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.project.project.getProjectFullInfo(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
 
     /** 
         @description  获取项目列表枚举

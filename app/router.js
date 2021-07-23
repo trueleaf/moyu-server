@@ -11,6 +11,8 @@ module.exports = app => {
     router.post("/api/project/add_project", controller.apidoc.project.project.addProject); // 新增项目
     router.get("/api/project/project_list", controller.apidoc.project.project.getProjectList); // 获取项目列表
     router.get("/api/project/project_info", controller.apidoc.project.project.getProjectInfo); // 获取项目基本信息
+    router.get("/api/project/project_full_info", controller.apidoc.project.project.getProjectFullInfo); // 获取项目完成信息
+    router.get("/api/project/project_members", controller.apidoc.project.project.getProjectMembers); // 获取项目成员信息
     router.get("/api/project/project_enum", controller.apidoc.project.project.getProjectEnum); // 获取项目列表枚举
     router.delete("/api/project/delete_project", controller.apidoc.project.project.deleteProjectList); // 删除项目
     router.put("/api/project/edit_project", controller.apidoc.project.project.editProject); // 修改项目

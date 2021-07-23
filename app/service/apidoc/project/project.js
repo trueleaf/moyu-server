@@ -65,7 +65,6 @@ class ProjectService extends Service {
         @param {String}      _id 项目id 
         @return       null
     */
-
     async getProjectInfo(params) {
         const { _id } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(_id);
@@ -75,6 +74,59 @@ class ProjectService extends Service {
         );
         return result;
     }
+    /**
+        @description   获取项目成员信息
+        @author        shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      _id 项目id 
+        @return       null
+    */
+    async getProjectMembers(params) {
+        const { _id } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(_id);
+        const result = await this.ctx.model.Apidoc.Project.Project.findById(
+            { _id, enabled: true },
+            { members: 1 }
+        );
+        return result.members;
+    }
+
+    /**
+        @description   获取项目完整信息
+        @author        shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      _id 项目id 
+        @return       null
+    */
+    async getProjectFullInfo(params) {
+        const { _id } = params;
+        const result = {};
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(_id);
+
+        const mindParams = await this.ctx.service.apidoc.docs.docsParamsMind.getDocParamsMindEnum({ projectId: _id });
+        const paramsTemplate = await this.ctx.service.apidoc.docs.docsParamsPreset.getPresetParamsEnum({ projectId: _id })
+        const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList({ projectId: _id });
+        const variables = await this.ctx.service.apidoc.project.projectVariable.getProjectVariableEnum({ projectId: _id });
+        const rules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById({ projectId: _id });
+        const projectInfo = await this.ctx.model.Apidoc.Project.Project.findById(
+            {   
+                _id,
+                enabled: true 
+            },
+            {
+                projectName: 1,
+            },
+        );
+        result.mindParams = mindParams;
+        result.projectName = projectInfo.projectName;
+        result._id = projectInfo._id;
+        result.paramsTemplate = paramsTemplate;
+        result.hosts = hosts;
+        result.variables = variables;
+        result.rules = rules;
+        return result;
+    }
+    
 
 
     /** 
