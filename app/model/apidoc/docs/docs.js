@@ -31,11 +31,17 @@ module.exports = app => {
         required: { //是否必填
             type: Boolean
         },
-        children: [], //嵌套字段
-        _select: { //业务参数，是否选中
+        select: { //业务参数，是否选中
             type: Boolean,
             default: true
-        }
+        },
+        editor: { //最后一次编辑人
+            type: String,
+        },
+        editorId: { //最后一次编辑人id
+            type: String
+        },
+        children: [], //嵌套字段
     });
     //文档模型信息
     const docSchema = new Schema({
