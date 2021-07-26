@@ -416,7 +416,7 @@ class DocsService extends Service {
                     sort: val.sort,
                     name: val.info.name,
                     type: val.info.type,
-                    creator: val.info.creator,
+                    updator: val.info.maintainer,
                     updatedAt: val.updatedAt,
                     isFolder: val.isFolder,
                     children: val.children,
@@ -432,7 +432,7 @@ class DocsService extends Service {
                     url: {
                         path: val.item.url ? val.item.url.path : "",
                     },
-                    creator: val.info.creator,
+                    updator: val.info.maintainer,
                     updatedAt: val.updatedAt,
                     isFolder: val.isFolder,
                     children: val.children,
@@ -484,7 +484,7 @@ class DocsService extends Service {
                     sort: val.sort,
                     name: val.info.name,
                     type: val.info.type,
-                    creator: val.info.creator,
+                    updator: val.info.updator,
                     isFolder: val.isFolder,
                     children: val.children,
                 };
@@ -496,7 +496,7 @@ class DocsService extends Service {
                     name: val.info.name,
                     type: val.info.type,
                     method: val.item.method,
-                    creator: val.info.creator,
+                    updator: val.info.updator,
                     isFolder: val.isFolder,
                     children: val.children,
                 };                
