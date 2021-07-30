@@ -429,9 +429,7 @@ class DocsService extends Service {
                     name: val.info.name,
                     type: val.info.type,
                     method: val.item.method,
-                    url: {
-                        path: val.item.url ? val.item.url.path : "",
-                    },
+                    url: val.item.url ? val.item.url.path : "",
                     updator: val.info.maintainer,
                     updatedAt: val.updatedAt,
                     isFolder: val.isFolder,

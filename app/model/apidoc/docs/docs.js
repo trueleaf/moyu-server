@@ -122,7 +122,23 @@ module.exports = app => {
             }, 
             paths: [ProperytySchema], //restful请求路径
             queryParams: [ProperytySchema], //查询字符串
-            requestBody: [ProperytySchema], //请求body
+            requestBody: {
+                mode: {
+                    type: String,
+                    enum: ["json", "raw", "formdata", "urlencoded", "binary"],
+                },
+                json: [ProperytySchema],
+                formdata: [ProperytySchema],
+                urlencoded: [ProperytySchema],
+                raw: {
+                    type: String,
+                    required: false,
+                },
+                file: {
+                    type: String,
+                    required: false,
+                },
+            }, //请求body
             responseParams: {
                 type: [{ //返回值
                     title: {

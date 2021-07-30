@@ -53,9 +53,9 @@ module.exports = app => {
         creatorName: { //创建者名称
             type: String
         },
-        presetParamsType: { //参数类型， queryParams requestBody responseParams
+        presetParamsType: { //参数类型， queryParams bodyParams responseParams
             type: String,
-            enum: ["queryParams", "requestBody", "responseParams"],
+            enum: ["pathParams", "queryParams", "bodyParams", "responseParams", "headerParams"],
         },
         items: [ProperytySchema],
     }, { timestamps: true });
