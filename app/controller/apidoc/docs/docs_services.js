@@ -4,11 +4,10 @@
     @create        2020-10-08 22:10
 */
 
-
 const Controller = require("egg").Controller;
 
 class ServicesController extends Controller {
-    /** 
+	/** 
         @description  新增空白文档
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -19,34 +18,33 @@ class ServicesController extends Controller {
         @return       null
     */
 
-    async addService() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                name: {
-                    type: "string"
-                },
-                url: {
-                    type: "string"
-                },
-                remark: {
-                    type: "string",
-                    required: false
-                },
-                projectId: {
-                    type: "string",
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsServices.addService(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async addService() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				name: {
+					type: "string"
+				},
+				url: {
+					type: "string"
+				},
+				remark: {
+					type: "string",
+					required: false
+				},
+				projectId: {
+					type: "string",
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docsServices.addService(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /** 
+	/** 
         @description  删除服务器
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -54,24 +52,23 @@ class ServicesController extends Controller {
         @return       null
     */
 
-    async deleteService() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                ids: {
-                    type: "array",
-                    itemType: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsServices.deleteService(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /** 
+	async deleteService() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				ids: {
+					type: "array",
+					itemType: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docsServices.deleteService(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+	/** 
         @description  获取服务器列表
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -83,43 +80,42 @@ class ServicesController extends Controller {
         @return       null
     */
 
-    async getServiceList() { 
-        try {
-            const params = this.ctx.query;
-            const reqRule = {
-                pageNum: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                pageSize: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                startTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                endTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                projectId: {
-                    type: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsServices.getServicesList(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /** 
+	async getServiceList() { 
+		try {
+			const params = this.ctx.query;
+			const reqRule = {
+				pageNum: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				pageSize: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				startTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				endTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				projectId: {
+					type: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docsServices.getServicesList(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+	/** 
         @description  获取服务器信息
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -128,27 +124,26 @@ class ServicesController extends Controller {
         @return       null
     */
 
-    async getServiceInfo() {
-        try {
-            const params = this.ctx.query;
-            const reqRule = {
-                projectId: {
-                    type: "string"
-                },
-                id: {
-                    type: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsServices.getServiceInfo(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async getServiceInfo() {
+		try {
+			const params = this.ctx.query;
+			const reqRule = {
+				projectId: {
+					type: "string"
+				},
+				id: {
+					type: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docsServices.getServiceInfo(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /** 
+	/** 
         @description  修改服务器信息
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -159,34 +154,33 @@ class ServicesController extends Controller {
         @return       null
     */
 
-    async editService() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                },
-                name: {
-                    type: "string",
-                    required: false
-                },
-                url: {
-                    type: "string",
-                    required: false
-                },
-                remark: {
-                    type: "string",
-                    required: false
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsServices.editService(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async editService() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+				},
+				name: {
+					type: "string",
+					required: false
+				},
+				url: {
+					type: "string",
+					required: false
+				},
+				remark: {
+					type: "string",
+					required: false
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docsServices.editService(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 }
 
 module.exports = ServicesController;

@@ -1,5 +1,4 @@
 
-
 /**
     @description  前端菜单控制器
     @author       shuxiaokai
@@ -9,7 +8,7 @@
 const Controller = require("egg").Controller;
 
 class clientMenuController extends Controller {
-    /**
+	/**
         @description  新增前端菜单
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -20,36 +19,35 @@ class clientMenuController extends Controller {
         @return       null
     */
 
-    async addClientMenu() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                name: {
-                    type: "string"
-                },
-                path: {
-                    type: "string"
-                },
-                type: {
-                    type: "enum",
-                    values: ["inline", "link"],
-                    required: false
-                },
-                pid: {
-                    type: "string",
-                    required: false
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.security.clientMenu.addClientMenu(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async addClientMenu() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				name: {
+					type: "string"
+				},
+				path: {
+					type: "string"
+				},
+				type: {
+					type: "enum",
+					values: ["inline", "link"],
+					required: false
+				},
+				pid: {
+					type: "string",
+					required: false
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.security.clientMenu.addClientMenu(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  删除前端菜单
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -57,25 +55,24 @@ class clientMenuController extends Controller {
         @return       null
     */
 
-    async deleteClientMenu() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                ids: {
-                    type: "array",
-                    itemType: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.security.clientMenu.deleteClientMenu(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async deleteClientMenu() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				ids: {
+					type: "array",
+					itemType: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.security.clientMenu.deleteClientMenu(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  修改前端菜单
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -86,57 +83,55 @@ class clientMenuController extends Controller {
         @return       null
     */
 
-    async editClientMenu() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                },
-                name: {
-                    type: "string"
-                },
-                path: {
-                    type: "string"
-                },
-                type: {
-                    type: "enum",
-                    values: ["inline", "link"],
-                    required: false
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.security.clientMenu.editClientMenu(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async editClientMenu() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+				},
+				name: {
+					type: "string"
+				},
+				path: {
+					type: "string"
+				},
+				type: {
+					type: "enum",
+					values: ["inline", "link"],
+					required: false
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.security.clientMenu.editClientMenu(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  以树形结构获取前端菜单
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @return       null
     */
    
-    async getTreeClientMenu() { 
-        try {
-            const params = this.ctx.query;
-            const reqRule = {
+	async getTreeClientMenu() { 
+		try {
+			const params = this.ctx.query;
+			const reqRule = {
                 
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.security.clientMenu.getTreeClientMenu(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.security.clientMenu.getTreeClientMenu(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /** 
+	/** 
         @description  修改菜单在菜单树中的位置
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -146,31 +141,29 @@ class clientMenuController extends Controller {
         @return       null
     */
 
-    async changeClientMenuPosition() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                },
-                pid: {
-                    type: "string",
-                    widelyUndefined: false,
-                    empty: true
-                },
-                sort: {
-                    type: "number"
-                }
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.security.clientMenu.changeClientMenuPosition(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-
+	async changeClientMenuPosition() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+				},
+				pid: {
+					type: "string",
+					widelyUndefined: false,
+					empty: true
+				},
+				sort: {
+					type: "number"
+				}
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.security.clientMenu.changeClientMenuPosition(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 }
 
 module.exports = clientMenuController;

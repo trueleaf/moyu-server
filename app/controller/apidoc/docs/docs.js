@@ -4,11 +4,10 @@
     @create        2020-10-08 22:10
 */
 
-
 const Controller = require("egg").Controller;
 
 class DocsController extends Controller {
-    /** 
+	/** 
         @description  新增空白文档
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -18,34 +17,33 @@ class DocsController extends Controller {
         @param {string}            projectId 项目id
         @return       null
     */
-    async addEmptyDoc() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                name: {
-                    type: "string",
-                },
-                type: {
-                    type: "string",
-                    enum: ["folder", "api", "markdown"],
-                },
-                pid: {
-                    type: "string",
-                    required: false
-                },
-                projectId: {
-                    type: "string",
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.addEmptyDoc(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /** 
+	async addEmptyDoc() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				name: {
+					type: "string",
+				},
+				type: {
+					type: "string",
+					enum: ["folder", "api", "markdown"],
+				},
+				pid: {
+					type: "string",
+					required: false
+				},
+				projectId: {
+					type: "string",
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.addEmptyDoc(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+	/** 
      * @description        拷贝一个节点
      * @author              shuxiaokai
      * @updateAuthor       shuxiaokai
@@ -55,27 +53,26 @@ class DocsController extends Controller {
      * @param {String}     projectId - 项目id       
      */
 
-    async copyDoc() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                },
-                projectId: {
-                    type: "string"
-                }
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.copyDoc(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async copyDoc() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+				},
+				projectId: {
+					type: "string"
+				}
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.copyDoc(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /** 
+	/** 
         @description  粘贴挂载文档
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -83,31 +80,30 @@ class DocsController extends Controller {
         @param {String?}       mountedId 挂载id
         @param {Array<Doc>}    docs 文档 
     */
-    async pasteDocs() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                projectId: {
-                    type: "string"
-                },
-                mountedId: {
-                    type: "string",
-                    required: false,
-                },
-                docs: {
-                    type: "array"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.pasteDocs(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async pasteDocs() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				projectId: {
+					type: "string"
+				},
+				mountedId: {
+					type: "string",
+					required: false,
+				},
+				docs: {
+					type: "array"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.pasteDocs(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /** 
+	/** 
      * @description        新增多个文档
      * @author              shuxiaokai
      * @create             2020-07-20 15:36
@@ -116,27 +112,26 @@ class DocsController extends Controller {
      * @return {String}    返回字符串
      */
 
-    async addMultiDocs() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                projectId: { //项目id
-                    type: "string"
-                },
-                docs: {
-                    type: "array"
-                }
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.addMultiDocs(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async addMultiDocs() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				projectId: { //项目id
+					type: "string"
+				},
+				docs: {
+					type: "array"
+				}
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.addMultiDocs(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /** 
+	/** 
         @description  修改文档在文档树中的位置
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -152,38 +147,37 @@ class DocsController extends Controller {
                             -type,
         @return       null
     */
-    async changeDocPosition() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                },
-                pid: {
-                    type: "string",
-                    required: false,
-                    empty: true
-                },
-                sort: {
-                    type: "number"
-                },
-                projectId: { //项目id
-                    type: "string"
-                },
-                dropInfo: { //拖拽信息
-                    type: "object",
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.changeDocPosition(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async changeDocPosition() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+				},
+				pid: {
+					type: "string",
+					required: false,
+					empty: true
+				},
+				sort: {
+					type: "number"
+				},
+				projectId: { //项目id
+					type: "string"
+				},
+				dropInfo: { //拖拽信息
+					type: "object",
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.changeDocPosition(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /** 
+	/** 
         @description  修改文档名称
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -192,29 +186,28 @@ class DocsController extends Controller {
         @param {String}    name 当前文档名称      
         @return       null
     */
-    async changeDocName() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                },
-                projectId: {
-                    type: "string"
-                },
-                name: {
-                    type: "string",
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.changeDocName(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /** 
+	async changeDocName() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+				},
+				projectId: {
+					type: "string"
+				},
+				name: {
+					type: "string",
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.changeDocName(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+	/** 
         @description  新增文档详细信息
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -226,38 +219,37 @@ class DocsController extends Controller {
         @return       null
     */
 
-    async fillDoc() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                    required: true
-                },
-                info: {
-                    type: "object",
-                },
-                item: {
-                    type: "object",
-                },
-                spendTime: {
-                    type: "number",
-                    required: false
-                },
-                projectId: {
-                    type: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.fillDoc(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async fillDoc() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+					required: true
+				},
+				info: {
+					type: "object",
+				},
+				item: {
+					type: "object",
+				},
+				spendTime: {
+					type: "number",
+					required: false
+				},
+				projectId: {
+					type: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.fillDoc(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /** 
+	/** 
         @description  获取文档结构树
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -265,48 +257,47 @@ class DocsController extends Controller {
         @return       null
     */
 
-    async getDocTreeNode() { 
-        try {
-            const params = this.ctx.request.query;
-            const reqRule = {
-                projectId: {
-                    type: "string",
-                    required: true
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.getDocTreeNode(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /** 
+	async getDocTreeNode() { 
+		try {
+			const params = this.ctx.request.query;
+			const reqRule = {
+				projectId: {
+					type: "string",
+					required: true
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.getDocTreeNode(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+
+	/** 
         @description  获取文档导航(仅获取文件夹信息，用于一个项目向另一个项目导入)
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @param {string}           projectId 项目id
         @return       null
     */
-    async getDocTreeFolderNode() { 
-        try {
-            const params = this.ctx.request.query;
-            const reqRule = {
-                projectId: {
-                    type: "string",
-                    required: true
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.getDocTreeFolderNode(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /** 
+	async getDocTreeFolderNode() { 
+		try {
+			const params = this.ctx.request.query;
+			const reqRule = {
+				projectId: {
+					type: "string",
+					required: true
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.getDocTreeFolderNode(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+	/** 
         @description  根据url过滤文档信息
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -315,28 +306,27 @@ class DocsController extends Controller {
         @return       null
     */
 
-    async filterDoc() { 
-        try {
-            const params = this.ctx.request.query;
-            const reqRule = {
-                projectId: {
-                    type: "string",
-                },
-                url: {
-                    type: "string",
-                    required: false
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.filterDoc(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async filterDoc() { 
+		try {
+			const params = this.ctx.request.query;
+			const reqRule = {
+				projectId: {
+					type: "string",
+				},
+				url: {
+					type: "string",
+					required: false
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.filterDoc(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-   /** 
+	/** 
     * @description        获取文档详细信息
     * @author             shuxiaokai
     * @create             2021-01-13 17:27
@@ -344,26 +334,25 @@ class DocsController extends Controller {
     * @param {string}     projectId - 项目id       
     * @return             null     
     */
-    async getDocDetail() { 
-        try {
-            const params = this.ctx.request.query;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                },
-                projectId: {
-                    type: "string",
-                }
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.getDocDetail(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /** 
+	async getDocDetail() { 
+		try {
+			const params = this.ctx.request.query;
+			const reqRule = {
+				_id: {
+					type: "string",
+				},
+				projectId: {
+					type: "string",
+				}
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.getDocDetail(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+	/** 
         @description  删除文档详细信息
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -371,28 +360,27 @@ class DocsController extends Controller {
         @return       null
     */
 
-    async deleteDoc() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                projectId: {
-                    type: "string",
-                    default: true,
-                },
-                ids: {
-                    type: "array",
-                    required: true
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.deleteDoc(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /** 
+	async deleteDoc() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				projectId: {
+					type: "string",
+					default: true,
+				},
+				ids: {
+					type: "array",
+					required: true
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.deleteDoc(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+	/** 
         @description  发布文档
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -400,25 +388,24 @@ class DocsController extends Controller {
         @return       null
     */
 
-    async publishDoc() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                    default: true,
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.publishDoc(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async publishDoc() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+					default: true,
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.publishDoc(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  生成文件word
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -426,23 +413,22 @@ class DocsController extends Controller {
         @return       null
     */
    
-    async convertDocToWord() {
-        try {
-            const params = this.ctx.request.query;
-            const reqRule = {
-                projectId: {
-                    type: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            await this.ctx.service.apidoc.docs.docs.convertDocToWord(params);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async convertDocToWord() {
+		try {
+			const params = this.ctx.request.query;
+			const reqRule = {
+				projectId: {
+					type: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			await this.ctx.service.apidoc.docs.docs.convertDocToWord(params);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  获取mock文档数据
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -450,23 +436,23 @@ class DocsController extends Controller {
         @return       null
     */
    
-    async getMockData() {
-        try {
-            const params = this.ctx.request.query;
-            const reqRule = {
-                _id: {
-                    type: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.getMockData(params);
-            this.ctx.body = result;
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /**
+	async getMockData() {
+		try {
+			const params = this.ctx.request.query;
+			const reqRule = {
+				_id: {
+					type: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.getMockData(params);
+			this.ctx.body = result;
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+
+	/**
         @description   获取文档回收站记录
         @author        shuxiaokai
         @create        2020-10-08 22:10
@@ -480,56 +466,55 @@ class DocsController extends Controller {
         @param {string}            projectId 项目id
         @return       null
     */
-    async getDocDeletedList() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                pageNum: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                pageSize: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                startTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                endTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                url: {
-                    type: "string",
-                    required: false
-                },
-                docName: {
-                    type: "string",
-                    required: false,
-                },
-                operators: {
-                    type: "array",
-                    required: false
-                },
-                projectId: {
-                    type: "string",
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.getDocDeletedList(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async getDocDeletedList() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				pageNum: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				pageSize: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				startTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				endTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				url: {
+					type: "string",
+					required: false
+				},
+				docName: {
+					type: "string",
+					required: false,
+				},
+				operators: {
+					type: "array",
+					required: false
+				},
+				projectId: {
+					type: "string",
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.getDocDeletedList(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
      * @description        恢复接口或文件夹
      * @author             shuxiaokai
      * @create             2021-05-24 14:27
@@ -538,29 +523,28 @@ class DocsController extends Controller {
      * @param {Boolean}    restoreChildren 是否恢复子节点
      * @return {String}    返回字符串
      */
-     async restroeNode() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                },
-                projectId: {
-                    type: "string",
-                },
-                restoreChildren: {
-                    type: "boolean",
-                    required: false,
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docs.restroeNode(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async restroeNode() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+				},
+				projectId: {
+					type: "string",
+				},
+				restoreChildren: {
+					type: "boolean",
+					required: false,
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docs.restroeNode(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 }
 
 module.exports = DocsController;

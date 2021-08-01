@@ -7,7 +7,7 @@
 const Service = require("egg").Service;
 const escapeStringRegexp = require("escape-string-regexp");
 class docHistoryService extends Service {
-    /**
+	/**
         @description  获取文档历史记录
         @author        shuxiaokai
         @create        2020-10-08 22:10
@@ -23,78 +23,78 @@ class docHistoryService extends Service {
         @return       null
     */
 
-    async getDocHistoryList(params) {
-        const { pageNum, pageSize, startTime, endTime, operators, operationTypes, projectId, url, docName } = params;
-        const query = {};
-        let skipNum = 0;
-        let limit = 100;
-        query.projectId = projectId;
-        if (pageSize != null && pageNum != null) {
-            skipNum = (pageNum - 1) * pageSize;
-            limit = pageSize;
-        }
-        if (startTime != null && endTime != null) {
-            query.createdAt = { $gt: startTime, $lt: endTime };
-        }
-        if (url) {
-            query.url = new RegExp(escapeStringRegexp(url));
-        }
-        if (docName) {
-            query["info.name"] = new RegExp(escapeStringRegexp(docName));
-        }
-        if (operators && operators.length > 0) {
-            query.operator = {
-                $in: operators,
-            };
-        }
-        if (operationTypes && operationTypes.length > 0) {
-            query.operation = {
-                $in: operationTypes,
-            }
-        }
-        console.log(query)
-        const rows = await this.ctx.model.Apidoc.Docs.DocsHistory.find(
-            query,
-            {
-                projectId: 0,
-                updatedAt: 0,
-                __v: 0,
-            }
-        ).skip(skipNum).sort({ createdAt: -1 }).limit(limit);
-        const total = await this.ctx.model.Apidoc.Docs.DocsHistory.find(query).countDocuments();
-        const result = {};
-        result.rows = rows;
-        result.total = total;
-        return result;
-    }
+	async getDocHistoryList(params) {
+		const { pageNum, pageSize, startTime, endTime, operators, operationTypes, projectId, url, docName } = params;
+		const query = {};
+		let skipNum = 0;
+		let limit = 100;
+		query.projectId = projectId;
+		if (pageSize != null && pageNum != null) {
+			skipNum = (pageNum - 1) * pageSize;
+			limit = pageSize;
+		}
+		if (startTime != null && endTime != null) {
+			query.createdAt = { $gt: startTime, $lt: endTime };
+		}
+		if (url) {
+			query.url = new RegExp(escapeStringRegexp(url));
+		}
+		if (docName) {
+			query["info.name"] = new RegExp(escapeStringRegexp(docName));
+		}
+		if (operators && operators.length > 0) {
+			query.operator = {
+				$in: operators,
+			};
+		}
+		if (operationTypes && operationTypes.length > 0) {
+			query.operation = {
+				$in: operationTypes,
+			};
+		}
+		console.log(query);
+		const rows = await this.ctx.model.Apidoc.Docs.DocsHistory.find(
+			query,
+			{
+				projectId: 0,
+				updatedAt: 0,
+				__v: 0,
+			}
+		).skip(skipNum).sort({ createdAt: -1 })
+			.limit(limit);
+		const total = await this.ctx.model.Apidoc.Docs.DocsHistory.find(query).countDocuments();
+		const result = {};
+		result.rows = rows;
+		result.total = total;
+		return result;
+	}
 
-    /**
+	/**
         @description  获取文档所有操作人员
         @author        shuxiaokai
         @create        2020-10-08 22:10
         @param {string}            projectId 项目id
         @return       null
     */
-    async getHistoryOperatorEnum(params) {
-        const { projectId } = params;
-        const docInfo = await this.ctx.model.Apidoc.Project.Project.findOne(
-            { 
-                _id: projectId,
-                enabled: true 
-            }, { 
-                members: 1,
-                owner: 1,
-                _id: 0
-            }
-        ).sort({ createdAt: 1 }).lean();
-        const members = docInfo.members.map(doc => {
-            return doc.realName || doc.loginName;
-        });
-        const owner = [docInfo.owner.name]
-        const result = owner.concat(members)
-        return result;
-    }
-    
+	async getHistoryOperatorEnum(params) {
+		const { projectId } = params;
+		const docInfo = await this.ctx.model.Apidoc.Project.Project.findOne(
+			{ 
+				_id: projectId,
+				enabled: true 
+			}, { 
+				members: 1,
+				owner: 1,
+				_id: 0
+			}
+		).sort({ createdAt: 1 }).lean();
+		const members = docInfo.members.map(doc => {
+			return doc.realName || doc.loginName;
+		});
+		const owner = [docInfo.owner.name];
+		const result = owner.concat(members);
+		return result;
+	}
 }
 
 module.exports = docHistoryService;

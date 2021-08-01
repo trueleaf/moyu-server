@@ -1,0 +1,113 @@
+{
+	"prettier.enable": false,
+    // << docthis
+    "docthis.includeAuthorTag": true, //出现@Author
+    "docthis.authorName": "bubao",
+    "docthis.dateTagFormat": "yyyy-mm-dd HH:mm:ss",
+    "docthis.includeDateTag": true,
+    "docthis.includeDescriptionTag": true, //出现@Description
+    // >> docthis
+    // << eslint
+    "eslint.enable": true,
+    "eslint.alwaysShowStatus": true,
+    // >> eslint
+	// 启用后，差异编辑器将忽略前导空格或尾随空格中的更改。
+    "files.eol": "\n",
+    // << javascript
+    // JavaScript 格式化程序
+    "javascript.format.enable": true,
+    // 始终自动更新路径。
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    // >> javascript
+    // << editor
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+    },
+    // 编辑器的分割字符处理，在下面去掉 - 就可以做到。class-name 双击全选
+    "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?",
+    // 按 "Tab" 时插入空格。
+    "editor.insertSpaces": false,
+    // 一个制表符等于的空格数。 
+    // "editor.tabSize": 4,
+    "editor.wordWrap": "on",
+    "pangu.auto_format_on_save": true,
+    // << better-comments 自定义注释高亮颜色
+    "better-comments.tags": [
+        {
+            "tag": "!", // * 警告
+            "color": "#FF2D00",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "?", // * 疑问
+            "color": "#3498DB",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "//", // * 删除注释
+            "color": "#474747",
+            "strikethrough": true,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "todo", // TODO
+            "color": "#FF8C00",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "*", // * 完成标志
+            "color": "#98C379",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "info", // * 说明
+            "color": "#99FB37",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": "<<", // * 范围开始
+            "color": "#F2D660",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+        {
+            "tag": ">>", // * 范围结束
+            "color": "#60D6F2",
+            "strikethrough": false,
+            "backgroundColor": "transparent"
+        },
+    ],
+    // >> better-comments
+    // << koro 头部注释配置
+    "fileheader.customMade": {
+        "Description": "",
+        "author": "bubao",
+        "Date": "Do not edit",
+        "LastEditors": "bubao",
+        "LastEditTime": "Do not edit",
+    },
+    
+    "fileheader.configObj": {
+        "language": {
+            "js": {
+                "head": "/**",
+                "middle": " * @",
+                "end": " */"
+            },
+            "vue": {
+                "head": "<!--",
+                "middle": " * @",
+                "end": " -->"
+            }
+        }
+    },
+    // >> koro 注释格式配置
+}

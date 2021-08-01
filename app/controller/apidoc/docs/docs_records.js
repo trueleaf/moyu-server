@@ -1,5 +1,4 @@
 
-
 /**
     @description  文档修改历史记录控制器
     @author        shuxiaokai
@@ -9,7 +8,7 @@
 const Controller = require("egg").Controller;
 
 class docsRecordsController extends Controller {
-    /**
+	/**
         @description  新增文档修改历史记录
         @author        shuxiaokai
         @create        2020-10-08 22:10
@@ -17,50 +16,49 @@ class docsRecordsController extends Controller {
         @param {String}            docInfo 文档详情
         @return       null
     */
-    async addDocsRecords() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                docId: {
-                    type: "string"
-                },
-                docInfo: {
-                    type: "object"
-                }
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsRecords.addDocsRecords(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /**
+	async addDocsRecords() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				docId: {
+					type: "string"
+				},
+				docInfo: {
+					type: "object"
+				}
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docsRecords.addDocsRecords(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+
+	/**
         @description  删除文档修改历史记录
         @author        shuxiaokai
         @create        2020-10-08 22:10
         @param {Array<String>}            ids 
         @return       null
     */
-    async deleteDocsRecords() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                ids: {
-                    type: "array",
-                    itemType: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsRecords.deleteDocsRecords(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /**
+	async deleteDocsRecords() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				ids: {
+					type: "array",
+					itemType: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docsRecords.deleteDocsRecords(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+	/**
         @description  获取文档修改历史记录
         @author        shuxiaokai
         @create        2020-10-08 22:10
@@ -72,42 +70,41 @@ class docsRecordsController extends Controller {
         @return       null
     */
 
-    async getDocsRecordsList() { 
-        try {
-            const params = this.ctx.query;
-            const reqRule = {
-                docId: {
-                    type: "string"
-                },
-                pageNum: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                pageSize: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                startTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                endTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsRecords.getDocsRecordsList(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async getDocsRecordsList() { 
+		try {
+			const params = this.ctx.query;
+			const reqRule = {
+				docId: {
+					type: "string"
+				},
+				pageNum: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				pageSize: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				startTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				endTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docsRecords.getDocsRecordsList(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 }
 
 module.exports = docsRecordsController;

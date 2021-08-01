@@ -4,11 +4,10 @@
     @create        2020-10-08 22:10
 */
 
-
 const Controller = require("egg").Controller;
 
 class ProjectTypeController extends Controller {
-    /** 
+	/** 
         @description  获取项目类型枚举分页列表
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -20,45 +19,44 @@ class ProjectTypeController extends Controller {
         @return       null
     */
 
-    async getProjectTypeEnumList() { 
-        try {
-            const params = this.ctx.query;
-            const reqRule = {
-                pageNum: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                pageSize: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                startTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                endTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                projectTypeName: {
-                    type: "string",
-                    convertType: "string",
-                    required: false
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.projectType.getProjectTypeEnumList(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /** 
+	async getProjectTypeEnumList() { 
+		try {
+			const params = this.ctx.query;
+			const reqRule = {
+				pageNum: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				pageSize: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				startTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				endTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				projectTypeName: {
+					type: "string",
+					convertType: "string",
+					required: false
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.project.projectType.getProjectTypeEnumList(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+	/** 
         @description  删除项目类型枚举
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -66,24 +64,23 @@ class ProjectTypeController extends Controller {
         @return       null
     */
 
-    async deleteProjectTypeEnum() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                ids: {
-                    type: "array",
-                    itemType: "string"
-                }
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.projectType.deleteProjectTypeEnum(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /** 
+	async deleteProjectTypeEnum() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				ids: {
+					type: "array",
+					itemType: "string"
+				}
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.project.projectType.deleteProjectTypeEnum(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+	/** 
         @description  修改项目类型枚举
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -91,45 +88,41 @@ class ProjectTypeController extends Controller {
         @return       null
     */
 
-    async editProjectTypeEnum() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string"
-                },
-                projectTypeName: {
-                    type: "string",
-                }
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.projectType.editProjectTypeEnum(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    
+	async editProjectTypeEnum() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string"
+				},
+				projectTypeName: {
+					type: "string",
+				}
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.project.projectType.editProjectTypeEnum(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-
-    /** 
+	/** 
         @description  获取项目类型枚举
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @return       null
     */
 
-    async getProjectTypeEnum() { 
-        try {
-            const result = await this.ctx.service.apidoc.project.projectType.getProjectTypeEnum();
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /** 
+	async getProjectTypeEnum() { 
+		try {
+			const result = await this.ctx.service.apidoc.project.projectType.getProjectTypeEnum();
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+	/** 
         @description  新增项目类型枚举
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -138,27 +131,26 @@ class ProjectTypeController extends Controller {
         @return       null
     */
 
-    async addProjectTypeEnum() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                projectTypeName: {
-                    type: "string"
-                },
-                remark: {
-                    type: "string",
-                    required: false,
-                }
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.projectType.addProjectTypeEnum(params);
-            this.ctx.helper.successResponseData(result);
-            return;
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async addProjectTypeEnum() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				projectTypeName: {
+					type: "string"
+				},
+				remark: {
+					type: "string",
+					required: false,
+				}
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.project.projectType.addProjectTypeEnum(params);
+			this.ctx.helper.successResponseData(result);
+			return;
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 }
 
 module.exports = ProjectTypeController;

@@ -7,7 +7,7 @@
 const Service = require("egg").Service;
 
 class clientRoutesService extends Service {
-    /**
+	/**
         @description  新增前端资源
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -17,21 +17,20 @@ class clientRoutesService extends Service {
         @return       null
     */
 
-    async addClientRoutes(params) {
-        const { name, path, groupName } = params;
-        const doc = {};
-        doc.name = name;
-        doc.path = path;
-        doc.groupName = groupName;
+	async addClientRoutes(params) {
+		const { name, path, groupName } = params;
+		const doc = {};
+		doc.name = name;
+		doc.path = path;
+		doc.groupName = groupName;
 
-        const hasPath = await this.ctx.model.Security.ClientRoutes.findOne({ path });
-        if (hasPath) {
-            this.ctx.helper.throwCustomError("路由已经存在", 1003);
-        }
-        await this.ctx.model.Security.ClientRoutes.create(doc);
-        return;
-    }
-    /**
+		const hasPath = await this.ctx.model.Security.ClientRoutes.findOne({ path });
+		if (hasPath) {
+			this.ctx.helper.throwCustomError("路由已经存在", 1003);
+		}
+		await this.ctx.model.Security.ClientRoutes.create(doc);
+	}
+	/**
         @description  批量新增前端资源
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -39,20 +38,19 @@ class clientRoutesService extends Service {
         @return       null
     */
 
-    async addMultiClientRoutes(params) {
-        const { routes } = params;
-        for (let i = 0; i < routes.length; i++) {
-            const doc = {
-                name: routes[i].name,
-                path: routes[i].path,
-                enabled: true
-            };
-            await this.ctx.model.Security.ClientRoutes.updateOne({ path: routes[i].path }, doc, { upsert: true });
-        }
-        return;
-    }
+	async addMultiClientRoutes(params) {
+		const { routes } = params;
+		for (let i = 0; i < routes.length; i++) {
+			const doc = {
+				name: routes[i].name,
+				path: routes[i].path,
+				enabled: true
+			};
+			await this.ctx.model.Security.ClientRoutes.updateOne({ path: routes[i].path }, doc, { upsert: true });
+		}
+	}
 
-    /**
+	/**
         @description  修改前端路由
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -63,27 +61,26 @@ class clientRoutesService extends Service {
         @return       null
     */
 
-    async editClientRoutes(params) { 
-        const { _id, name, path, groupName } = params;
-        const updateDoc = {};
-        if (name) {
-            updateDoc.name = name; 
-        }
-        if (path) {
-            updateDoc.path = path; 
-        }
-        if (groupName) {
-            updateDoc.groupName = groupName; 
-        }
-        const hasPath = await this.ctx.model.Security.ClientRoutes.findOne({ _id: { $ne: _id }, path });
-        if (hasPath) {
-            this.ctx.helper.throwCustomError("路由已经存在", 1003);
-        }
-        await this.ctx.model.Security.ClientRoutes.findByIdAndUpdate({ _id }, updateDoc);
-        return;
-    }
+	async editClientRoutes(params) { 
+		const { _id, name, path, groupName } = params;
+		const updateDoc = {};
+		if (name) {
+			updateDoc.name = name; 
+		}
+		if (path) {
+			updateDoc.path = path; 
+		}
+		if (groupName) {
+			updateDoc.groupName = groupName; 
+		}
+		const hasPath = await this.ctx.model.Security.ClientRoutes.findOne({ _id: { $ne: _id }, path });
+		if (hasPath) {
+			this.ctx.helper.throwCustomError("路由已经存在", 1003);
+		}
+		await this.ctx.model.Security.ClientRoutes.findByIdAndUpdate({ _id }, updateDoc);
+	}
 
-    /**
+	/**
         @description  批量前端路由分类
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -92,13 +89,12 @@ class clientRoutesService extends Service {
         @return       null
     */
 
-    async editMultiClientRoutesType(params) { 
-        const { ids, groupName } = params;
-        await this.ctx.model.Security.ClientRoutes.updateMany({ _id: { $in: ids }}, { $set: { groupName }});
-        return;
-    }
+	async editMultiClientRoutesType(params) { 
+		const { ids, groupName } = params;
+		await this.ctx.model.Security.ClientRoutes.updateMany({ _id: { $in: ids } }, { $set: { groupName } });
+	}
 
-    /**
+	/**
         @description  删除前端资源
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -106,12 +102,11 @@ class clientRoutesService extends Service {
         @return       null
     */
 
-    async deleteClientRoutes(params) {
-        const { ids } = params;
-        await this.ctx.model.Security.ClientRoutes.updateMany({ _id: { $in: ids }}, { $set: { enabled: false }});
-        return;
-    }
-    /**
+	async deleteClientRoutes(params) {
+		const { ids } = params;
+		await this.ctx.model.Security.ClientRoutes.updateMany({ _id: { $in: ids } }, { $set: { enabled: false } });
+	}
+	/**
         @description  获取前端资源
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -122,41 +117,41 @@ class clientRoutesService extends Service {
         @return       null
     */
 
-    async getClientRoutesList(params) {
-        const { pageNum, pageSize, startTime, endTime } = params;
-        const query = {};
-        let skipNum = 0;
-        let limit = 100;
-        query.enabled = true;
-        if (pageSize != null && pageNum != null) {
-            skipNum = (pageNum - 1) * pageSize; 
-            limit = pageSize;
-        }
-        if (startTime != null && endTime != null) {
-            query.createdAt = { $gt: startTime, $lt: endTime };
-        }
-        const rows = await this.ctx.model.Security.ClientRoutes.find(query, { _id: 1, path: 1, name: 1, groupName: 1 }).skip(skipNum).limit(limit);
-        const total = await this.ctx.model.Security.ClientRoutes.find(query).countDocuments();
-        const result = {};
-        result.rows = rows;
-        result.total = total;
-        return result;
-    }
+	async getClientRoutesList(params) {
+		const { pageNum, pageSize, startTime, endTime } = params;
+		const query = {};
+		let skipNum = 0;
+		let limit = 100;
+		query.enabled = true;
+		if (pageSize != null && pageNum != null) {
+			skipNum = (pageNum - 1) * pageSize; 
+			limit = pageSize;
+		}
+		if (startTime != null && endTime != null) {
+			query.createdAt = { $gt: startTime, $lt: endTime };
+		}
+		const rows = await this.ctx.model.Security.ClientRoutes.find(query, { _id: 1, path: 1, name: 1, groupName: 1 }).skip(skipNum).limit(limit);
+		const total = await this.ctx.model.Security.ClientRoutes.find(query).countDocuments();
+		const result = {};
+		result.rows = rows;
+		result.total = total;
+		return result;
+	}
 
-    /**
+	/**
         @description  获取前端资源(不分页)
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @return       null
     */
 
-    async getClientRoutes() {
-        const limit = 1000;
-        const query = {};
-        query.enabled = true;
-        const result = await this.ctx.model.Security.ClientRoutes.find(query, { _id: 1, path: 1, name: 1, groupName: 1 }).limit(limit);
-        return result;
-    }
+	async getClientRoutes() {
+		const limit = 1000;
+		const query = {};
+		query.enabled = true;
+		const result = await this.ctx.model.Security.ClientRoutes.find(query, { _id: 1, path: 1, name: 1, groupName: 1 }).limit(limit);
+		return result;
+	}
 }
 
 module.exports = clientRoutesService;

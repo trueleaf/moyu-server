@@ -1,5 +1,4 @@
 
-
 /** 
     @description  restful模板控制器
     @author       shuxiaokai
@@ -9,7 +8,7 @@
 const Controller = require("egg").Controller;
 
 class restfulTemplateController extends Controller {
-    /** 
+	/** 
         @description  新增restful模板
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -23,39 +22,38 @@ class restfulTemplateController extends Controller {
         @return       null
     */
 
-    async addRestfulTemplate() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                name: { //名称
-                    type: "string"
-                },
-                projectId: { //项目id
-                    type: "string"
-                },
-                getParams: {
-                    type: "object"
-                },
-                postParams: {
-                    type: "object",
-                },
-                putParams: {
-                    type: "object"
-                },
-                delParams: {
-                    type: "object"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsRestfulTemplate.addRestfulTemplate(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async addRestfulTemplate() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				name: { //名称
+					type: "string"
+				},
+				projectId: { //项目id
+					type: "string"
+				},
+				getParams: {
+					type: "object"
+				},
+				postParams: {
+					type: "object",
+				},
+				putParams: {
+					type: "object"
+				},
+				delParams: {
+					type: "object"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docsRestfulTemplate.addRestfulTemplate(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /** 
+	/** 
         @description  删除restful模板
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -63,25 +61,24 @@ class restfulTemplateController extends Controller {
         @return       null
     */
 
-    async deleteRestfulTemplate() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                ids: {
-                    type: "array",
-                    itemType: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsRestfulTemplate.deleteRestfulTemplate(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async deleteRestfulTemplate() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				ids: {
+					type: "array",
+					itemType: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docsRestfulTemplate.deleteRestfulTemplate(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /** 
+	/** 
         @description  修改restful模板
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -89,24 +86,23 @@ class restfulTemplateController extends Controller {
         @return       null
     */
 
-    async editRestfulTemplate() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsRestfulTemplate.editRestfulTemplate(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async editRestfulTemplate() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docsRestfulTemplate.editRestfulTemplate(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /** 
+	/** 
         @description  获取restful模板
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -117,42 +113,41 @@ class restfulTemplateController extends Controller {
         @return       null
     */
 
-    async getRestfulTemplateList() { 
-        try {
-            const params = this.ctx.query;
-            const reqRule = {
-                projectId: {
-                    type: "string",
-                },
-                pageNum: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                pageSize: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                startTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                endTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsRestfulTemplate.getRestfulTemplateList(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async getRestfulTemplateList() { 
+		try {
+			const params = this.ctx.query;
+			const reqRule = {
+				projectId: {
+					type: "string",
+				},
+				pageNum: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				pageSize: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				startTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				endTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.docs.docsRestfulTemplate.getRestfulTemplateList(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 }
 
 module.exports = restfulTemplateController;

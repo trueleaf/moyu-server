@@ -1,5 +1,4 @@
 
-
 /**
     @description  项目全局变量控制器
     @author        shuxiaokai
@@ -9,7 +8,7 @@
 const Controller = require("egg").Controller;
 
 class ProjectVariableController extends Controller {
-    /**
+	/**
         @description  新增项目全局变量
         @author        shuxiaokai
         @create        2020-10-08 22:10
@@ -20,34 +19,33 @@ class ProjectVariableController extends Controller {
         @return       null
     */
    
-    async addProjectVariable() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                name: {
-                    type: "string"
-                },
-                type: {
-                    type: "string",
-                    values: ["string", "number", "boolean"]
-                },
-                value: {
-                    type: "string"
-                },
-                projectId: {
-                    type: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.projectVariable.addProjectVariable(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async addProjectVariable() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				name: {
+					type: "string"
+				},
+				type: {
+					type: "string",
+					values: ["string", "number", "boolean"]
+				},
+				value: {
+					type: "string"
+				},
+				projectId: {
+					type: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.project.projectVariable.addProjectVariable(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  删除项目全局变量
         @author        shuxiaokai
         @create        2020-10-08 22:10
@@ -55,28 +53,27 @@ class ProjectVariableController extends Controller {
         @return       null
     */
 
-    async deleteProjectVariable() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                ids: {
-                    type: "array",
-                    itemType: "string"
-                },
-                projectId: {
-                    type: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.projectVariable.deleteProjectVariable(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async deleteProjectVariable() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				ids: {
+					type: "array",
+					itemType: "string"
+				},
+				projectId: {
+					type: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.project.projectVariable.deleteProjectVariable(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  修改项目全局变量
         @author        shuxiaokai
         @create        2020-10-08 22:10
@@ -87,40 +84,39 @@ class ProjectVariableController extends Controller {
         @return       null
     */
 
-    async editProjectVariable() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                },
-                name: {
-                    type: "string",
-                    required: false
-                },
-                type: {
-                    type: "string",
-                    values: ["string", "number", "boolean"],
-                    required: false
-                },
-                value: {
-                    type: "string",
-                    required: false
-                },
-                projectId: {
-                    type: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.projectVariable.editProjectVariable(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async editProjectVariable() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+				},
+				name: {
+					type: "string",
+					required: false
+				},
+				type: {
+					type: "string",
+					values: ["string", "number", "boolean"],
+					required: false
+				},
+				value: {
+					type: "string",
+					required: false
+				},
+				projectId: {
+					type: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.project.projectVariable.editProjectVariable(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  获取项目全局变量
         @author        shuxiaokai
         @create        2020-10-08 22:10
@@ -132,44 +128,43 @@ class ProjectVariableController extends Controller {
         @return       null
     */
 
-    async getProjectVariableList() { 
-        try {
-            const params = this.ctx.query;
-            const reqRule = {
-                pageNum: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                pageSize: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                startTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                endTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                projectId: {
-                    type: "string",
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.projectVariable.getProjectVariableList(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async getProjectVariableList() { 
+		try {
+			const params = this.ctx.query;
+			const reqRule = {
+				pageNum: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				pageSize: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				startTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				endTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				projectId: {
+					type: "string",
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.project.projectVariable.getProjectVariableList(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  获取项目全局变量枚举值
         @author        shuxiaokai
         @create        2020-10-08 22:10
@@ -177,24 +172,21 @@ class ProjectVariableController extends Controller {
         @return       null
     */
 
-    async getProjectVariableEnum() { 
-        try {
-            const params = this.ctx.query;
-            const reqRule = {
-                projectId: {
-                    type: "string",
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.projectVariable.getProjectVariableEnum(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-
-
+	async getProjectVariableEnum() { 
+		try {
+			const params = this.ctx.query;
+			const reqRule = {
+				projectId: {
+					type: "string",
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.project.projectVariable.getProjectVariableEnum(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 }
 
 module.exports = ProjectVariableController;

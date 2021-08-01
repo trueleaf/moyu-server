@@ -4,11 +4,10 @@
     @create        2020-10-08 22:10
 */
 
-
 const Service = require("egg").Service;
 
 class presetParamsService extends Service {
-    /** 
+	/** 
         @description  新增参数组
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -20,22 +19,21 @@ class presetParamsService extends Service {
         @return       null
     */
 
-    async addPresetParams(params) {
-        const { name, remark, presetParamsType, items, projectId } = params;
-        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const doc = {};
-        const userInfo = this.ctx.session.userInfo;
-        doc.name = name;
-        doc.remark = remark;
-        doc.presetParamsType = presetParamsType;
-        doc.items = items;
-        doc.projectId = projectId;
-        doc.creatorName = userInfo.realName || userInfo.loginName;
-        await this.ctx.model.Apidoc.Docs.DocsParamsPreset.create(doc);
-        return;
-    }
+	async addPresetParams(params) {
+		const { name, remark, presetParamsType, items, projectId } = params;
+		await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+		const doc = {};
+		const userInfo = this.ctx.session.userInfo;
+		doc.name = name;
+		doc.remark = remark;
+		doc.presetParamsType = presetParamsType;
+		doc.items = items;
+		doc.projectId = projectId;
+		doc.creatorName = userInfo.realName || userInfo.loginName;
+		await this.ctx.model.Apidoc.Docs.DocsParamsPreset.create(doc);
+	}
 
-    /** 
+	/** 
         @description  修改自定义组
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -47,23 +45,22 @@ class presetParamsService extends Service {
         @return       null
     */
 
-    async editPresetParams(params) { 
-        const { _id, projectId, name, items, presetParamsType } = params;
-        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const updateDoc = {};
-        if (name) {
-            updateDoc.name = name; 
-        }
-        if (presetParamsType) {
-            updateDoc.presetParamsType = presetParamsType; 
-        }
-        if (items) {
-            updateDoc.items = items; 
-        }
-        await this.ctx.model.Apidoc.Docs.DocsParamsPreset.findByIdAndUpdate({ _id }, updateDoc);
-        return;
-    }
-    /** 
+	async editPresetParams(params) { 
+		const { _id, projectId, name, items, presetParamsType } = params;
+		await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+		const updateDoc = {};
+		if (name) {
+			updateDoc.name = name; 
+		}
+		if (presetParamsType) {
+			updateDoc.presetParamsType = presetParamsType; 
+		}
+		if (items) {
+			updateDoc.items = items; 
+		}
+		await this.ctx.model.Apidoc.Docs.DocsParamsPreset.findByIdAndUpdate({ _id }, updateDoc);
+	}
+	/** 
         @description  删除参数组
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -71,12 +68,12 @@ class presetParamsService extends Service {
         @return       null
     */
 
-    async deletePresetParams(params) {
-        const { ids } = params;
-        const result = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.deleteMany({ _id: { $in: ids }});
-        return result;
-    }
-    /** 
+	async deletePresetParams(params) {
+		const { ids } = params;
+		const result = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.deleteMany({ _id: { $in: ids } });
+		return result;
+	}
+	/** 
         @description  获取参数组
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -89,31 +86,31 @@ class presetParamsService extends Service {
         @return       null
     */
 
-    async getPresetParamsList(params) {
-        const { pageNum, pageSize, startTime, endTime, presetParamsType, projectId } = params;
-        const query = {};
-        let skipNum = 0;
-        let limit = 100;
-        query.projectId = projectId;
-        if (pageSize != null && pageNum != null) {
-            skipNum = (pageNum - 1) * pageSize;
-            limit = pageSize;
-        }
-        if (startTime != null && endTime != null) {
-            query.createdAt = { $gt: startTime, $lt: endTime };
-        }
-        if (presetParamsType) {
-            query.presetParamsType = presetParamsType;
-        }
-        const rows = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.find(query, { creatorName: 1, name: 1, presetParamsType: 1 }).skip(skipNum).limit(limit);
-        const total = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.find(query).countDocuments();
-        const result = {};
-        result.rows = rows;
-        result.total = total;
-        return result;
-    }
+	async getPresetParamsList(params) {
+		const { pageNum, pageSize, startTime, endTime, presetParamsType, projectId } = params;
+		const query = {};
+		let skipNum = 0;
+		let limit = 100;
+		query.projectId = projectId;
+		if (pageSize != null && pageNum != null) {
+			skipNum = (pageNum - 1) * pageSize;
+			limit = pageSize;
+		}
+		if (startTime != null && endTime != null) {
+			query.createdAt = { $gt: startTime, $lt: endTime };
+		}
+		if (presetParamsType) {
+			query.presetParamsType = presetParamsType;
+		}
+		const rows = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.find(query, { creatorName: 1, name: 1, presetParamsType: 1 }).skip(skipNum).limit(limit);
+		const total = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.find(query).countDocuments();
+		const result = {};
+		result.rows = rows;
+		result.total = total;
+		return result;
+	}
 
-    /** 
+	/** 
         @description  获取参数组枚举
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -122,19 +119,19 @@ class presetParamsService extends Service {
         @return       null
     */
 
-    async getPresetParamsEnum(params) {
-        const { projectId } = params;
-        const query = {};
-        const limit = 100;
-        query.projectId = projectId;
-        // if (presetParamsType) {
-        //     query.presetParamsType = presetParamsType;
-        // }
-        const result = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.find(query, { items: 1, creatorName: 1, name: 1, presetParamsType: 1 }).limit(limit);
-        return result;
-    }
+	async getPresetParamsEnum(params) {
+		const { projectId } = params;
+		const query = {};
+		const limit = 100;
+		query.projectId = projectId;
+		// if (presetParamsType) {
+		//     query.presetParamsType = presetParamsType;
+		// }
+		const result = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.find(query, { items: 1, creatorName: 1, name: 1, presetParamsType: 1 }).limit(limit);
+		return result;
+	}
 
-    /** 
+	/** 
         @description  获取自定义参数组详情
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -142,14 +139,14 @@ class presetParamsService extends Service {
         @param {String}           _id 当前参数组id
         @return       null
     */
-    async getPresetParamsInfo(params) {
-        const { projectId, _id } = params;
-        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const query = {};
-        query._id = _id;
-        const result = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.findById(query, { items: 1 });
-        return result;
-    }
+	async getPresetParamsInfo(params) {
+		const { projectId, _id } = params;
+		await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+		const query = {};
+		query._id = _id;
+		const result = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.findById(query, { items: 1 });
+		return result;
+	}
 }
 
 module.exports = presetParamsService;

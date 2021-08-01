@@ -4,33 +4,32 @@
     @create       2020/12/2 上午9:46:59
 */
 
-
 const Controller = require("egg").Controller;
 class ProjectRulesController extends Controller {
-    /**
+	/**
         @description    根据id查询项目规则
         @author         shuxiaokai
         @create         2020/12/2 上午9:46:59
         @param {string}        projectId 项目id
         @return    null
     */
-    async readProjectRulesById() {
-        try {
-            const params = this.ctx.request.query;
-            const reqRule = {
-                projectId: {
-                    type: "string"
-                }
-            };
-            this.ctx.validate(reqRule, params);
-            let result = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /**
+	async readProjectRulesById() {
+		try {
+			const params = this.ctx.request.query;
+			const reqRule = {
+				projectId: {
+					type: "string"
+				}
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+
+	/**
         @description    修改项目规则
         @author         shuxiaokai
         @create         2020/12/2 上午9:46:59
@@ -44,49 +43,48 @@ class ProjectRulesController extends Controller {
         @param {array?}        requestMethods 请求方法
         @return    null
     */
-    async updateProjectRules() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                projectId: {
-                    type: "string"
-                },
-                fileInFolderLimit: {
-                    type: "number",
-                    required: false
-                },
-                dominLimit: {
-                    type: "number",
-                    required: false
-                },
-                requireDescription: {
-                    type: "boolean",
-                    required: false
-                },
-                requireValue: {
-                    type: "boolean",
-                    required: false
-                },
-                enableCollapseAnimation: {
-                    type: "boolean",
-                    required: false
-                },
-                contentType: {
-                    type: "array",
-                    required: false
-                },
-                requestMethods: {
-                    type: "array",
-                    required: false
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.projectRules.updateProjectRules(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async updateProjectRules() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				projectId: {
+					type: "string"
+				},
+				fileInFolderLimit: {
+					type: "number",
+					required: false
+				},
+				dominLimit: {
+					type: "number",
+					required: false
+				},
+				requireDescription: {
+					type: "boolean",
+					required: false
+				},
+				requireValue: {
+					type: "boolean",
+					required: false
+				},
+				enableCollapseAnimation: {
+					type: "boolean",
+					required: false
+				},
+				contentType: {
+					type: "array",
+					required: false
+				},
+				requestMethods: {
+					type: "array",
+					required: false
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.apidoc.project.projectRules.updateProjectRules(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 }
 module.exports = ProjectRulesController;

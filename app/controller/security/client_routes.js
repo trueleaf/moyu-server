@@ -1,5 +1,4 @@
 
-
 /**
     @description  前端路由控制器
     @author       shuxiaokai
@@ -9,7 +8,7 @@
 const Controller = require("egg").Controller;
 
 class clientRoutesController extends Controller {
-    /**
+	/**
         @description  新增前端路由
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -19,30 +18,29 @@ class clientRoutesController extends Controller {
         @return       null
     */
 
-    async addClientRoutes() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                path: {
-                    type: "string"
-                },
-                name: {
-                    type: "string",
-                },
-                groupName: {
-                    type: "string",
-                    required: false
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.security.clientRoutes.addClientRoutes(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
-    /**
+	async addClientRoutes() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				path: {
+					type: "string"
+				},
+				name: {
+					type: "string",
+				},
+				groupName: {
+					type: "string",
+					required: false
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.security.clientRoutes.addClientRoutes(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
+	/**
         @description  批量新增前端路由
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -50,24 +48,23 @@ class clientRoutesController extends Controller {
         @return       null
     */
 
-    async addMultiClientRoutes() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                routes: {
-                    type: "array"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.security.clientRoutes.addMultiClientRoutes(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async addMultiClientRoutes() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				routes: {
+					type: "array"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.security.clientRoutes.addMultiClientRoutes(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  删除前端路由
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -75,25 +72,24 @@ class clientRoutesController extends Controller {
         @return       null
     */
 
-    async deleteClientRoutes() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                ids: {
-                    type: "array",
-                    itemType: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.security.clientRoutes.deleteClientRoutes(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async deleteClientRoutes() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				ids: {
+					type: "array",
+					itemType: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.security.clientRoutes.deleteClientRoutes(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  修改前端路由
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -104,36 +100,35 @@ class clientRoutesController extends Controller {
         @return       null
     */
 
-    async editClientRoutes() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                },
-                path: {
-                    type: "string",
-                    required: false
-                },
-                name: {
-                    type: "string",
-                    required: false
-                },
-                groupName: {
-                    type: "string",
-                    required: false
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.security.clientRoutes.editClientRoutes(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async editClientRoutes() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+				},
+				path: {
+					type: "string",
+					required: false
+				},
+				name: {
+					type: "string",
+					required: false
+				},
+				groupName: {
+					type: "string",
+					required: false
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.security.clientRoutes.editClientRoutes(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  批量前端路由分类
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -142,29 +137,28 @@ class clientRoutesController extends Controller {
         @return       null
     */
 
-    async editMultiClientRoutesType() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                ids: {
-                    type: "array",
-                },
-                groupName: {
-                    type: "string",
-                    required: false,
-                    default: ""
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.security.clientRoutes.editMultiClientRoutesType(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async editMultiClientRoutesType() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				ids: {
+					type: "array",
+				},
+				groupName: {
+					type: "string",
+					required: false,
+					default: ""
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.security.clientRoutes.editMultiClientRoutesType(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  获取前端路由
         @author       shuxiaokai
         @create        2020-10-08 22:10
@@ -175,56 +169,54 @@ class clientRoutesController extends Controller {
         @return       null
     */
 
-    async getClientRoutesList() { 
-        try {
-            const params = this.ctx.query;
-            const reqRule = {
-                pageNum: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                pageSize: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                startTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                endTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.security.clientRoutes.getClientRoutesList(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async getClientRoutesList() { 
+		try {
+			const params = this.ctx.query;
+			const reqRule = {
+				pageNum: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				pageSize: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				startTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				endTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.security.clientRoutes.getClientRoutesList(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  获取前端路由(不分页)
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @return       null
     */
 
-    async getClientRoutes() { 
-        try {
-            const result = await this.ctx.service.security.clientRoutes.getClientRoutes();
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async getClientRoutes() { 
+		try {
+			const result = await this.ctx.service.security.clientRoutes.getClientRoutes();
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 }
 
 module.exports = clientRoutesController;

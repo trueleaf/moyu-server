@@ -1,5 +1,4 @@
 
-
 /**
     @description  字典(词典)控制器
     @author        shuxiaokai
@@ -9,7 +8,7 @@
 const Controller = require("egg").Controller;
 
 class dictionaryController extends Controller {
-    /**
+	/**
         @description  新增字典(词典)
         @author        shuxiaokai
         @create       2021-03-26 11:03"
@@ -21,69 +20,67 @@ class dictionaryController extends Controller {
         @param {String}            tags 标签信息
         @return       null
     */
-    async addDictionary() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                cnName: {
-                    type: "string"
-                },
-                enName: {
-                    type: "string",
-                    required: false,
-                },
-                example: {
-                    type: "string",
-                    required: false,
-                },
-                refer: {
-                    type: "string",
-                    required: false,
-                },
-                remark: {
-                    type: "string",
-                    required: false,
-                },
-                tags: {
-                    type: "string",
-                    required: false,
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.dictionary.dictionary.addDictionary(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async addDictionary() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				cnName: {
+					type: "string"
+				},
+				enName: {
+					type: "string",
+					required: false,
+				},
+				example: {
+					type: "string",
+					required: false,
+				},
+				refer: {
+					type: "string",
+					required: false,
+				},
+				remark: {
+					type: "string",
+					required: false,
+				},
+				tags: {
+					type: "string",
+					required: false,
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.dictionary.dictionary.addDictionary(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  删除字典(词典)
         @author        shuxiaokai
         @create       2019-11-01 10:39"
         @param {Array<String>}            ids 
         @return       null
     */
-    async deleteDictionary() {
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                ids: {
-                    type: "array",
-                    itemType: "string"
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.dictionary.dictionary.deleteDictionary(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async deleteDictionary() {
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				ids: {
+					type: "array",
+					itemType: "string"
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.dictionary.dictionary.deleteDictionary(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  修改字典(词典)
         @author        shuxiaokai
         @create       2019-10-06 12:44"
@@ -97,52 +94,51 @@ class dictionaryController extends Controller {
         @param {String}      tags 标签信息
         @return       null
     */
-    async editDictionary() { 
-        try {
-            const params = this.ctx.request.body;
-            const reqRule = {
-                _id: {
-                    type: "string",
-                },
-                cnName: {
-                    type: "string",
-                    required: false
-                },
-                enName: {
-                    type: "string",
-                    required: false
-                },
-                synonym: {
-                    type: "array",
-                    required: false
-                },
-                example: {
-                    type: "string",
-                    required: false
-                },
-                refer: {
-                    type: "string",
-                    required: false
-                },
-                remark: {
-                    type: "string",
-                    required: false
-                },
-                tags: {
-                    type: "array",
-                    required: false
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.dictionary.dictionary.editDictionary(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async editDictionary() { 
+		try {
+			const params = this.ctx.request.body;
+			const reqRule = {
+				_id: {
+					type: "string",
+				},
+				cnName: {
+					type: "string",
+					required: false
+				},
+				enName: {
+					type: "string",
+					required: false
+				},
+				synonym: {
+					type: "array",
+					required: false
+				},
+				example: {
+					type: "string",
+					required: false
+				},
+				refer: {
+					type: "string",
+					required: false
+				},
+				remark: {
+					type: "string",
+					required: false
+				},
+				tags: {
+					type: "array",
+					required: false
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.dictionary.dictionary.editDictionary(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
         @description  获取字典(词典)列表
         @author        shuxiaokai
         @create       2019-11-01 10:40"
@@ -156,80 +152,78 @@ class dictionaryController extends Controller {
         @param {number?}           endTime 结束日期       @remark 默认精确到毫秒
         @return       null
     */
-    async getDictionaryList() { 
-        try {
-            const params = this.ctx.query;
-            const reqRule = {
-                pageNum: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                pageSize: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                startTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                endTime: {
-                    type: "number",
-                    convertType: "number",
-                    required: false
-                },
-                cnName: {
-                    type: "string",
-                    required: false,
-                },
-                enName: {
-                    type: "string",
-                    required: false,
-                },
-                maintainers: {
-                    type: "array",
-                    required: false,
-                },
-                creators: {
-                    type: "array",
-                    required: false,
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.dictionary.dictionary.getDictionaryList(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async getDictionaryList() { 
+		try {
+			const params = this.ctx.query;
+			const reqRule = {
+				pageNum: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				pageSize: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				startTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				endTime: {
+					type: "number",
+					convertType: "number",
+					required: false
+				},
+				cnName: {
+					type: "string",
+					required: false,
+				},
+				enName: {
+					type: "string",
+					required: false,
+				},
+				maintainers: {
+					type: "array",
+					required: false,
+				},
+				creators: {
+					type: "array",
+					required: false,
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.dictionary.dictionary.getDictionaryList(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 
-    /**
+	/**
      * @description        根据id获取词汇详情
      * @author             shuxiaokai
      * @create             2021-04-13 10:20
      * @param {string}     id - 词汇id
      * @return {String}    返回字符串
      */
-     async getDictionaryById() { 
-        try {
-            const params = this.ctx.query;
-            const reqRule = {
-                id: {
-                    type: "string",
-                    required: false,
-                },
-            };
-            this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.dictionary.dictionary.getDictionaryById(params);
-            this.ctx.helper.successResponseData(result);
-        } catch (error) {
-            this.ctx.helper.throwError(error);
-            return;
-        }
-    }
+	async getDictionaryById() { 
+		try {
+			const params = this.ctx.query;
+			const reqRule = {
+				id: {
+					type: "string",
+					required: false,
+				},
+			};
+			this.ctx.validate(reqRule, params);
+			const result = await this.ctx.service.dictionary.dictionary.getDictionaryById(params);
+			this.ctx.helper.successResponseData(result);
+		} catch (error) {
+			this.ctx.helper.throwError(error);
+		}
+	}
 }
 
 module.exports = dictionaryController;
