@@ -80,11 +80,15 @@ class DocsService extends Service {
         }
         await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
         return {
-            ...result.item,
-            ...result.info,
             _id: result._id,
             pid: result.pid,
             sort: result.sort,
+            name: result.info.name,
+            type: result.info.type,
+            method: result.item.method,
+            url: result.item.url ? result.item.url.path : "",
+            updator: result.info.maintainer,
+            updatedAt: result.updatedAt,
             isFolder: result.isFolder,
             children: result.children,
         };
