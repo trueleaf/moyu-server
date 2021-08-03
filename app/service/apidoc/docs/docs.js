@@ -423,7 +423,7 @@ class DocsService extends Service {
                     updator: val.info.maintainer,
                     updatedAt: val.updatedAt,
                     isFolder: val.isFolder,
-                    children: val.children,
+                    children: val.children || [],
                 };
             } else {
                 return {
@@ -437,7 +437,7 @@ class DocsService extends Service {
                     updator: val.info.maintainer,
                     updatedAt: val.updatedAt,
                     isFolder: val.isFolder,
-                    children: val.children,
+                    children: val.children || [],
                 };                
             }
         })
