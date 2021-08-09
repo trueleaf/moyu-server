@@ -90,7 +90,7 @@ class DocsService extends Service {
             updator: result.info.maintainer,
             updatedAt: result.updatedAt,
             isFolder: result.isFolder,
-            children: result.children,
+            children: result.children || [],
         };
     }
     /** 
