@@ -342,6 +342,7 @@ class DocsService extends Service {
             }
             idMap.push(mapInfo);
             docInfo._id = newId;
+            docInfo.sort = Date.now();
         })
         await this.ctx.model.Apidoc.Docs.Docs.insertMany(matchedDocs);
         return idMap;
