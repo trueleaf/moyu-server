@@ -107,8 +107,8 @@ module.exports = app => {
             method: { //请求方法
                 type: String,
                 trim: true,
-                enum: ["get", "post", "put", "delete", "options", "patch", "head"],
-                default: "get"  
+                enum: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD", "CONNECTION", "TRACE"],
+                default: "GET"  
             },
             url: { //请求地址信息
                 host: { //host地址
@@ -125,7 +125,7 @@ module.exports = app => {
             requestBody: {
                 mode: {
                     type: String,
-                    enum: ["json", "raw", "formdata", "urlencoded", "binary"],
+                    enum: ["json", "raw", "formdata", "urlencoded", "binary", "xml", "javascript"],
                 },
                 json: [ProperytySchema],
                 formdata: [ProperytySchema],
@@ -149,7 +149,17 @@ module.exports = app => {
                         type: Number,
                         default: 200
                     },
-                    values: [ProperytySchema]
+                    values: {
+                        mode: {
+                            type: String,
+                            enum: ["json"],
+                        },
+                        json: [ProperytySchema],
+                        file: {
+                            type: String,
+                            required: false,
+                        },
+                    }
                 }],
                 default: [{
                     title: "成功返回",
