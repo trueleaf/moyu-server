@@ -60,7 +60,7 @@ class DocsService extends Service {
                 name,
                 type,
                 creator: userInfo.realName || userInfo.loginName
-            }
+            },
         }
         const result = await this.ctx.model.Apidoc.Docs.Docs.create(doc);
         const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
@@ -323,6 +323,7 @@ class DocsService extends Service {
             const newId = this.app.mongoose.Types.ObjectId();
             const oldId = docInfo._id.toString();
             const oldPid = docInfo.pid;
+            docInfo.sort = Date.now();
             const mapInfo = {
                 oldId,
                 newId,
