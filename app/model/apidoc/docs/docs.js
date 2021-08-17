@@ -125,18 +125,17 @@ module.exports = app => {
             requestBody: {
                 mode: {
                     type: String,
-                    enum: ["json", "raw", "formdata", "urlencoded", "binary", "xml", "javascript"],
+                    enum: ["json", "raw", "formdata", "urlencoded", "binary"],
                 },
                 json: [ProperytySchema],
                 formdata: [ProperytySchema],
                 urlencoded: [ProperytySchema],
                 raw: {
-                    type: String,
-                    required: false,
+                    data: String,
+                    dataType: String,
                 },
                 file: {
-                    type: String,
-                    required: false,
+                    url: String
                 },
             }, //请求body
             responseParams: {
@@ -149,15 +148,16 @@ module.exports = app => {
                         type: Number,
                         default: 200
                     },
-                    values: {
-                        mode: {
+                    value: {
+                        dataType: {
                             type: String,
                             enum: ["json"],
                         },
                         json: [ProperytySchema],
+                        text: String,
                         file: {
-                            type: String,
-                            required: false,
+                            url: String,
+                            raw: String,
                         },
                     }
                 }],
