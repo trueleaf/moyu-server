@@ -125,7 +125,8 @@ module.exports = app => {
             requestBody: {
                 mode: {
                     type: String,
-                    enum: ["json", "raw", "formdata", "urlencoded", "binary"],
+                    enum: ["json", "raw", "formdata", "urlencoded", "binary", "none"],
+                    default: "none"
                 },
                 json: [ProperytySchema],
                 formdata: [ProperytySchema],

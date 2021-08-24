@@ -77,7 +77,7 @@ module.exports = app => {
                 maxlength: 255,
                 required: true,
             },
-            enabledContenType: [],//该方法允许的contentType
+            enabledContenTypes: [],//该方法允许的contentType
         }],
     }, {
         timestamps: true

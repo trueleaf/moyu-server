@@ -58,45 +58,45 @@ const BASE_RULES = {
     requestMethods: [
         {
             name: "GET", //请求方式名称
-            value: "get",
+            value: "GET",
             enabled: true, //是否启用
             iconColor: "#28a745", //请求方式颜色
-            enabledContenType: ["path", "params"], //当前请求方式允许的ContentType
+            enabledContenTypes: ["path", "params"], //当前请求方式允许的ContentType
         },
         {
             name: "POST",
-            value: "post",
+            value: "POST",
             enabled: true, //是否启用
             iconColor: "#ffc107",
-            enabledContenType: ["params", "json", "formData"],
+            enabledContenTypes: ["params", "json", "formData"],
         },
         {
             name: "PUT",
-            value: "put",
+            value: "PUT",
             enabled: true, //是否启用
             iconColor: "#409EFF",
-            enabledContenType: ["params", "json"],
+            enabledContenTypes: ["params", "json"],
         },
         {
             name: "DEL",
-            value: "delete",
+            value: "DELETE",
             enabled: true, 
             iconColor: "#f56c6c",
-            enabledContenType: ["params"],
+            enabledContenTypes: ["params"],
         },
         {
             name: "OPTIONS",
-            value: "options",
+            value: "OPTIONS",
             enabled: false, 
             iconColor: "#17a2b8",
-            enabledContenType: ["params", "json"],
+            enabledContenTypes: ["params", "json"],
         },
         {
             name: "PATCH",
-            value: "patch",
+            value: "PATCH",
             enabled: true, 
             iconColor: "#17a2b8",
-            enabledContenType: ["params", "json"],
+            enabledContenTypes: ["params", "json"],
         },
     ],
 };
