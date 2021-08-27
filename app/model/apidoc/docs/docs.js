@@ -132,8 +132,14 @@ module.exports = app => {
                 formdata: [ProperytySchema],
                 urlencoded: [ProperytySchema],
                 raw: {
-                    data: String,
-                    dataType: String,
+                    type: {
+                        data: String,
+                        dataType: String,
+                    },
+                    default: {
+                        data: "",
+                        dataType: "text/plain"
+                    },
                 },
                 file: {
                     url: String
