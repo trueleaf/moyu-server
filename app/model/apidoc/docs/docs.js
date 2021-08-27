@@ -138,7 +138,7 @@ module.exports = app => {
                     },
                     default: {
                         data: "",
-                        dataType: "text/plain"
+                        dataType: "text/plain",
                     },
                 },
                 file: {
