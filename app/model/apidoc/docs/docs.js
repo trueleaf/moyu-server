@@ -158,7 +158,7 @@ module.exports = app => {
                     value: {
                         dataType: {
                             type: String,
-                            enum: ["json"],
+                            enum: ["application/json", "application/x-www-form-urlencoded", "multipart/form-data", "text/plain", "application/xml", "text/html"],
                         },
                         json: [ProperytySchema],
                         text: String,
@@ -171,7 +171,15 @@ module.exports = app => {
                 default: [{
                     title: "成功返回",
                     statusCode: 200,
-                    values: []
+                    value: {
+                        dataType: "application/json",
+                        json: [],
+                        file: {
+                            url: "",
+                            raw: "",
+                        },
+                        text: "",
+                    }
                 }]
             },
             headers: [ProperytySchema], //请求头
