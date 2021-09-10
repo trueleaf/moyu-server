@@ -186,7 +186,7 @@ module.exports = app => {
             contentType: { //请求contentType
                 type: String,
                 trim: true,
-                enum: ["application/json", "application/x-www-form-urlencoded", "multipart/form-data", "text/plain", "application/xml", "text/html"],
+                enum: ["application/json", "application/x-www-form-urlencoded", "multipart/form-data", "text/plain", "application/xml", "text/html", ""],
             },
         },
         enabled: { //使能
