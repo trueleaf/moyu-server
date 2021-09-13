@@ -32,7 +32,7 @@ class docsRecordsService extends Service {
                 return;
             }
         }
-        docInfo.creator = this.ctx.session.userInfo.realName;
+        docInfo.creator = this.ctx.userInfo.realName;
         docInfo.createTime = new Date();
         await this.ctx.model.Apidoc.Docs.DocsRecords.findOneAndUpdate({ docId }, {
             $push: {

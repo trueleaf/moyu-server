@@ -1,5 +1,5 @@
 
-
+const jwt = require("jsonwebtoken");
 
 module.exports = options => {
     return async function permission(ctx, next) {
@@ -13,13 +13,15 @@ module.exports = options => {
             if (isInWhiteList) { //路由白名单放行
                 await next();
                 return;
-            } else if (!ctx.session.userInfo) {
-                ctx.helper.throwCustomError("登录过期", 4100);
-            } else if (options.free) { //free模式全部放行
+            } 
+            const tokenInfo = jwt.verify(ctx.headers.authorization, ctx.app.config.jwtConfig.secretOrPrivateKey);
+            ctx.userInfo = tokenInfo;
+            if (options.free) { //free模式全部放行
                 await next();
                 return;
             }
-            const loginName = ctx.session.userInfo.loginName;
+            // console.log("toekn", tokenInfo)
+            const loginName = tokenInfo.loginName;
             const userInfo = await ctx.model.Security.User.findOne({ loginName });
             if (!userInfo) {
                 ctx.helper.throwCustomError("登录过期", 4100);

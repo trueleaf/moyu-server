@@ -28,6 +28,14 @@ module.exports = {
         const errorCode = error.code;
         this.ctx.logger.error(error);
         console.error(error);
+        if (error.name === "TokenExpiredError") { //jwt过期
+            this.ctx.body = {
+                code: 4100,
+                msg: error.message,
+            };
+            return;
+        }
+
         if (typeof errorCode === "number") {
             this.ctx.body = {
                 code: errorCode,
@@ -336,7 +344,9 @@ module.exports = {
         return result;
     },
 
-
+    /**
+     * 获取用户信息
+     */
 
 
 };

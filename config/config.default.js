@@ -70,14 +70,19 @@ module.exports = appInfo => {
         }
     };
     // session
-    const session = {
-        key: "jobtool_session",
-        maxAge: 24 * 3600 * 1000 * 7, // 7天
-        httpOnly: true,
-        encrypt: true,
-        path: "/"
-    };
+    // const session = {
+    //     key: "jobtool_session",
+    //     maxAge: 24 * 3600 * 1000 * 7, // 7天
+    //     httpOnly: true,
+    //     encrypt: true,
+    //     path: "/"
+    // };
 
+    //jwt
+    const jwtConfig = {
+        secretOrPrivateKey: "moyu", //私钥或者
+        expiresIn: `${1000 * 60 * 60}`, //过期时间
+    };
 
     //文件上传
     const multipart = {
@@ -164,10 +169,10 @@ module.exports = appInfo => {
         security,
         cors,
         cluster,
-        session,
         multipart,
         ossConfig,
         smsConfig,
         mongoose,
+        jwtConfig,
     };
 };

@@ -17,6 +17,7 @@
     "escape-string-regexp": "^4.0.0",
     "file-type": "^14.6.2",
     "fs-extra": "^9.0.0",
+    "jsonwebtoken": "^8.5.1",
     "officegen": "^0.6.4",
     "svg-captcha": "^1.4.0",
     "xlsx": "^0.16.5",

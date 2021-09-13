@@ -22,7 +22,7 @@ class dictionaryService extends Service {
     */
     async addDictionary(params) {
         const { cnName, synonym, enName, example, refer, remark, tags } = params;
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         const doc = {};
         doc.cnName = cnName;
         doc.enName = enName;

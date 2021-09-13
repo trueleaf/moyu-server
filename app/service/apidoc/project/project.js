@@ -46,10 +46,10 @@ class ProjectService extends Service {
         //是否为创建者或者为成员
         query.$or = [
             {
-                "members.userId": this.ctx.session.userInfo.id
+                "members.userId": this.ctx.userInfo.id
             }
         ];
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         const visitAndStar = await this.ctx.model.Security.User.findOne({ _id: userInfo.id }, { recentVisitProjects: 1, starProjects: 1 }).lean();
         const result = {};
         result.list = await this.ctx.model.Apidoc.Project.Project.find(query, { enabled: 0, createdAt: 0 }).skip(skipNum).limit(limit).sort({ updatedAt: -1 });;
@@ -143,7 +143,7 @@ class ProjectService extends Service {
         //是否为创建者或者为成员
         query.$or = [
             {
-                "members.userId": this.ctx.session.userInfo.id
+                "members.userId": this.ctx.userInfo.id
             }
         ];
         const limit = 100;
@@ -177,14 +177,14 @@ class ProjectService extends Service {
         doc.members = members;
         //创建者默认为管理员
         doc.members.unshift({
-            loginName: this.ctx.session.userInfo.loginName,
-            realName: this.ctx.session.userInfo.realName,
-            userId: this.ctx.session.userInfo.id,
+            loginName: this.ctx.userInfo.loginName,
+            realName: this.ctx.userInfo.realName,
+            userId: this.ctx.userInfo.id,
             permission: "admin"
         });
         doc.owner = {
-            id: this.ctx.session.userInfo.id,
-            name: this.ctx.session.userInfo.realName || this.ctx.session.userInfo.loginName
+            id: this.ctx.userInfo.id,
+            name: this.ctx.userInfo.realName || this.ctx.userInfo.loginName
         };
         const result = await this.ctx.model.Apidoc.Project.Project.create(doc);
         return result._id;
@@ -233,7 +233,7 @@ class ProjectService extends Service {
             {
                 members: { 
                     $elemMatch: {
-                        userId: this.ctx.session.userInfo.id,
+                        userId: this.ctx.userInfo.id,
                         permission: "admin",
                     }
                 }
@@ -331,13 +331,13 @@ class ProjectService extends Service {
         project.projectName = projectName;
         project.docNum = moyuData.docs.length;
         project.owner = {
-            id: this.ctx.session.userInfo.id,
-            name: this.ctx.session.userInfo.realName || this.ctx.session.userInfo.loginName
+            id: this.ctx.userInfo.id,
+            name: this.ctx.userInfo.realName || this.ctx.userInfo.loginName
         };
         project.members = [{
-            userId: this.ctx.session.userInfo.id,
-            loginName: this.ctx.session.userInfo.realName || this.ctx.session.userInfo.loginName,
-            realName: this.ctx.session.userInfo.realName,
+            userId: this.ctx.userInfo.id,
+            loginName: this.ctx.userInfo.realName || this.ctx.userInfo.loginName,
+            realName: this.ctx.userInfo.realName,
             permission: "admin",
         }];
         const projectInfo = await this.ctx.model.Apidoc.Project.Project.create(project);
@@ -362,7 +362,7 @@ class ProjectService extends Service {
         await this.ctx.model.Apidoc.Docs.DocsServices.create(convertHosts);
         await this.ctx.model.Apidoc.Docs.Docs.create(convertDocs)
         //添加历史记录
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         const record = {
             operation: "import",
             projectId: projectInfo._id,
@@ -404,7 +404,7 @@ class ProjectService extends Service {
             {
                 members: { 
                     $elemMatch: {
-                        userId: this.ctx.session.userInfo.id,
+                        userId: this.ctx.userInfo.id,
                         permission: "admin",
                     }
                 }
@@ -428,7 +428,7 @@ class ProjectService extends Service {
      */
     async deleteUser(params) { 
         const { projectId, userId } = params;
-        const isDeleteSelf = userId === this.ctx.session.userInfo.id;
+        const isDeleteSelf = userId === this.ctx.userInfo.id;
         //是否拥有权限
         const query = {
             _id: projectId,
@@ -437,7 +437,7 @@ class ProjectService extends Service {
             {
                 members: { 
                     $elemMatch: {
-                        userId: this.ctx.session.userInfo.id,
+                        userId: this.ctx.userInfo.id,
                         permission: "admin",
                     }
                 }
@@ -486,7 +486,7 @@ class ProjectService extends Service {
             {
                 members: { 
                     $elemMatch: {
-                        userId: this.ctx.session.userInfo.id,
+                        userId: this.ctx.userInfo.id,
                         permission: "admin",
                     }
                 }

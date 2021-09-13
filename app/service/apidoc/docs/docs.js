@@ -21,7 +21,7 @@ class DocsService extends Service {
      * @return {boolean}   true代表有权限 false代表无权限
      */
     async checkOperationDocPermission(projectId) {
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         const projectInfo = await this.ctx.model.Apidoc.Project.Project.findById({ _id: projectId });
         if (!projectInfo) {
             this.ctx.helper.throwCustomError("暂无当前项目权限", 4002);
@@ -43,7 +43,7 @@ class DocsService extends Service {
     */
     async addEmptyDoc(params) {
         const { name, type, pid, projectId} = params;
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         if (pid) { //不允许在非folder类型文档下面插入文档
             const parentDoc = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id: pid });
@@ -103,7 +103,7 @@ class DocsService extends Service {
     */
     async changeDocName(params) { 
         const { _id, name, projectId } = params;
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const originDoc = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { $set: { "info.name": name }});
         //添加历史记录
@@ -140,7 +140,7 @@ class DocsService extends Service {
     async changeDocPosition(params) { 
         const { _id, pid, sort, projectId, dropInfo } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         const updateDoc = { $set: {}};
         let parentDoc = null;
         let isFolder = null;
@@ -184,7 +184,7 @@ class DocsService extends Service {
     */
     async fillDoc(params) {
         const { _id, info, item, projectId, spendTime = 0 } = params;
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const description = xss(info.description);
         const result = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { 
@@ -228,7 +228,7 @@ class DocsService extends Service {
     async copyDoc(params) {
         const { _id, projectId } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         let doc = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id }).lean();
         doc.info.name = "副本-" + doc.info.name;
         doc._id = this.app.mongoose.Types.ObjectId();
@@ -269,7 +269,7 @@ class DocsService extends Service {
     */
     async deleteDoc(params) { 
         const { ids, projectId } = params;
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         const result = await this.ctx.model.Apidoc.Docs.Docs.updateMany({ 
             projectId,
             _id: { $in: ids }
@@ -660,7 +660,7 @@ class DocsService extends Service {
 
     async publishDoc(params) { 
         const { _id } = params;
-        const publisher = this.ctx.session.userInfo.realName;
+        const publisher = this.ctx.userInfo.realName;
         
         const result = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { 
             $set: { publish: true },

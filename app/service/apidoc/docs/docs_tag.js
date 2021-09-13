@@ -23,7 +23,7 @@ class DocsTagService extends Service {
         if (hasTagName) {
             this.ctx.helper.throwCustomError("标签名称重复", 1003);
         }
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         const doc = {};
         doc.projectId = projectId;
         doc.name = name;

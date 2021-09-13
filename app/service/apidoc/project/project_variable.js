@@ -26,7 +26,7 @@ class ProjectVariableService extends Service {
         doc.type = type;
         doc.value = value;
         doc.projectId = projectId;
-        doc.creator = this.ctx.session.userInfo.realName;
+        doc.creator = this.ctx.userInfo.realName;
         const hasName = await this.ctx.model.Apidoc.Project.ProjectVariable.findOne({ 
             projectId,
             name, 

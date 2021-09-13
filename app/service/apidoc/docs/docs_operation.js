@@ -55,7 +55,7 @@ class docsOperationService extends Service {
         this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.html`)}`);
 
         //添加历史记录
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         const record = {
             operation: "export", //导出为html
             projectId,
@@ -79,7 +79,7 @@ class docsOperationService extends Service {
     async exportAsMoyuDoc(params) { 
         const { projectId, selectedNodes = [] } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
         const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById(params);
         const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList(params);
@@ -159,7 +159,7 @@ class docsOperationService extends Service {
         const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
         await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }});
         //文档导入
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         const record = {
             operation: "import",
             projectId,
@@ -207,7 +207,7 @@ class docsOperationService extends Service {
             upsert: true,
         });
         //文档导出
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         const record = {
             operation: "export", //导出为online
             projectId,
@@ -255,7 +255,7 @@ class docsOperationService extends Service {
         })
         await this.ctx.model.Apidoc.Docs.Docs.insertMany(sourceDocs);
         //文档导出
-        // const userInfo = this.ctx.session.userInfo;
+        // const userInfo = this.ctx.userInfo;
         // const record = {
         //     operation: "export",
         //     projectId,

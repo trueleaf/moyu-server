@@ -24,7 +24,7 @@ class presetParamsService extends Service {
         const { name, remark, presetParamsType, items, projectId } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const doc = {};
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         doc.name = name;
         doc.remark = remark;
         doc.presetParamsType = presetParamsType;

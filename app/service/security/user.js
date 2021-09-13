@@ -9,6 +9,8 @@ const crypto = require("crypto");
 const Sms = require("@alicloud/pop-core");
 const escapeStringRegexp = require("escape-string-regexp");
 const XLSX = require("xlsx");
+const jwt = require("jsonwebtoken");
+
 // const user = require("../../model/security/user");
 class userService extends Service {
     /** 
@@ -226,7 +228,8 @@ class userService extends Service {
     */
 
     async loginWithPassword(params) {
-        const loginRecord = await this.checkIsLockIP(); //检查ip是否被锁定
+        const loginRecord = false;
+        //await this.checkIsLockIP(); //检查ip是否被锁定
         const { loginName, password, captcha = "" } = params;
         const userInfo = await this.ctx.model.Security.User.findOne({ loginName });
         const result = {};
@@ -282,9 +285,14 @@ class userService extends Service {
             realName: userInfo.realName,
             phone: userInfo.phone,            
         });
-        this.ctx.session.userInfo = {
-            ...result,
-        };
+        // this.ctx.userInfo = {
+        //     ...result,
+        // };
+        const { jwtConfig } = this.app.config;
+        const token = jwt.sign(result, jwtConfig.secretOrPrivateKey, {
+            expiresIn: jwtConfig.expiresIn,
+        });
+        result.token = token;
         return result;
     }
 
@@ -353,7 +361,7 @@ class userService extends Service {
             realName: userInfo.realName,
             phone: userInfo.phone,            
         });
-        this.ctx.session.userInfo = {
+        this.ctx.userInfo = {
             ...result
         };
         return result;
@@ -483,7 +491,7 @@ class userService extends Service {
 
     async changeUserPassword(params) { 
         const { oldPassword, newPassword } = params;
-        const _id = this.ctx.session.userInfo.id;
+        const _id = this.ctx.userInfo.id;
         const matchString = /[a-zA-Z]/;
         const matchNumber = /\d/;
         const inValidKey = /[^\w\d!@#]/;
@@ -518,8 +526,7 @@ class userService extends Service {
     */
    
     async getUserBaseInfo() {
-        const userInfo = this.ctx.session.userInfo;
-        console.log(222, userInfo)
+        const userInfo = this.ctx.userInfo;
         const roleIds = userInfo.roleIds; //用户所有角色信息
         const allClientRoutes = await this.ctx.model.Security.ClientRoutes.find({}, { name: 1, path: 1 }); //系统所有前端路由
         const allClientMenu = await this.ctx.model.Security.ClientMenu.find({}, { name: 1, path: 1, sort: 1 }); //系统所有前端菜单
@@ -576,7 +583,7 @@ class userService extends Service {
      */
 
     async getUserInfo() {
-        const _id = this.ctx.session.userInfo.id;
+        const _id = this.ctx.userInfo.id;
         const result = await this.ctx.model.Security.User.findById({ _id }, { enable: 0, roleIds: 0, roleNames: 0, loginTimes: 0, password: 0, salt: 0, clientRoutes: 0, clinetMenus: 0, serverRoutes: 0, starProjects: 0 });
 
         return result;
@@ -677,7 +684,7 @@ class userService extends Service {
     async addLastVisit(params) {
         const { projectId } = params;
         const MAX_RECENT_VISIT = 5;
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         const recentVisit = await this.ctx.model.Security.User.findOne({ _id: userInfo.id }, { recentVisitProjects: 1 }).lean();
         let recentVisitProjects = recentVisit.recentVisitProjects || [];
         // console.log(222, recentVisit, userInfo)
@@ -705,7 +712,7 @@ class userService extends Service {
      */
     async starProject(params) {
         const { projectId } = params;
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         await this.ctx.model.Security.User.findByIdAndUpdate({ _id: userInfo.id }, {
             $addToSet: { 
                 starProjects: projectId
@@ -722,7 +729,7 @@ class userService extends Service {
      */
     async unStarProject(params) {
         const { projectId } = params;
-        const userInfo = this.ctx.session.userInfo;
+        const userInfo = this.ctx.userInfo;
         await this.ctx.model.Security.User.findByIdAndUpdate({ _id: userInfo.id }, {
             $pull: { 
                 starProjects: projectId
