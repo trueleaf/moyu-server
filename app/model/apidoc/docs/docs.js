@@ -126,7 +126,7 @@ module.exports = app => {
                 mode: {
                     type: String,
                     enum: ["json", "raw", "formdata", "urlencoded", "binary", "none"],
-                    default: "none"
+                    default: "json"
                 },
                 json: [ProperytySchema],
                 formdata: [ProperytySchema],
