@@ -81,7 +81,7 @@ module.exports = appInfo => {
     //jwt
     const jwtConfig = {
         secretOrPrivateKey: "moyu", //私钥或者
-        expiresIn: `${1000 * 60 * 60}`, //过期时间
+        expiresIn: `${1000 * 60 * 60 * 24 * 7}`, //过期时间
     };
 
     //文件上传

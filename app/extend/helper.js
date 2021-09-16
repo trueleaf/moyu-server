@@ -120,7 +120,7 @@ module.exports = {
      */
 
     dfsForest(forestData, config) {
-        const { rCondition, rKey, hooks } = config;
+        const { rCondition, rKey = "children", hooks } = config;
         if (!Array.isArray(forestData)) {
             throw new Error("第一个参数必须为数组结构森林");
         }

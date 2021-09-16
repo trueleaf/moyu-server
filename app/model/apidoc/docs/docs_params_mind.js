@@ -34,10 +34,6 @@ module.exports = app => {
             type: Boolean
         },
         children: [], //嵌套字段
-        _select: { //业务参数，是否选中
-            type: Boolean,
-            default: true
-        }
     });
     const docsParamsMindSchema = new Schema({
         projectId: { //项目id
