@@ -30,7 +30,7 @@ class presetParamsController extends Controller {
                 },
                 presetParamsType: {
                     type: "enum",
-                    values: ["queryParams", "requestBody", "responseParams"],
+                    values: ["bodyParams", "responseParams", "pathParams", "queryParams", "responseParams", "headerParams"],
                 },
                 items: {
                     type: "array"
