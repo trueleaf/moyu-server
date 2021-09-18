@@ -31,8 +31,14 @@ class presetParamsService extends Service {
         doc.items = items;
         doc.projectId = projectId;
         doc.creatorName = userInfo.realName || userInfo.loginName;
-        await this.ctx.model.Apidoc.Docs.DocsParamsPreset.create(doc);
-        return;
+        const result = await this.ctx.model.Apidoc.Docs.DocsParamsPreset.create(doc);
+        return {
+            _id: result._id,
+            name: result.name,
+            presetParamsType: result.presetParamsType,
+            creatorName: userInfo.realName || userInfo.loginName,
+            items: result.items,
+        };
     }
 
     /** 

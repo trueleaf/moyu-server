@@ -87,7 +87,7 @@ class DocsService extends Service {
             type: result.info.type,
             method: result.item.method,
             url: result.item.url ? result.item.url.path : "",
-            updator: result.info.maintainer,
+            maintainer: result.info.maintainer,
             updatedAt: result.updatedAt,
             isFolder: result.isFolder,
             children: result.children || [],
@@ -230,6 +230,7 @@ class DocsService extends Service {
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const userInfo = this.ctx.userInfo;
         let doc = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id }).lean();
+        doc.item.method = doc.item.method.toUpperCase();
         doc.info.name = "副本-" + doc.info.name;
         doc._id = this.app.mongoose.Types.ObjectId();
         doc.sort += 1;
@@ -251,13 +252,17 @@ class DocsService extends Service {
         };
         await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
         return {
-            ...result.item,
-            ...result.info,
             _id: result._id,
             pid: result.pid,
             sort: result.sort,
             isFolder: result.isFolder,
-            children: result.children,
+            updatedAt: result.updatedAt,
+            type: result.info.type,
+            name: result.info.name,
+            maintainer: result.info.maintainer,
+            method: result.item.method,
+            url: result.item.url.path,
+            children: [],
         };
     }
     /** 
@@ -422,7 +427,7 @@ class DocsService extends Service {
                     sort: val.sort,
                     name: val.info.name,
                     type: val.info.type,
-                    updator: val.info.maintainer,
+                    maintainer: val.info.maintainer,
                     updatedAt: val.updatedAt,
                     isFolder: val.isFolder,
                     children: val.children || [],
@@ -436,7 +441,7 @@ class DocsService extends Service {
                     type: val.info.type,
                     method: val.item.method,
                     url: val.item.url ? val.item.url.path : "",
-                    updator: val.info.maintainer,
+                    maintainer: val.info.maintainer,
                     updatedAt: val.updatedAt,
                     isFolder: val.isFolder,
                     children: val.children || [],
@@ -488,7 +493,7 @@ class DocsService extends Service {
                     sort: val.sort,
                     name: val.info.name,
                     type: val.info.type,
-                    updator: val.info.updator,
+                    maintainer: val.info.maintainer,
                     isFolder: val.isFolder,
                     children: val.children,
                 };
@@ -500,7 +505,7 @@ class DocsService extends Service {
                     name: val.info.name,
                     type: val.info.type,
                     method: val.item.method,
-                    updator: val.info.updator,
+                    maintainer: val.info.maintainer,
                     isFolder: val.isFolder,
                     children: val.children,
                 };                
