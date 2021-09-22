@@ -133,47 +133,45 @@ class userService extends Service {
         user.salt = salt;
         //临时，可能改变
         user.roleIds = [ 
-            "5ede0ba06f76185204584700", 
             "5ee980553c63cd01a49952e4"
         ];
         user.roleNames = [ 
-            "api文档-完全控制", 
             "公共基础权限"
         ];
-        const createdUser = await this.ctx.model.Security.User.create(user);
+        await this.ctx.model.Security.User.create(user);
         const loginResult = await this.loginWithPassword(params);
         //=====================================为用户拷贝一份测试文档====================================//
-        const originProject = await this.ctx.model.Apidoc.Project.Project.findOne({_id: "5ff1c8136110532cc8c6343c"}).lean(); 
-        const originDocs = await this.ctx.model.Apidoc.Docs.Docs.find({projectId: "5ff1c8136110532cc8c6343c"}).lean(); 
-        const projectId = this.app.mongoose.Types.ObjectId()
-        const project = {
-            ...originProject,
-            projectName: "快乐摸鱼",
-            _id: projectId,
-            members: [{
-                loginName,
-                realName: loginName,
-                userId: createdUser._id,
-                permission: "admin"
-            }],
-        };
-        const convertDocs = originDocs.map((docInfo) => {
-            const newId = this.app.mongoose.Types.ObjectId()
-            const oldId = docInfo._id.toString();
-            originDocs.forEach(originDoc => {
-                if (originDoc.pid === oldId) {
-                    originDoc.pid = newId
-                }
-            })
-            docInfo.projectId = projectId;
-            docInfo._id = newId;
-            docInfo.info.creator = loginName;
-            return docInfo;
-        })
-        if (originProject) {
-            await this.ctx.model.Apidoc.Project.Project.create(project);
-            await this.ctx.model.Apidoc.Docs.Docs.create(convertDocs);
-        }
+        // const originProject = await this.ctx.model.Apidoc.Project.Project.findOne({_id: "5ff1c8136110532cc8c6343c"}).lean(); 
+        // const originDocs = await this.ctx.model.Apidoc.Docs.Docs.find({projectId: "5ff1c8136110532cc8c6343c"}).lean(); 
+        // const projectId = this.app.mongoose.Types.ObjectId()
+        // const project = {
+        //     ...originProject,
+        //     projectName: "快乐摸鱼",
+        //     _id: projectId,
+        //     members: [{
+        //         loginName,
+        //         realName: loginName,
+        //         userId: createdUser._id,
+        //         permission: "admin"
+        //     }],
+        // };
+        // const convertDocs = originDocs.map((docInfo) => {
+        //     const newId = this.app.mongoose.Types.ObjectId()
+        //     const oldId = docInfo._id.toString();
+        //     originDocs.forEach(originDoc => {
+        //         if (originDoc.pid === oldId) {
+        //             originDoc.pid = newId
+        //         }
+        //     })
+        //     docInfo.projectId = projectId;
+        //     docInfo._id = newId;
+        //     docInfo.info.creator = loginName;
+        //     return docInfo;
+        // })
+        // if (originProject) {
+        //     await this.ctx.model.Apidoc.Project.Project.create(project);
+        //     await this.ctx.model.Apidoc.Docs.Docs.create(convertDocs);
+        // }
         // console.log(originDocs.map(val => !val.isFolder).length)
         return loginResult;
     }
