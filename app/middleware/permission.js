@@ -43,7 +43,7 @@ module.exports = options => {
             serverRoutes = ctx.helper.unique(serverRoutes, "id");
             const reqMethod = ctx.request.method.toLowerCase();
             const hasPermission = serverRoutes.find(val => {
-                return val.method === reqMethod && val.path === requestUrl;
+                return val.method.toLowerCase() === reqMethod && val.path === requestUrl;
             });
             if (!hasPermission) {
                 ctx.helper.throwCustomError("暂无权限", 4002);
