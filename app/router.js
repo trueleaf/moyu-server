@@ -210,4 +210,6 @@ module.exports = app => {
     router.delete("/api/dictionary/dictionary", controller.dictionary.dictionary.deleteDictionary); //删除词汇
     // router.put("/api/dictionary/dictionary", controller.eoms.logs.getDictionaryList); //词汇列表
     // router.delete("/api/dictionary/dictionary", controller.eoms.logs.getDictionaryList); //词汇列表
+    //=====================================代理服务器====================================//
+    router.post("/api/proxy/proxyWebApi", controller.apidoc.proxy.proxy.proxyWebApi);
 };
