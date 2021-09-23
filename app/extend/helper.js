@@ -27,7 +27,7 @@ module.exports = {
         // console.dir(error);
         const errorCode = error.code;
         this.ctx.logger.error(error);
-        console.error(error);
+        console.error(error.name, 999);
         if (error.name === "TokenExpiredError") { //jwt过期
             this.ctx.body = {
                 code: 4100,
@@ -35,7 +35,13 @@ module.exports = {
             };
             return;
         }
-
+        if (error.name === "proxyError") { //代理错误
+            this.ctx.body = {
+                code: 4200,
+                msg: error.message,
+            };
+            return
+        }
         if (typeof errorCode === "number") {
             this.ctx.body = {
                 code: errorCode,

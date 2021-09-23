@@ -72,7 +72,9 @@ class ProxyController extends Controller {
                 data: response.body,
             });
         } catch (error) {
-            this.ctx.helper.throwError(error);
+            const err = new Error(error.message);
+            err.name = "proxyError"
+            this.ctx.helper.throwError(err);
             return;
         }
     }

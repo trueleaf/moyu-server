@@ -14,35 +14,22 @@ class docParamsMindController extends Controller {
         @author        shuxiaokai
         @create        2020-10-08 22:10
         @param {String}  projectId 项目id
-        @param {String}  paths 联想请求参数
-        @param {String}  queryParams 联想返回参数
-        @param {String}  requestBody 联想返回参数
-        @param {String}  responseParams 联想返回参数
+        @param {Property}  mindParams 联想参数
         @return       null
     */
-
-    async addDocParamsMind() {
+    async addMindParams() {
         try {
             const params = this.ctx.request.body;
             const reqRule = {
                 projectId: { //项目id
                     type: "string"
                 },
-                paths: { //路径参数
-                    type: "array"
-                },
-                queryParams: { //查询字符串
-                    type: "array"
-                },
-                requestBody: { //请求body
-                    type: "array"
-                },
-                responseParams: { //返回参数
-                    type: "array"
+                mindParams: {
+                    type: "array",
                 },
             };
             this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsParamsMind.addDocParamsMind(params);
+            const result = await this.ctx.service.apidoc.docs.docsParamsMind.addMindParams(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);
@@ -57,8 +44,7 @@ class docParamsMindController extends Controller {
         @param {string}           projectId 项目id
         @return       null
     */
-   
-    async getDocParamsMindEnum() { 
+    async geMindParams() { 
         try {
             const params = this.ctx.query;
             const reqRule = {
@@ -67,7 +53,34 @@ class docParamsMindController extends Controller {
                 },
             };
             this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsParamsMind.getDocParamsMindEnum(params);
+            const result = await this.ctx.service.apidoc.docs.docsParamsMind.geMindParams(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    /**
+        @description  批量删除联想参数
+        @author        shuxiaokai
+        @create        2020-10-08 22:10
+        @param {string}           projectId 项目id
+        @param {string[]}           ids 需要删除数据ids
+        @return       null
+    */
+    async deleteMindParams() { 
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                projectId: {
+                    type: "string",
+                },
+                ids: {
+                    type: "array"
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docsParamsMind.deleteMindParams(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);

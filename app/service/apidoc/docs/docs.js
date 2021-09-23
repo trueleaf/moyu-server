@@ -1,10 +1,123 @@
-/* eslint-disable camelcase */
 
 /** 
     @description  docs相关service
     @author       shuxiaokai
     @create        2020-10-08 22:10
 */
+const ReadOnlyUrl = [
+    {
+        url: "/api/project/project_list",
+        method: "get",
+    },
+    {
+        url: "/api/project/project_info",
+        method: "get"
+    },
+    {
+        url: "/api/project/project_full_info",
+        method: "get"
+    },
+    {
+        url: "/api/project/project_members",
+        method: "get"
+    },
+    {
+        url: "/api/project/visited",
+        method: "put"
+    },
+    {
+        url: "/api/project/star",
+        method: "put"
+    },
+    {
+        url: "/api/project/unstar",
+        method: "put"
+    },
+    {
+        url: "/api/project/share_info",
+        method: "get"
+    },
+    {
+        url: "/api/project/share",
+        method: "get"
+    },
+    {
+        url: "/api/apidoc/project/project_rules",
+        method: "get"
+    },
+    {
+        url: "/api/project/doc_tree_node",
+        method: "get"
+    },
+    {
+        url: "/api/project/doc_tree_folder_node",
+        method: "get"
+    },
+    {
+        url: "/api/project/doc_detail",
+        method: "get"
+    },
+    {
+        url: "/api/project/doc_mock",
+        method: "get"
+    },
+    {
+        url: "/api/project/export/html",
+        method: "post"
+    },
+    {
+        url: "/api/project/export/moyu",
+        method: "post"
+    },
+    {
+        url: "/api/project/export/online",
+        method: "post"
+    },
+    {
+        url: "/api/docs/docs_history",
+        method: "post"
+    },
+    {
+        url: "/api/docs/docs_records",
+        method: "get"
+    },
+    {
+        url: "/api/docs/docs_history_operator_enum",
+        method: "get"
+    },
+    {
+        url: "/api/docs/docs_deleted_list",
+        method: "get"
+    },
+    {
+        url: "/api/project/project_variable",
+        method: "get"
+    },
+    {
+        url: "/api/project/project_variable_enum",
+        method: "get"
+    },
+    {
+        url: "/api/project/doc_preset_params_list",
+        method: "get"
+    },
+    {
+        url: "/api/project/doc_preset_params_enum",
+        method: "get"
+    },
+    {
+        url: "/api/project/doc_preset_params",
+        method: "get"
+    },
+    {
+        url: "/api/project/doc_service",
+        method: "get"
+    },
+    {
+        url: "/api/project/doc_service_info",
+        method: "get"
+    },
+];
 
 
 const Service = require("egg").Service;
@@ -22,13 +135,20 @@ class DocsService extends Service {
      */
     async checkOperationDocPermission(projectId) {
         const userInfo = this.ctx.userInfo;
+        const method = this.ctx.request.method.toLocaleLowerCase();
+        const URL = this.ctx.request.URL;
         const projectInfo = await this.ctx.model.Apidoc.Project.Project.findById({ _id: projectId });
-        if (!projectInfo) {
+        if (!projectInfo) { //项目不存在
             this.ctx.helper.throwCustomError("暂无当前项目权限", 4002);
         }
-        const accessUsers = projectInfo.members
-        if (!accessUsers.find(user => user.userId === userInfo.id || user.id === userInfo.id)) {
+        const accessUsers = projectInfo.members; //不是当前项目成员
+        const currentUserPermission = accessUsers.find(user => user.userId === userInfo.id || user.id === userInfo.id);
+        const accessableReadonlyUrl = ReadOnlyUrl.find(v => v.method === method && URL.pathname.startsWith(v.url))
+        if (!currentUserPermission) {
             this.ctx.helper.throwCustomError("暂无当前项目权限", 4002);
+        } 
+        else if (currentUserPermission.permission === "readOnly" && !accessableReadonlyUrl) {
+            this.ctx.helper.throwCustomError("暂无当前操作权限", 4002);
         }
     }
     /** 
@@ -287,7 +407,6 @@ class DocsService extends Service {
         const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
         await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }}); //删除文档
         const deleteDocs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, _id: { $in: ids }});
-        console.log(deleteDocs, ids, 222)
         //添加历史记录
         const record = {
             operation: deleteDocs.length > 1 ? "deleteMany" : (deleteDocs[0].isFolder ? "deleteFolder" : "deleteDoc"),

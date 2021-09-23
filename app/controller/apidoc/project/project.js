@@ -198,7 +198,7 @@ class ProjectController extends Controller {
         @return       null
     */
 
-    async deleteProjectList() { 
+    async deleteProject() { 
         try {
             const params = this.ctx.request.body;
             const reqRule = {
@@ -206,10 +206,9 @@ class ProjectController extends Controller {
                     type: "array",
                     itemType: "string"
                 },
-                
             };
             this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.project.deleteProjectList(params);
+            const result = await this.ctx.service.apidoc.project.project.deleteProject(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);

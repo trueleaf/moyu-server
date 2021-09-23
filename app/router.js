@@ -14,7 +14,7 @@ module.exports = app => {
     router.get("/api/project/project_full_info", controller.apidoc.project.project.getProjectFullInfo); // 获取项目完成信息
     router.get("/api/project/project_members", controller.apidoc.project.project.getProjectMembers); // 获取项目成员信息
     router.get("/api/project/project_enum", controller.apidoc.project.project.getProjectEnum); // 获取项目列表枚举
-    router.delete("/api/project/delete_project", controller.apidoc.project.project.deleteProjectList); // 删除项目
+    router.delete("/api/project/delete_project", controller.apidoc.project.project.deleteProject); // 删除项目
     router.put("/api/project/edit_project", controller.apidoc.project.project.editProject); // 修改项目
 
     router.post("/api/project/add_user", controller.apidoc.project.project.addUser); // 项目新增用户
@@ -35,26 +35,17 @@ module.exports = app => {
 
 
 
-    //项目类型枚举
-    router.get("/api/project/project_type_list", controller.apidoc.project.projectType.getProjectTypeEnumList); //获取项目类型枚举列表
-    router.get("/api/project/project_type_enum", controller.apidoc.project.projectType.getProjectTypeEnum); //获取项目类型枚举
-    router.delete("/api/project/project_type", controller.apidoc.project.projectType.deleteProjectTypeEnum); //删除项目类型
-    router.put("/api/project/project_type", controller.apidoc.project.projectType.editProjectTypeEnum); //修改项目类型
-    router.post("/api/project/add_project_type", controller.apidoc.project.projectType.addProjectTypeEnum); //添加项目类型
     //=====================================文档相关====================================//
     router.post("/api/project/new_doc", controller.apidoc.docs.docs.addEmptyDoc); //新增空白文档
     router.post("/api/project/copy_doc", controller.apidoc.docs.docs.copyDoc); //拷贝文档
     router.put("/api/project/change_doc_pos", controller.apidoc.docs.docs.changeDocPosition); //改变文档在位置
     router.put("/api/project/change_doc_info", controller.apidoc.docs.docs.changeDocName); //修改文档树形结构基础信息
-    router.put("/api/project/publish_doc", controller.apidoc.docs.docs.publishDoc); //发布文档
     router.delete("/api/project/doc", controller.apidoc.docs.docs.deleteDoc); //删除文档
     router.post("/api/project/doc_multi", controller.apidoc.docs.docs.addMultiDocs); //新增多个文档
     router.post("/api/project/fill_doc", controller.apidoc.docs.docs.fillDoc); //填写文档
     router.get("/api/project/doc_tree_node", controller.apidoc.docs.docs.getDocTreeNode); //获取文档导航
     router.get("/api/project/doc_tree_folder_node", controller.apidoc.docs.docs.getDocTreeFolderNode); //获取文档导航(仅获取文件夹信息，用于一个项目向另一个项目导入)
     router.get("/api/project/doc_detail", controller.apidoc.docs.docs.getDocDetail); //获取文档详情
-    router.get("/api/project/filter_doc", controller.apidoc.docs.docs.filterDoc); //根据url获取文档id，用于菜单筛选
-    router.get("/api/project/doc_word", controller.apidoc.docs.docs.convertDocToWord); //将文档导出为word
     router.get("/api/project/doc_mock", controller.apidoc.docs.docs.getMockData); //获取文档mock数据
     router.post("/api/project/paste_docs", controller.apidoc.docs.docs.pasteDocs); //粘贴文档
     
@@ -73,14 +64,6 @@ module.exports = app => {
     router.post("/api/docs/docs_tag", controller.apidoc.docs.docsTag.addDocsTag); //新增文档标签
     router.delete("/api/docs/docs_tag", controller.apidoc.docs.docsTag.deleteDocsTag); //删除文档标签
 
-    //=====================================内置请求返回参数相关路由====================================//
-    router.post("/api/apidoc/docs/docs_internal_params", controller.apidoc.docs.docsInternalParams.createDocsInternalParams); //新增内置请求返回参数
-    router.put("/api/apidoc/docs/docs_internal_params", controller.apidoc.docs.docsInternalParams.updateDocsInternalParams); //修改内置请求返回参数
-    router.get("/api/apidoc/docs/docs_internal_params", controller.apidoc.docs.docsInternalParams.readDocsInternalParamsById); //根据id查询内置请求返回参数
-    router.get("/api/apidoc/docs/docs_internal_params_list", controller.apidoc.docs.docsInternalParams.readDocsInternalParamsList); //以列表形式获取内置请求返回参数
-    router.get("/api/apidoc/docs/docs_internal_params_enum", controller.apidoc.docs.docsInternalParams.readDocsInternalParamsEnum); //以枚举形式获取内置请求返回参数
-    router.delete("/api/apidoc/docs/docs_internal_params", controller.apidoc.docs.docsInternalParams.deleteDocsInternalParams); //删除内置请求返回参数
-
 
     //======文档历史记录
     router.post("/api/docs/docs_history", controller.apidoc.docs.docsHistory.getDocHistoryList); //获取项目文档操作历史记录
@@ -98,17 +81,11 @@ module.exports = app => {
     router.get("/api/project/project_variable", controller.apidoc.project.projectVariable.getProjectVariableList); //获取预设参数组
     router.get("/api/project/project_variable_enum", controller.apidoc.project.projectVariable.getProjectVariableEnum); //获取预设参数组枚举
     
-    //======自定义参数列表
-    router.post("/api/project/docs_params", controller.apidoc.docs.docsParams.addDocsParams); //新增预设参数组
-    router.delete("/api/project/docs_params", controller.apidoc.docs.docsParams.deleteDocsParams); //删除预设参数组
-    router.put("/api/project/docs_params", controller.apidoc.docs.docsParams.editDocsParams); //填写预设参数组
-    router.get("/api/project/docs_params", controller.apidoc.docs.docsParams.getDocsParams); //获取预设参数组
 
     //======联想参数相关
-    router.get("/api/project/doc_params_mind", controller.apidoc.docs.docsParamsMind.getDocParamsMindEnum); //获取参数联想
-    router.post("/api/project/doc_params_mind", controller.apidoc.docs.docsParamsMind.addDocParamsMind); //新增联想参数
-
-
+    router.get("/api/project/doc_params_mind", controller.apidoc.docs.docsParamsMind.geMindParams); //获取参数联想
+    router.delete("/api/project/doc_params_mind", controller.apidoc.docs.docsParamsMind.deleteMindParams); //批量删除联想参数
+    router.post("/api/project/doc_params_mind", controller.apidoc.docs.docsParamsMind.addMindParams); //新增联想参数
     
     //======预设参数组
     router.post("/api/project/doc_preset_params", controller.apidoc.docs.docsParamsPreset.addPresetParams); //新增预设参数组
@@ -124,21 +101,6 @@ module.exports = app => {
     router.put("/api/project/doc_service", controller.apidoc.docs.docsServices.editService); //填写服务器
     router.get("/api/project/doc_service", controller.apidoc.docs.docsServices.getServiceList); //获取服务器
     router.get("/api/project/doc_service_info", controller.apidoc.docs.docsServices.getServiceInfo); //获取服务器详情
-
-    //======restful模板
-    router.post("/api/doc/restful_template", controller.apidoc.docs.docsRestfulTemplate.addRestfulTemplate); //新增restful模板
-    router.delete("/api/doc/restful_template", controller.apidoc.docs.docsRestfulTemplate.deleteRestfulTemplate); //删除restful模板
-    router.put("/api/doc/restful_template", controller.apidoc.docs.docsRestfulTemplate.editRestfulTemplate); //填写restful模板
-    router.get("/api/doc/restful_template", controller.apidoc.docs.docsRestfulTemplate.getRestfulTemplateList); //获取restful模板   
-
-    //======自定义状态码
-    router.post("/api/project/doc_code", controller.apidoc.docs.docsStatus.addDiyStatus); //新增文档状态码
-    router.delete("/api/project/doc_code", controller.apidoc.docs.docsStatus.deleteDiyStatus); //删除文档状态码
-    router.put("/api/project/doc_code", controller.apidoc.docs.docsStatus.editDiyStatus); //填写文档状态码
-    router.get("/api/project/doc_code", controller.apidoc.docs.docsStatus.getDiyStatusList); //获取文档状态码
-    //=====================================代理服务器====================================//
-
-
 
 
     //=====================================鉴权与安全====================================//

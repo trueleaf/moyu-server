@@ -101,8 +101,7 @@ class ProjectService extends Service {
         const { _id } = params;
         const result = {};
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(_id);
-
-        const mindParams = await this.ctx.service.apidoc.docs.docsParamsMind.getDocParamsMindEnum({ projectId: _id });
+        const mindParams = await this.ctx.service.apidoc.docs.docsParamsMind.geMindParams({ projectId: _id });
         const paramsTemplate = await this.ctx.service.apidoc.docs.docsParamsPreset.getPresetParamsEnum({ projectId: _id })
         const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList({ projectId: _id });
         const variables = await this.ctx.service.apidoc.project.projectVariable.getProjectVariableEnum({ projectId: _id });
@@ -197,8 +196,11 @@ class ProjectService extends Service {
         @return       null
     */
 
-    async deleteProjectList(params) {
+    async deleteProject(params) {
         const { ids } = params;
+        for(let i = 0; i < ids.length; i ++) {
+            await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(ids[i]);
+        }
         const result = await this.ctx.model.Apidoc.Project.Project.update({ _id: { $in: ids }}, { $set: { enabled: false }});
         return result;
     }

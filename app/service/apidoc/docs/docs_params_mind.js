@@ -12,49 +12,16 @@ class docParamsMindService extends Service {
         @author        shuxiaokai
         @create        2020-10-08 22:10
         @param {String}  projectId 项目id
-        @param {String}  paths 联想请求参数
-        @param {String}  queryParams 联想返回参数
-        @param {String}  requestBody 联想返回参数
-        @param {String}  responseParams 联想返回参数
+        @param {Property}  mindParams 联想请求参数
         @return       null
     */
 
-    async addDocParamsMind(params) {
-        const { projectId, paths, queryParams, requestBody, responseParams } = params;
-        let result = null;
-        const doc = {
-            projectId,
-            paths,
-            queryParams,
-            requestBody,
-            responseParams
-        };
-        const savedDoc = await this.ctx.model.Apidoc.Docs.DocsParamsMind.findOne({ projectId: doc.projectId });
-        if (savedDoc) {
-            const oldPaths = savedDoc.paths;
-            const oldQueryParams = savedDoc.queryParams;
-            const oldRequestBody = savedDoc.requestBody;
-            const oldResponseParams = savedDoc.responseParams;
-            const newPaths = this.ctx.helper.unique([...paths, ...oldPaths], "key");
-            const newQueryParams = this.ctx.helper.unique([...queryParams, ...oldQueryParams], "key");
-            const newRequestBody = this.ctx.helper.unique([...requestBody, ...oldRequestBody], "key");
-            const newResponseParams = this.ctx.helper.unique([...responseParams, ...oldResponseParams], "key");
-            result = {
-                paths: newPaths,
-                queryParams: newQueryParams,
-                requestBody: newRequestBody,
-                responseParams: newResponseParams,
-            }
-            await this.ctx.model.Apidoc.Docs.DocsParamsMind.update({ projectId }, { $set: {
-                paths: newPaths,
-                queryParams: newQueryParams,
-                requestBody: newRequestBody,
-                responseParams: newResponseParams,
-            }});
-        } else {
-            await this.ctx.model.Apidoc.Docs.DocsParamsMind.create(doc);
-        }
-        return result;
+    async addMindParams(params) {
+        const { projectId, mindParams } = params;
+        const allParams = await this.ctx.model.Apidoc.Docs.DocsParamsMind.find({ projectId }).lean();
+        const uniqueDocs = this.ctx.helper.unique(allParams.concat(mindParams), "key");
+        await this.ctx.model.Apidoc.Docs.DocsParamsMind.updateOne({ projectId }, { mindParams: uniqueDocs }, { upsert: true });
+        return uniqueDocs;
     }
     /**
         @description  获取文档参数联想
@@ -63,17 +30,29 @@ class docParamsMindService extends Service {
         @param {string}           projectId 项目id
         @return       null
     */
-   
-    async getDocParamsMindEnum(params) {
+    async geMindParams(params) {
         const { projectId } = params;
-        const result = await this.ctx.model.Apidoc.Docs.DocsParamsMind.findOne({ projectId }, {
-            paths: 1,
-            queryParams: 1,
-            requestBody: 1,
-            responseParams: 1,
-            _id: 0
-        });
-        return result || [];
+        const result = await this.ctx.model.Apidoc.Docs.DocsParamsMind.findOne({ projectId });
+        if (!result) {
+            return [];
+        }
+        return result.mindParams.filter(v => v.enabled);
+    }
+    /**
+        @description  批量删除联想参数
+        @author        shuxiaokai
+        @create        2020-10-08 22:10
+        @param {string}           projectId 项目id
+        @param {string[]}           ids 需要删除数据ids
+        @return       null
+    */
+    async deleteMindParams(params) {
+        const { projectId, ids } = params;
+        const result = await this.ctx.model.Apidoc.Docs.DocsParamsMind.update({ 
+            projectId, 
+            "mindParams._id": { $in: ids } 
+        }, { $set: { "mindParams.$.enabled": false } });
+        return result;
     }
 }
 
