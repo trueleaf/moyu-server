@@ -361,9 +361,9 @@ class userService extends Service {
             realName: userInfo.realName,
             phone: userInfo.phone,            
         });
-        this.ctx.userInfo = {
-            ...result
-        };
+        // this.ctx.userInfo = {
+        //     ...result
+        // };
         const { jwtConfig } = this.app.config;
         const token = jwt.sign(result, jwtConfig.secretOrPrivateKey, {
             expiresIn: jwtConfig.expiresIn,
