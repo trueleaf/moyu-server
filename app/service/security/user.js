@@ -364,6 +364,11 @@ class userService extends Service {
         this.ctx.userInfo = {
             ...result
         };
+        const { jwtConfig } = this.app.config;
+        const token = jwt.sign(result, jwtConfig.secretOrPrivateKey, {
+            expiresIn: jwtConfig.expiresIn,
+        });
+        result.token = token;
         return result;
     }
 

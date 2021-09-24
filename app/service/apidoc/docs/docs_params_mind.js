@@ -48,10 +48,14 @@ class docParamsMindService extends Service {
     */
     async deleteMindParams(params) {
         const { projectId, ids } = params;
-        const result = await this.ctx.model.Apidoc.Docs.DocsParamsMind.update({ 
+        const result = await this.ctx.model.Apidoc.Docs.DocsParamsMind.updateMany({ 
             projectId, 
             "mindParams._id": { $in: ids } 
-        }, { $set: { "mindParams.$.enabled": false } });
+        }, { 
+            $set: { "mindParams.$[elem].enabled": false } 
+        }, {
+            arrayFilters: [{ "elem._id": { $in: ids } }]
+        });
         return result;
     }
 }

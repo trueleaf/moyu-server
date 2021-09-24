@@ -10,6 +10,7 @@ module.exports = options => {
                 const reg = new RegExp(val);
                 return requestUrl.match(reg);
             })
+            console.log(requestUrl, 9)
             if (isInWhiteList) { //路由白名单放行
                 await next();
                 return;

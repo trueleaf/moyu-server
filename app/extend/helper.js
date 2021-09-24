@@ -27,7 +27,6 @@ module.exports = {
         // console.dir(error);
         const errorCode = error.code;
         this.ctx.logger.error(error);
-        console.error(error.name, 999);
         if (error.name === "TokenExpiredError") { //jwt过期
             this.ctx.body = {
                 code: 4100,

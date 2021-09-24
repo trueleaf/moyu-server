@@ -52,6 +52,12 @@ class ProxyController extends Controller {
             };
             this.ctx.validate(reqRule, params);
             const { url, method, body, headers } = params
+            if (url.startsWith("http://127.0.0.1")) {
+                const err = new Error("无法代理内网请求");
+                err.name = "proxyError"
+                this.ctx.helper.throwError(err);
+                return;
+            }
             const response = await gotInstance(url, {
                 method,
                 body,

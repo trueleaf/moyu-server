@@ -33,7 +33,8 @@ module.exports = appInfo => {
             "/api/security/sms",
             "/api/security/login_guest",
             "/api/security/captcha",
-            "/api/project/doc_mock"
+            "/api/project/doc_mock",
+            "/api/proxy/proxyWebApi",
         ],
     };
     const throttle = {};
