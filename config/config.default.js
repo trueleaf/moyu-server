@@ -152,7 +152,7 @@ module.exports = appInfo => {
     };
     //日志模块 https://eggjs.org/zh-cn/core/logger.html
     const logger = {
-        dir: `${appInfo.root}/logs`,
+        dir: `../moyu-logs`,
         appLogName: "app-web.log",
         coreLogName: "web.log",
         agentLogName: "agent.log",

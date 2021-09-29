@@ -111,6 +111,7 @@ module.exports = app => {
     router.post("/api/security/login_password", controller.security.user.loginWithPassword); //用户名密码登录
     router.post("/api/security/login_guest", controller.security.user.loginGuest); //体验用户登录
     router.get("/api/security/captcha", controller.security.user.getSVGCaptcha); //获取验证码
+    router.post("/api/security/user_reset_password", controller.security.user.resetPassword); //重置密码
     
     //======用户管理
     router.get("/api/security/user_base_info", controller.security.user.getUserBaseInfo); //获取用户基本信息

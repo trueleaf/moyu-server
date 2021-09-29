@@ -235,6 +235,37 @@ class userController extends Controller {
             return;
         }
     }
+    /** 
+        @description  忘记密码
+        @author       shuxiaokai
+        @create       2021-10-2 22:10
+        @params {String}            phone 手机号
+        @params {String}            smsCode 验证码
+        @params {String}            password 密码
+        @return       null
+    */
+    async resetPassword() {
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                phone: {
+                    type: "string"
+                },
+                smsCode: {
+                    type: "string"
+                },
+                password: {
+                    type: "string"
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.security.user.resetPassword(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
     /* 
         @description  删除用户
         @author       shuxiaokai

@@ -145,7 +145,7 @@ class ProjectService extends Service {
             }
         ];
         const limit = 100;
-        const result = await this.ctx.model.Apidoc.Project.Project.find(query, { projectName: 1, enabled: true }).limit(limit);
+        const result = await this.ctx.model.Apidoc.Project.Project.find(query, { projectName: 1 }).limit(limit);
         return result;
     }
 

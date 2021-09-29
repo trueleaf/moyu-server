@@ -115,6 +115,46 @@ class userService extends Service {
     }
 
     /** 
+        @description  重置密码
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @params {String}            phone 手机号码
+        @params {String}            password 名称
+        @params {String}            smsCode 验证码
+        @return       null
+    */
+    async resetPassword(params) {
+        const { phone, password, smsCode } = params;
+        const smsConfig = this.app.config.smsConfig; //短信配置信息
+        const smsInfo = await this.ctx.model.Security.Sms.findOne({ phone });
+        const isExpire = (Date.now() - new Date(smsInfo ? smsInfo.updatedAt : 0).getTime()) > smsConfig.maxAge;
+        const hasSmsPhone = !!smsInfo;
+       
+        if (isExpire) {
+            this.ctx.helper.throwCustomError("验证码失效", 2002);
+        }
+        if (!hasSmsPhone) {
+            this.ctx.helper.throwCustomError("验证码不正确", 2003);
+        }
+        if (smsInfo.smsCode !== smsCode) {
+            this.ctx.helper.throwCustomError("验证码不正确", 2003);
+        }
+        if (phone !== smsInfo.phone) { //注册手机号与接受验证码手机号不一致
+            this.ctx.helper.throwCustomError("注册手机号与接受验证码手机号不一致", 2001);
+        }
+        
+        const matchedUser = await this.ctx.model.Security.User.findOne({ phone }); 
+        const hash = crypto.createHash("md5");
+        const salt = this.ctx.helper.rand(10000, 9999999).toString();
+        hash.update((password + salt).slice(2));
+        const hashPassword = hash.digest("hex");
+        await this.ctx.model.Security.User.updateOne({ phone }, { $set: { salt, password: hashPassword } });
+        return {
+            loginName: matchedUser.loginName
+        };
+    }  
+
+    /** 
      * @description        来宾用户登录
      * @author              shuxiaokai
      * @create             2020-09-21 14:24
@@ -338,12 +378,15 @@ class userService extends Service {
 
     async loginWithPhone(params) {
         const { phone, smsCode } = params;
+        const smsConfig = this.app.config.smsConfig; //短信配置信息
         const result = {};
-
         const smsInfo = await this.ctx.model.Security.Sms.findOne({ phone });
-        console.log(smsInfo, smsCode)
+        const isExpire = (Date.now() - new Date(smsInfo ? smsInfo.updatedAt : 0).getTime()) > smsConfig.maxAge;
         if (!smsInfo) {
             this.ctx.helper.throwCustomError("请输入正确的手机号码", 2005);
+        }
+        if (isExpire) { //验证码过期
+            this.ctx.helper.throwCustomError("验证码已失效", 2003);
         }
         if (smsInfo.smsCode !== smsCode) {
             this.ctx.helper.throwCustomError("短信验证码错误", 2003);
