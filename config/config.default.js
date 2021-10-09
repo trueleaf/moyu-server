@@ -160,9 +160,14 @@ module.exports = appInfo => {
         errorLogName: "error.log",
         outputJSON: true,
     };
+    //bodyparser
+    const bodyParser = {
+        jsonLimit: "3mb",
+    }
 
     return {
         ...config,
+        bodyParser,
         logger,
         mock,
         permission,
