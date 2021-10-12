@@ -178,16 +178,16 @@ class docsOperationService extends Service {
      * @description        生成在线链接
      * @author             shuxiaokai
      * @create             2020-11-13 09:24
+     * @param  {String}    shareName 分享标题
      * @param  {String}    projectId 项目id
      * @param  {String?}   password 密码
      * @param  {String?}   maxAge 过期时间
      * @param  {Array}     selectedDocs 被选择的需要导出的节点
      * @return {String}    返回在线链接
      */
-    async exportAsOnlineDoc(params) { 
-        const { projectId, password, maxAge = 86400000, selectedDocs = [] } = params;
+    async generateOnlineLink(params) { 
+        const { shareName, projectId, password, maxAge = 86400000, selectedDocs = [] } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const shareId = this.ctx.helper.uuid();
         let expire = Date.now();
         if (!maxAge || maxAge > 31536000 * 5) {
             expire += 31536000 * 5; //五年后过期
@@ -195,30 +195,35 @@ class docsOperationService extends Service {
             expire += maxAge
         }
         const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId }, { projectName: 1 }).lean();
-        await this.ctx.model.Apidoc.Project.ProjectShare.findOneAndUpdate({ _id: projectId }, {
-            $set: {
-                shareId,
-                projectId,
-                projectName: projectInfo.projectName,
-                password,
-                expire,
-                selectedDocs
-            }
-        }, {
-            upsert: true,
-        });
-        //文档导出
-        const userInfo = this.ctx.userInfo;
-        const record = {
-            operation: "export", //导出为online
+        const shareInfo = {
+            shareName,
             projectId,
-            recordInfo: {
-                exportType: "online"
-            },
-            operator: userInfo.realName || userInfo.loginName,
-        };
-        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
+            password,
+            projectName: projectInfo.projectName,
+            expire,
+            selectedDocs
+        }
+        await this.ctx.model.Apidoc.Project.ProjectShare.create(shareInfo);
         return shareId;
+    }
+
+    /** 
+     * @description        获取在线链接列表
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {number}    pageNum 页码
+     * @param  {number}    pageSize 每页数量
+     * @param  {string}    projectId 项目id
+     * @param  {boolean}   isAll 是否展示全部项目
+     * @return {Array}    
+     */
+     async getOnlineLinkList(params) { 
+        const { projectId, isAll } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        return {
+            isAll,
+            projectId
+        };
     }
 
      /** 

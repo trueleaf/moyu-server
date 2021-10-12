@@ -99,16 +99,20 @@ class docsOperationController extends Controller {
      * @description        生成在线链接
      * @author             shuxiaokai
      * @create             2020-11-13 09:24
+     * @param  {String}    shareName 分享标题
      * @param  {String}    projectId 项目id
      * @param  {String?}   password 密码
      * @param  {String?}   maxAge 过期时间
      * @param  {Array}     selectedDocs 被选择的需要导出的节点
      * @return {String}    返回在线链接
      */
-    async exportAsOnlineDoc() {
+    async generateOnlineLink() {
         try {
             const params = this.ctx.request.body;
             const reqRule = {
+                shareName: {
+                    type: "string"
+                },
                 projectId: {
                     type: "string"
                 },
@@ -127,13 +131,56 @@ class docsOperationController extends Controller {
                 },
             };
             this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.docs.docsOperation.exportAsOnlineDoc(params);
+            const result = await this.ctx.service.apidoc.docs.docsOperation.generateOnlineLink(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);
             return;
         }
     }
+
+    /** 
+     * @description        获取在线链接列表
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {number}    pageNum 页码
+     * @param  {number}    pageSize 每页数量
+     * @param  {string}    projectId 项目id
+     * @param  {boolean}   isAll 是否展示全部项目
+     * @return {Array}    
+     */
+    async getOnlineLinkList() {
+        try {
+            const params = this.ctx.query;
+            const reqRule = {
+                pageNum: {
+                    type: "number",
+                    convertType: "number",
+                    required: false
+                },
+                pageSize: {
+                    type: "number",
+                    convertType: "number",
+                    required: false
+                },
+                projectId: {
+                    type: "string",
+                    required: false
+                },
+                isAll: {
+                    type: "boolean",
+                    required: false
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docsOperation.getOnlineLinkList(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+
 
     /** 
      * @description        fork项目中部分文档

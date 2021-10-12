@@ -8,13 +8,13 @@ module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
     const projectShareSchema = new Schema({
-        shareId: { //随机生成的id
-            type: String
-        },
         projectId: { //项目id
             type: String,
         },
         projectName: { //项目名称
+            type: String,
+        },
+        shareName: { //分享标题
             type: String,
         },
         password: { //密码
@@ -23,12 +23,13 @@ module.exports = app => {
         expire: { //过期时间，时间戳
             type: Number,
         },
-        eTag: { //标识文档是否更新
-            type: String,
-        },
         selectedDocs: { //允许用户查看的文档，如果没有当前字段则代表所有数据都允许查看
             type: Array,
             default: null
+        },
+        enabled: { //使能
+            type: Boolean,
+            default: true
         },
     }, { timestamps: true });
 
