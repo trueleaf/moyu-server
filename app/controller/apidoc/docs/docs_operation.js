@@ -138,6 +138,33 @@ class docsOperationController extends Controller {
             return;
         }
     }
+    /** 
+     * @description        删除在线链接
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    projectId 项目id
+     * @param  {String?}   _id 项目id
+     */
+     async deleteOnlineLink() {
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                projectId: {
+                    type: "string"
+                },
+                _id: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docsOperation.deleteOnlineLink(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    
 
     /** 
      * @description        获取在线链接列表

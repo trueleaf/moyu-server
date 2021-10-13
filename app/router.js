@@ -59,6 +59,7 @@ module.exports = app => {
     router.post("/api/project/import/moyu", controller.apidoc.docs.docsOperation.importAsMoyuDoc); //导入摸鱼数据
     router.post("/api/project/export/online", controller.apidoc.docs.docsOperation.generateOnlineLink); //生成在线链接
     router.get("/api/project/export/online_list", controller.apidoc.docs.docsOperation.getOnlineLinkList); //分页获取在线链接
+    router.delete("/api/project/export/online", controller.apidoc.docs.docsOperation.deleteOnlineLink); //删除在线链接
     //==========文档标签
     router.get("/api/docs/docs_tag_enum", controller.apidoc.docs.docsTag.getDocsTagEnum); //获取文档标签枚举
     router.put("/api/docs/docs_tag", controller.apidoc.docs.docsTag.editDocsTag); //修改文档标签

@@ -189,8 +189,8 @@ class docsOperationService extends Service {
         const { shareName, projectId, password, maxAge = 86400000, selectedDocs = [] } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         let expire = Date.now();
-        if (!maxAge || maxAge > 31536000 * 5) {
-            expire += 31536000 * 5; //五年后过期
+        if (!maxAge || maxAge > 31536000000 * 5) {
+            expire += 31536000000 * 5; //五年后过期
         } else {
             expire += maxAge
         }
@@ -203,8 +203,22 @@ class docsOperationService extends Service {
             expire,
             selectedDocs
         }
-        await this.ctx.model.Apidoc.Project.ProjectShare.create(shareInfo);
-        return shareId;
+        const result = await this.ctx.model.Apidoc.Project.ProjectShare.create(shareInfo);
+        return result._id;
+    }
+
+    /** 
+     * @description        删除在线链接
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    projectId 项目id
+     * @param  {String?}   _id 项目id
+     */
+     async deleteOnlineLink(params) { 
+        const { projectId, _id } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        await this.ctx.model.Apidoc.Project.ProjectShare.update({ projectId, _id }, { $set: { enabled: false } });
+        return;
     }
 
     /** 
@@ -220,9 +234,11 @@ class docsOperationService extends Service {
      async getOnlineLinkList(params) { 
         const { projectId, isAll } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const rows = await this.ctx.model.Apidoc.Project.ProjectShare.find({ projectId, enabled: true }, { enabled: 0, createdAt: 0, updatedAt: 0 });
+        const total = await this.ctx.model.Apidoc.Project.ProjectShare.find({ projectId, enabled: true }).countDocuments();
         return {
-            isAll,
-            projectId
+            rows,
+            total
         };
     }
 

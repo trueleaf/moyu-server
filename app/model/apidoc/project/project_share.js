@@ -19,6 +19,7 @@ module.exports = app => {
         },
         password: { //密码
             type: String,
+            default: ""
         },
         expire: { //过期时间，时间戳
             type: Number,
