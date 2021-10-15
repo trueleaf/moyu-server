@@ -20,9 +20,7 @@ class docsOperationService extends Service {
     async exportAsHTML(params) { 
         const { projectId, selectedNodes = [] } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
-        const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
-        const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById(params);
-        const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList(params)
+        const projectInfo = await this.ctx.service.apidoc.project.project.getProjectFullInfo({ _id: projectId })
         let docs = [];
         if (selectedNodes.length > 0) { //选择导出
             docs = await this.ctx.model.Apidoc.Docs.Docs.find({
@@ -39,17 +37,11 @@ class docsOperationService extends Service {
         this.ctx.set("content-type", "application/force-download");
         this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.json`)}`);
         const result = {
-            type: "moyu",
-            info: {
-                projectName: projectInfo.projectName,
-            },
-            rules: porjectRules,
-            docs,
-            hosts
+            projectInfo,
+            docs
         };
         let file = await fs.readFile(path.resolve(this.app.baseDir, "app/public/share-doc/index.html"), "utf-8");
         file = file.replace(/window.SHARE_DATA = null/, `window.SHARE_DATA = ${JSON.stringify(result)}`);
-        file = file.replace(/window.IS_OFFLINE = null/, `window.IS_OFFLINE = true`);
         file = file.replace(/<title>[^<]*<\/title>/, `<title>${projectInfo.projectName}<\/title>`);
         this.ctx.set("content-type", "application/force-download");
         this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.html`)}`);
@@ -196,6 +188,7 @@ class docsOperationService extends Service {
         }
         const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId }, { projectName: 1 }).lean();
         const shareInfo = {
+            shareId: this.ctx.helper.uuid(),
             shareName,
             projectId,
             password,
@@ -204,7 +197,39 @@ class docsOperationService extends Service {
             selectedDocs
         }
         const result = await this.ctx.model.Apidoc.Project.ProjectShare.create(shareInfo);
-        return result._id;
+        return result.shareId;
+    }
+
+    /** 
+     * @description        修改在线链接
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    projectId 项目id
+     * @param  {String}    _id 在线链接id
+     * @param  {String}    shareName 分享标题
+     * @param  {String?}   password 密码
+     * @param  {String?}   maxAge 过期时间
+     * @param  {Array}     selectedDocs 被选择的需要导出的节点
+     * @return {String}    返回在线链接
+     */
+     async editOnlineLink(params) { 
+        const { shareName, projectId, _id, password, maxAge = 86400000, selectedDocs = [] } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        let expire = Date.now();
+        if (!maxAge || maxAge > 31536000000 * 5) {
+            expire += 31536000000 * 5; //五年后过期
+        } else {
+            expire += maxAge
+        }
+        await this.ctx.model.Apidoc.Project.ProjectShare.findByIdAndUpdate({ _id }, {
+            $set: {
+                shareName,
+                password,
+                expire,
+                selectedDocs
+            }
+        });
+        return;
     }
 
     /** 

@@ -138,6 +138,55 @@ class docsOperationController extends Controller {
             return;
         }
     }
+
+    /** 
+     * @description        修改在线链接
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    projectId 项目id
+     * @param  {String}    _id 在线链接id
+     * @param  {String}    shareName 分享标题
+     * @param  {String?}   password 密码
+     * @param  {String?}   maxAge 过期时间
+     * @param  {Array}     selectedDocs 被选择的需要导出的节点
+     * @return {String}    返回在线链接
+     */
+     async editOnlineLink() {
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                shareName: {
+                    type: "string"
+                },
+                projectId: {
+                    type: "string"
+                },
+                _id: {
+                    type: "string"
+                },
+                password: {
+                    type: "string",
+                    required: false,
+                },
+                maxAge: {
+                    type: "number",
+                    convertType: "number",
+                    required: false
+                },
+                selectedDocs: {
+                    type: "array",
+                    required: false,
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docsOperation.editOnlineLink(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    
     /** 
      * @description        删除在线链接
      * @author             shuxiaokai

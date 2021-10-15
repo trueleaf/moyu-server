@@ -519,9 +519,11 @@ class DocsService extends Service {
         @param {string}          projectId 文档id
         @return       null
     */
-    async getDocTreeNode(params) { 
+    async getDocTreeNode(params, ignorePermission) { 
         const { projectId } = params;
-        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        if (!ignorePermission) {
+            await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        }
         const result = [];
         const docsInfo = await this.ctx.model.Apidoc.Docs.Docs.find({
             projectId: projectId,

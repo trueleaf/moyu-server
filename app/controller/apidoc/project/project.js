@@ -251,13 +251,13 @@ class ProjectController extends Controller {
     }
 
     /** 
-        @description  根据分享id获取项目基本信息
-        @author       shuxiaokai
-        @create        2020-10-08 22:10
-        @param {String}      shareId 随机id
-        @return       null
-    */
-    async getOnlineProjectInfo() { 
+     * @description        获取在线链接基本信息
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    shareId 分享链接id
+     * @return {String}    返回在线链接基本信息
+     */
+     async getOnlineProjectInfo() {
         try {
             const params = this.ctx.request.query;
             const reqRule = {
@@ -275,14 +275,14 @@ class ProjectController extends Controller {
     }
     
     /** 
-        @description  根据分享id获取项目详情
+        @description  检查在线项目密码是否匹配
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @param {String}      shareId 随机id
         @param {String}      password 密码
         @return       null
     */
-    async getOnlineProjectDetail() { 
+    async checkOnlineProjectPassword() { 
         try {
             const params = this.ctx.request.query;
             const reqRule = {
@@ -295,13 +295,107 @@ class ProjectController extends Controller {
                 },
             };
             this.ctx.validate(reqRule, params);
-            const result = await this.ctx.service.apidoc.project.project.getOnlineProjectDetail(params);
+            const result = await this.ctx.service.apidoc.project.project.checkOnlineProjectPassword(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);
             return;
         }
     }
+    /** 
+        @description  获取分享项目banner信息
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      shareId 随机id
+        @param {String}      password 密码
+        @return       null
+    */
+    async getShareBanner() { 
+        try {
+            const params = this.ctx.request.query;
+            const reqRule = {
+                shareId: {
+                    type: "string",
+                },
+                password: {
+                    type: "string",
+                    required: false
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.project.project.getShareBanner(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    /** 
+        @description  获取分享项目基本信息
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      shareId 随机id
+        @param {String}      password 密码
+        @return       null
+    */
+    async getSharedProjectInfo() { 
+        try {
+            const params = this.ctx.request.query;
+            const reqRule = {
+                shareId: {
+                    type: "string",
+                },
+                password: {
+                    type: "string",
+                    required: false
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.project.project.getSharedProjectInfo(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    /** 
+        @description  获取分享文档详细信息
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      _id 文档id
+        @param {String}      shareId 随机id
+        @param {String}      password 密码
+        @return       null
+    */
+    async getSharedDocDetail() { 
+        try {
+            const params = this.ctx.request.query;
+            const reqRule = {
+                _id: {
+                    type: "string"
+                },
+                shareId: {
+                    type: "string",
+                },
+                password: {
+                    type: "string",
+                    required: false
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.project.project.getSharedDocDetail(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    
+    
+
+
+
+
     /** 
         @description  导入生成项目
         @author       shuxiaokai

@@ -8,6 +8,9 @@ module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
     const projectShareSchema = new Schema({
+        shareId: { //分享id，不适用_id是为了防止数据被用户猜出来
+            type: String,
+        },
         projectId: { //项目id
             type: String,
         },

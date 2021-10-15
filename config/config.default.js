@@ -35,7 +35,12 @@ module.exports = appInfo => {
             "/api/security/captcha",
             "/api/project/doc_mock",
             "/api/proxy/proxyWebApi",
-            "/api/security/user_reset_password"
+            "/api/security/user_reset_password",
+            "/api/project/share_info",
+            "/api/project/share_check",
+            "/api/project/export/share_banner",
+            "/api/project/export/share_project_info",
+            "/api/project/share_doc_detail",
         ],
     };
     const throttle = {};

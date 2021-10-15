@@ -97,10 +97,12 @@ class ProjectService extends Service {
         @param {String}      _id 项目id 
         @return       null
     */
-    async getProjectFullInfo(params) {
+    async getProjectFullInfo(params, ignorePermission) {
         const { _id } = params;
         const result = {};
-        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(_id);
+        if (!ignorePermission) {
+            await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(_id);
+        }
         const mindParams = await this.ctx.service.apidoc.docs.docsParamsMind.geMindParams({ projectId: _id });
         const paramsTemplate = await this.ctx.service.apidoc.docs.docsParamsPreset.getPresetParamsEnum({ projectId: _id })
         const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList({ projectId: _id });
@@ -247,76 +249,147 @@ class ProjectService extends Service {
         await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id }, updateDoc);
         return;
     }
+
     /** 
-        @description  根据分享id获取项目详情
+        @description  检查在线项目密码是否匹配
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @param {String}      shareId 随机id
         @param {String}      password 密码
         @return       null
     */
-    async getOnlineProjectDetail(params) { 
+    async checkOnlineProjectPassword(params) { 
         const { shareId, password } = params;
         const projectShare = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ shareId }).lean();
-        const selectedDocs = projectShare.selectedDocs;
         if (!projectShare) {
-            this.ctx.helper.throwCustomError("不存在当前文档", 101003);
+            this.ctx.helper.throwCustomError("文档不存在", 101003);
         }
-        const { projectId } = projectShare;
         const projectPassword = projectShare.password;
         const expire = projectShare.expire;
         const nowTime = Date.now();
         const isExpire = nowTime > expire;
-        const hasPassword = projectPassword != null;
+        const hasPassword = projectPassword != null && projectPassword !== "";
         const passwordIsEqual = password === projectPassword;
-        let result = null; 
         if (hasPassword && !passwordIsEqual) { //密码错误
             this.ctx.helper.throwCustomError("密码错误", 101001);
         }  else if (isExpire) { //文档过期
             this.ctx.helper.throwCustomError("文档已过期", 101002);
         } else if ((hasPassword && passwordIsEqual && !isExpire) || (!hasPassword && !isExpire)) {
-            const projectInfo = await this.ctx.model.Apidoc.Project.Project.findOne({ _id: projectId });
-            const porjectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById({ projectId });
-            const hosts = await this.ctx.service.apidoc.docs.docsServices.getServicesList({ projectId })
-            let docs = [];
-            if (selectedDocs.length > 0) { //选择导出
-                docs = await this.ctx.model.Apidoc.Docs.Docs.find({
-                    projectId,
-                    enabled: true,
-                    _id: { $in: selectedDocs }
-                }).lean();
-            } else { //直接导出
-                docs = await this.ctx.model.Apidoc.Docs.Docs.find({
-                    projectId,
-                    enabled: true,
-                }).lean();
-            }
-            result = {
-                type: "moyu",
-                info: {
-                    projectName: projectInfo.projectName,
-                },
-                rules: porjectRules,
-                docs,
-                hosts
-            };
+            return true;
+        } else {
+            this.ctx.helper.throwCustomError("文档错误", 101003);
         }
-        return result;
+    }    
+
+    //检查密码是否正确
+    async checkPassword(params) {
+        const { expire, password, projectPassword } = params;
+        const nowTime = Date.now();
+        const isExpire = nowTime > expire;
+        const hasPassword = projectPassword != null && projectPassword !== "";
+        const passwordIsEqual = password === projectPassword;
+        if ((hasPassword && passwordIsEqual && !isExpire) || (!hasPassword && !isExpire)) { //密码正确并且没有过期
+            return true;
+        }
+        return false;
     }
     /** 
-        @description  根据分享id获取项目基本信息
+        @description  获取分享项目banner信息
         @author       shuxiaokai
         @create        2020-10-08 22:10
         @param {String}      shareId 随机id
+        @param {String}      password 密码
         @return       null
     */
-    async getOnlineProjectInfo(params) { 
-        const { shareId } = params;
-        const projectShare = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ shareId }, { projectId: 1, projectName: 1 }).lean();
-        if (!projectShare) {
-            this.ctx.helper.throwCustomError("不存在当前文档", 101003);
+    async getShareBanner(params) { 
+        const sharedProjectInfo = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ shareId: params.shareId }).lean();
+        if (!sharedProjectInfo) {
+            this.ctx.helper.throwCustomError("无效的的id和密码", 101005);
         }
-        return projectShare;
+        const checkParams = {
+            expire: sharedProjectInfo.expire,
+            password:  params.password,
+            projectPassword: sharedProjectInfo.password,
+        };
+        const valid = await this.ctx.service.apidoc.project.project.checkPassword(checkParams);
+        if (!valid) {
+            this.ctx.helper.throwCustomError("无效的的id和密码", 101005);
+        }
+        const result = await this.ctx.service.apidoc.docs.docs.getDocTreeNode({ projectId: sharedProjectInfo.projectId }, true);
+
+        return result;
+    }    
+    /** 
+        @description  获取分享项目基本信息
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      shareId 随机id
+        @param {String}      password 密码
+        @return       null
+    */
+    async getSharedProjectInfo(params) { 
+        const sharedProjectInfo = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ shareId: params.shareId }).lean();
+        if (!sharedProjectInfo) {
+            this.ctx.helper.throwCustomError("无效的的id和密码", 101005);
+        }
+        const checkParams = {
+            expire: sharedProjectInfo.expire,
+            password:  params.password,
+            projectPassword: sharedProjectInfo.password,
+        };
+        const valid = await this.ctx.service.apidoc.project.project.checkPassword(checkParams);
+        if (!valid) {
+            this.ctx.helper.throwCustomError("无效的的id和密码", 101005);
+        }
+        const result = await this.ctx.service.apidoc.project.project.getProjectFullInfo({ _id: sharedProjectInfo.projectId }, true);
+        return result;
+    }  
+    /** 
+        @description  获取分享文档详细信息
+        @author       shuxiaokai
+        @create        2020-10-08 22:10
+        @param {String}      _id 文档id
+        @param {String}      shareId 随机id
+        @param {String}      password 密码
+        @return       null
+    */
+    async getSharedDocDetail(params) { 
+        const sharedProjectInfo = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ shareId: params.shareId }).lean();
+        if (!sharedProjectInfo) {
+            this.ctx.helper.throwCustomError("无效的的id和密码", 101005);
+        }
+        const checkParams = {
+            expire: sharedProjectInfo.expire,
+            password:  params.password,
+            projectPassword: sharedProjectInfo.password,
+        };
+        const valid = await this.ctx.service.apidoc.project.project.checkPassword(checkParams);
+        if (!valid) {
+            this.ctx.helper.throwCustomError("无效的的id和密码", 101005);
+        }
+        const result = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id: params._id }, { pid: 0, isFolder: 0, sort: 0, enabled: 0 });
+        return result;
+    }  
+
+    /** 
+     * @description        获取在线链接基本信息
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    shareId 分享链接id
+     * @return {String}    返回在线链接基本信息
+     */
+     async getOnlineProjectInfo(params) { 
+        const { shareId } = params;
+        const result = await this.ctx.model.Apidoc.Project.ProjectShare.findOne({ shareId, enabled: true }, { projectName: 1, shareName: 1, expire: 1, password: 1 }).lean();
+        if (!result) {
+            this.ctx.helper.throwCustomError("文档不存在", 101003);
+        }
+        return {
+            projectName: result.projectName,
+            shareName: result.shareName,
+            expire: result.expire,
+            needPassword: !!result.password,
+        };
     }
     /** 
         @description  导入生成项目

@@ -16,19 +16,13 @@ module.exports = app => {
     router.get("/api/project/project_enum", controller.apidoc.project.project.getProjectEnum); // 获取项目列表枚举
     router.delete("/api/project/delete_project", controller.apidoc.project.project.deleteProject); // 删除项目
     router.put("/api/project/edit_project", controller.apidoc.project.project.editProject); // 修改项目
-
     router.post("/api/project/add_user", controller.apidoc.project.project.addUser); // 项目新增用户
     router.delete("/api/project/delete_user", controller.apidoc.project.project.deleteUser); // 项目删除用户
     router.put("/api/project/change_permission", controller.apidoc.project.project.changePermission); // 改变用户权限
-
     router.put("/api/project/visited", controller.security.user.addLastVisit); // 记录用户访问项目记录
     router.put("/api/project/star", controller.security.user.starProject); // 收藏项目
     router.put("/api/project/unstar", controller.security.user.unStarProject); // 取消收藏项目
-    router.get("/api/project/share_info", controller.apidoc.project.project.getOnlineProjectInfo); // 根据分享id获取项目基本信息
-    router.get("/api/project/share", controller.apidoc.project.project.getOnlineProjectDetail); // 根据分享id获取项目详情(在线链接)
     router.post("/api/project/import", controller.apidoc.project.project.importAsProject); // 直接导入项目
-
-    
     //项目规则
     router.put("/api/apidoc/project/project_rules", controller.apidoc.project.projectRules.updateProjectRules); //修改项目规则
     router.get("/api/apidoc/project/project_rules", controller.apidoc.project.projectRules.readProjectRulesById); //根据id查询项目规则
@@ -51,15 +45,24 @@ module.exports = app => {
     
 
 
-
-    //=====================================文档操作相关====================================//
+    //=====================================离线分享====================================//
+    router.post("/api/project/export/online", controller.apidoc.docs.docsOperation.generateOnlineLink); //生成在线链接
+    router.put("/api/project/export/online", controller.apidoc.docs.docsOperation.editOnlineLink); //修改在线链接
+    router.get("/api/project/export/online_list", controller.apidoc.docs.docsOperation.getOnlineLinkList); //分页获取在线链接
+    router.delete("/api/project/export/online", controller.apidoc.docs.docsOperation.deleteOnlineLink); //删除在线链接
+    
+    router.get("/api/project/share_info", controller.apidoc.project.project.getOnlineProjectInfo); // 根据分享id获取项目基本信息
+    router.get("/api/project/share_check", controller.apidoc.project.project.checkOnlineProjectPassword); // 检查密码是否匹配(在线链接)
+    router.get("/api/project/export/share_banner", controller.apidoc.project.project.getShareBanner); //根据id和密码获取分享文档的banner信息
+    router.get("/api/project/export/share_project_info", controller.apidoc.project.project.getSharedProjectInfo); //获取分享项目基本信息
+    router.get("/api/project/share_doc_detail", controller.apidoc.project.project.getSharedDocDetail); //获取分享项目接口详情
+    //=====================================导出html====================================//
     router.post("/api/project/export/html", controller.apidoc.docs.docsOperation.exportAsHTML); //获取文档全部离线数据
+    //=====================================文档操作相关====================================//
     router.post("/api/project/export/fork", controller.apidoc.docs.docsOperation.forkDocs); //导出部分文档到别的项目
     router.post("/api/project/export/moyu", controller.apidoc.docs.docsOperation.exportAsMoyuDoc); //导出为摸鱼数据
     router.post("/api/project/import/moyu", controller.apidoc.docs.docsOperation.importAsMoyuDoc); //导入摸鱼数据
-    router.post("/api/project/export/online", controller.apidoc.docs.docsOperation.generateOnlineLink); //生成在线链接
-    router.get("/api/project/export/online_list", controller.apidoc.docs.docsOperation.getOnlineLinkList); //分页获取在线链接
-    router.delete("/api/project/export/online", controller.apidoc.docs.docsOperation.deleteOnlineLink); //删除在线链接
+
     //==========文档标签
     router.get("/api/docs/docs_tag_enum", controller.apidoc.docs.docsTag.getDocsTagEnum); //获取文档标签枚举
     router.put("/api/docs/docs_tag", controller.apidoc.docs.docsTag.editDocsTag); //修改文档标签
