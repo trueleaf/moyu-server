@@ -88,11 +88,12 @@ class docHistoryService extends Service {
             }
         ).sort({ createdAt: 1 }).lean();
         const members = docInfo.members.map(doc => {
-            return doc.realName || doc.loginName;
+            return {
+                name: doc.realName || doc.loginName,
+                permission: doc.permission
+            };
         });
-        const owner = [docInfo.owner.name]
-        const result = owner.concat(members)
-        return result;
+        return members;
     }
     
 }
