@@ -56,9 +56,9 @@ module.exports = app => {
     router.get("/api/project/export/share_banner", controller.apidoc.project.project.getShareBanner); //根据id和密码获取分享文档的banner信息
     router.get("/api/project/export/share_project_info", controller.apidoc.project.project.getSharedProjectInfo); //获取分享项目基本信息
     router.get("/api/project/share_doc_detail", controller.apidoc.project.project.getSharedDocDetail); //获取分享项目接口详情
-    //=====================================导出html====================================//
+    //=====================================导出文档====================================//
+    router.post("/api/project/export/pdf", controller.apidoc.docs.docsOperation.exportAsPdf); //导出为pdf
     router.post("/api/project/export/html", controller.apidoc.docs.docsOperation.exportAsHTML); //获取文档全部离线数据
-    //=====================================文档操作相关====================================//
     router.post("/api/project/export/fork", controller.apidoc.docs.docsOperation.forkDocs); //导出部分文档到别的项目
     router.post("/api/project/export/moyu", controller.apidoc.docs.docsOperation.exportAsMoyuDoc); //导出为摸鱼数据
     router.post("/api/project/import/moyu", controller.apidoc.docs.docsOperation.importAsMoyuDoc); //导入摸鱼数据

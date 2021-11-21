@@ -36,6 +36,34 @@ class docsOperationController extends Controller {
         }
     }
     /** 
+     * @description        导出为pdf
+     * @author              shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    projectId 项目id
+     * @param  {Array}     selectedNodes 被选择的需要导出的节点
+     * @return {String}    返回字符串
+     */
+     async exportAsPdf() {
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                projectId: {
+                    type: "string"
+                },
+                selectedNodes: {
+                    type: "array",
+                    required: false,
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docsOperation.exportAsPdf(params);
+            this.ctx.body = result;
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    /** 
      * @description        导出为摸鱼文档
      * @author              shuxiaokai
      * @create             2020-11-13 09:24

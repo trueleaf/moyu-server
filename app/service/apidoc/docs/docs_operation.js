@@ -59,7 +59,39 @@ class docsOperationService extends Service {
         await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
         return file;
     }
-
+     /** 
+     * @description        导出为pdf
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    projectId 项目id
+     * @param  {Array}     selectedNodes 被选择的需要导出的节点
+     * @return {String}    返回字符串
+     */
+      async exportAsPdf(params) { 
+        const { projectId, selectedNodes = [] } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const projectInfo = await this.ctx.service.apidoc.project.project.getProjectFullInfo({ _id: projectId })
+        let docs = [];
+        if (selectedNodes.length > 0) { //选择导出
+            docs = await this.ctx.model.Apidoc.Docs.Docs.find({
+                projectId,
+                isFolder: false,
+                enabled: true,
+                _id: { $in: selectedNodes }
+            }).lean();
+        } else { //直接导出
+            docs = await this.ctx.model.Apidoc.Docs.Docs.find({
+                projectId,
+                isFolder: false,
+                enabled: true,
+            }).lean();
+        }
+        // this.ctx.set("content-type", "application/force-download");
+        // this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.json`)}`);
+        // this.ctx.set("content-type", "application/force-download");
+        // this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.html`)}`);
+        return docs;
+    }
     /** 
      * @description        导出为摸鱼文档
      * @author              shuxiaokai
