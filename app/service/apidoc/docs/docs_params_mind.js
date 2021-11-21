@@ -18,8 +18,15 @@ class docParamsMindService extends Service {
 
     async addMindParams(params) {
         const { projectId, mindParams } = params;
-        const allParams = await this.ctx.model.Apidoc.Docs.DocsParamsMind.findOne({ projectId }).lean();
-        const uniqueDocs = this.ctx.helper.unique(allParams.mindParams.concat(mindParams), "key");
+        let allParams = await this.ctx.model.Apidoc.Docs.DocsParamsMind.findOne({ projectId }).lean();
+        allParams = allParams.mindParams.concat(mindParams);
+        const uniqueDocs = [];
+        for(let i = 0; i < allParams.length; i ++) {
+            if (uniqueDocs.find(v => (v.key === allParams[i].key && v.paramsPosition === allParams[i].paramsPosition))) {
+                continue;
+            }
+            uniqueDocs.push(allParams[i]);
+        }
         await this.ctx.model.Apidoc.Docs.DocsParamsMind.updateOne({ projectId }, { mindParams: uniqueDocs }, { upsert: true });
         return uniqueDocs;
     }
