@@ -18,8 +18,8 @@ class docParamsMindService extends Service {
 
     async addMindParams(params) {
         const { projectId, mindParams } = params;
-        const allParams = await this.ctx.model.Apidoc.Docs.DocsParamsMind.find({ projectId }).lean();
-        const uniqueDocs = this.ctx.helper.unique(allParams.concat(mindParams), "key");
+        const allParams = await this.ctx.model.Apidoc.Docs.DocsParamsMind.findOne({ projectId }).lean();
+        const uniqueDocs = this.ctx.helper.unique(allParams.mindParams.concat(mindParams), "key");
         await this.ctx.model.Apidoc.Docs.DocsParamsMind.updateOne({ projectId }, { mindParams: uniqueDocs }, { upsert: true });
         return uniqueDocs;
     }
