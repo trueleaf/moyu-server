@@ -131,6 +131,10 @@ module.exports = app => {
             type: Array,
             default: []
         },
+        couldVisitProjects: { //可以访问的项目列表id集合
+            type: Array,
+            default: []
+        }
     }, {
         timestamps: true,
     });
