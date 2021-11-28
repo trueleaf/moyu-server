@@ -7,6 +7,7 @@
 
 
 const Service = require("egg").Service;
+const escapeStringRegexp = require("escape-string-regexp");
 
 
 class ProjectService extends Service {
@@ -164,13 +165,6 @@ class ProjectService extends Service {
 
     async addProject(params) {
         const { projectName, remark, members } = params;
-        // 判断是否存在该类型
-        // const hasName = await this.ctx.model.Apidoc.Project.Project.findOne({ projectName, enabled: true });
-        // if (hasName) {
-        //     const error = new Error("项目名称已经存在");
-        //     error.code = 1003;
-        //     throw error;
-        // }
         const doc = {};
         doc.projectName = projectName;
         doc.remark = remark;
@@ -187,6 +181,9 @@ class ProjectService extends Service {
             name: this.ctx.userInfo.realName || this.ctx.userInfo.loginName
         };
         const result = await this.ctx.model.Apidoc.Project.Project.create(doc);
+        const allUsers = members.map(v => v.userId).concat([this.ctx.userInfo.id]);
+        const uniqueUsers = Array.from(new Set(allUsers));
+        await this.ctx.model.Security.User.updateMany({ _id: { $in: uniqueUsers } }, { $push: { couldVisitProjects: result._id.toString() } });
         return result._id;
     }
 
@@ -203,7 +200,19 @@ class ProjectService extends Service {
         for(let i = 0; i < ids.length; i ++) {
             await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(ids[i]);
         }
-        const result = await this.ctx.model.Apidoc.Project.Project.update({ _id: { $in: ids }}, { $set: { enabled: false }});
+        const result = await this.ctx.model.Apidoc.Project.Project.update(
+            { _id: { $in: ids }}, 
+            { $set: { enabled: false }}
+        );
+        //同时删除每个用户可访问项目
+        const delProjects = await this.ctx.model.Apidoc.Project.Project.find({ _id: { $in: ids }}, { members: 1 });
+        const members = []
+        delProjects.forEach(projectInfo => {
+            projectInfo.members.forEach(member => {
+                members.push(member.userId)
+            })
+        })
+        await this.ctx.model.Security.User.updateMany({ _id: { $in: members } }, { $pull: { couldVisitProjects: { $in: ids } } });
         return result;
     }
     /** 
@@ -246,6 +255,7 @@ class ProjectService extends Service {
         if (!hasPermission) {
             this.ctx.helper.throwCustomError("暂无权限", 4002);
         } 
+
         await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id }, updateDoc);
         return;
     }
@@ -488,6 +498,7 @@ class ProjectService extends Service {
         if (!hasPermission) {
             this.ctx.helper.throwCustomError("管理员才允许修改权限", 4002);
         } 
+        await this.ctx.model.Security.User.updateOne({ _id: userId }, { $push: { couldVisitProjects: projectId } });
         await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, {
             $push: { members: userInfo }
         });
@@ -534,6 +545,7 @@ class ProjectService extends Service {
         if (!hasAdmin) {
             this.ctx.helper.throwCustomError("一个团队至少保留一个管理员", 4002);
         }
+        await this.ctx.model.Security.User.updateOne({ _id: userId }, { $pull: { couldVisitProjects: projectId } });
         await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, {
             $pull: {
                 members: { userId },
@@ -590,6 +602,37 @@ class ProjectService extends Service {
         });
     }
 
+    /**
+     * @description        根据url搜索项目
+     * @author             shuxiaokai
+     * @create             2021-11-25 22:56
+     * @param {String}     url - 接口url
+     * @return {String}    项目列表
+     */
+     async getProjectByUrl(params) { 
+        const { url } = params;
+        const userId = this.ctx.userInfo.id;
+        const userInfo = await this.ctx.model.Security.User.findOne({ _id: userId }, { couldVisitProjects: 1 });
+        const docs = await this.ctx.model.Apidoc.Docs.Docs.find({
+            projectId: { $in: userInfo.couldVisitProjects },
+            "item.url.path": new RegExp(escapeStringRegexp(url))
+        }, {
+            "info.name": 1,
+            "item.url.path": 1,
+            "item.method": 1,
+            projectId: 1,
+        }).lean();
+        const result = docs.map(v => {
+            return {
+                projectId: v.projectId,
+                path: v.item.url.path,
+                name: v.info.name,
+                method: v.item.method,
+            }
+
+        })
+        return result
+    }
 }
 
 module.exports = ProjectService;

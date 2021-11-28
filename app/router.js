@@ -10,6 +10,8 @@ module.exports = app => {
     //=====================================项目相关====================================//
     router.post("/api/project/add_project", controller.apidoc.project.project.addProject); // 新增项目
     router.get("/api/project/project_list", controller.apidoc.project.project.getProjectList); // 获取项目列表
+    router.get("/api/project/project_list_by_url", controller.apidoc.project.project.getProjectByUrl); // 根据url获取项目信息
+
     router.get("/api/project/project_info", controller.apidoc.project.project.getProjectInfo); // 获取项目基本信息
     router.get("/api/project/project_full_info", controller.apidoc.project.project.getProjectFullInfo); // 获取项目完成信息
     router.get("/api/project/project_members", controller.apidoc.project.project.getProjectMembers); // 获取项目成员信息
