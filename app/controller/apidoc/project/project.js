@@ -391,11 +391,6 @@ class ProjectController extends Controller {
         }
     }
     
-    
-
-
-
-
     /** 
         @description  导入生成项目
         @author       shuxiaokai
@@ -519,6 +514,30 @@ class ProjectController extends Controller {
             };
             this.ctx.validate(reqRule, params);
             const result = await this.ctx.service.apidoc.project.project.changePermission(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+
+    /**
+     * @description        根据url搜索项目
+     * @author             shuxiaokai
+     * @create             2021-11-25 22:56
+     * @param {String}     url - 接口url
+     * @return {String}    项目列表
+     */
+     async getProjectByUrl() { 
+        try {
+            const params = this.ctx.request.query;
+            const reqRule = {
+                url: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.project.project.getProjectByUrl(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);
