@@ -4,11 +4,11 @@
  * @create             2020-05-19 22:13
  */
 
-const INITIAL_ROLE = [
+ const INITIAL_ROLE = [
     {
         "_id": "5ede0ba06f76185204584700",
         "__v": "0",
-        "clientBanner": [ '5ee9a5b1cde26b8e24fc8270' ],
+        "clientBanner": [ '602e7c40b4ea582923bcb36f' ],
         "clientRoutes": [ '5edd91bf5fcdf3111671cbe6', '5edd91bf5fcdf3111671cbe8', '5edd91bf5fcdf3111671cbee', '5edd91bf5fcdf3111671cbec', '5edd91c05fcdf3111671cbf4' ],
         "enabled": "true",
         "remark": "对文档拥有所有权限",
@@ -18,7 +18,7 @@ const INITIAL_ROLE = [
     {
         "_id": "5edf71f2193c7d5fa0ec9b98",
         "__v": "0",
-        "clientBanner": [ '5eddf6a821a5aa26cc316d28' ],
+        "clientBanner": [ '5eddf6a821a5aa26cc316d28', '602e7c40b4ea582923bcb36f' ],
         "clientRoutes": [ '5edd91c05fcdf3111671cbfa', '5edd91bf5fcdf3111671cbe6' ],
         "enabled": "true",
         "remark": "拥有所有权限管理能力",

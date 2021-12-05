@@ -4,6 +4,8 @@
     @create       2021-01-11 22:10
 */
 
+const { uuid } = require("../../../extend/helper");
+
 module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
@@ -147,6 +149,10 @@ module.exports = app => {
             }, //请求body
             responseParams: {
                 type: [{ //返回值
+                    _id: {
+                        type: String,
+                        default: uuid,
+                    },
                     title: {
                         type: String,
                         default: "成功返回"
