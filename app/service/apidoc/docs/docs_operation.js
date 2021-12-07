@@ -167,7 +167,7 @@ class docsOperationService extends Service {
             })
             docInfo.projectId = projectId;
             docInfo._id = newId;
-            docInfo.item.method = docInfo.item.method.toUpperCase();
+            docInfo.item.method = docInfo.item?.method?.toUpperCase() || "GET";
             return docInfo;
         })
         const convertHosts = hosts && hosts.map(host => {
