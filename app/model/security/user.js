@@ -47,14 +47,12 @@ const INITIAL_USER = [
         "password": "84d748e1ac5c09a425d463d18ac08b86",
         "phone": "123456789111",
         "qq": "",
-        "realName": "",
+        "realName": "快乐摸鱼",
         "roleIds": [
-            "5edf71f2193c7d5fa0ec9b98",
             "5ede0ba06f76185204584700",
             "5ee980553c63cd01a49952e4",
         ],
         "roleNames": [
-            "权限管理-完全控制",
             "api文档-完全控制",
             "公共基础权限",
         ],
@@ -90,13 +88,7 @@ module.exports = app => {
         lastLogin: { //上次登录时间
             type: Date,
         },
-        qq: { //qq号码
-            type: String
-        },
-        department: { //部门
-            type: String
-        },
-        title: { //头衔
+        email: { //邮箱
             type: String
         },
         enable: { //使能
