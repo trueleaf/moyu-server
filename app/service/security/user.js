@@ -578,6 +578,7 @@ class userService extends Service {
         const roleIds = userInfo.roleIds; //用户所有角色信息
         const allClientRoutes = await this.ctx.model.Security.ClientRoutes.find({}, { name: 1, path: 1 }); //系统所有前端路由
         const allClientMenu = await this.ctx.model.Security.ClientMenu.find({}, { name: 1, path: 1, sort: 1 }); //系统所有前端菜单
+        const globalConfig = await this.ctx.model.Global.Config.findOne({});
         let clientRoutesResult = [];
         let clientBannerResult = []; 
         for (let i = 0; i < roleIds.length; i++) {
@@ -606,7 +607,8 @@ class userService extends Service {
             clientBanner: clientBannerResult.sort((a, b) => {
                 return b.sort - a.sort;
             }),
-            clientRoutes: clientRoutesResult
+            clientRoutes: clientRoutesResult,
+            globalConfig,
         };
     }
 
@@ -693,9 +695,7 @@ class userService extends Service {
             }
             const phone = user["手机号码"];
             const realName = user["真实姓名"];
-            const title = user["职位"];
-            const department = user["部门"];
-            const qq = user["qq号"];
+            const email = user["邮箱"];
             const password = "111111";
             const doc = {};
             const hasUser = await this.ctx.model.Security.User.findOne({ $or: [{ loginName }, { phone }] }); 
@@ -709,9 +709,9 @@ class userService extends Service {
                 doc.phone = phone;
                 doc.password = hashPassword;
                 doc.salt = salt;
-                doc.title = title;
-                doc.department = department;
-                doc.qq = qq;
+                doc.email = email;
+                doc.roleIds = ["5ede0ba06f76185204584700", "5ee980553c63cd01a49952e4"];
+                doc.roleNames = ["权限管理-完全控制", "api文档-完全控制"];
                 userDocs.push(doc);
                 validNum++;
             }
