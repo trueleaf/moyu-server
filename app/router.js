@@ -171,15 +171,7 @@ module.exports = app => {
     router.post("/api/oss/folder", controller.oss.oss.addFolder); //获取文件列表
     // router.post("/api/oss/file", controller.oss.oss.addFile); //上传文件
     router.delete("/api/oss/file", controller.oss.oss.deleteFile); //删除文件或者文件列表
-
-
-    //=====================================字典(词典)====================================//
-    router.post("/api/dictionary/dictionary", controller.dictionary.dictionary.addDictionary); //新增词汇
-    router.get("/api/dictionary/dictionary_list", controller.dictionary.dictionary.getDictionaryList); //获取词汇列表
-    router.get("/api/dictionary/dictionary_by_id", controller.dictionary.dictionary.getDictionaryById); //根据id获取词汇信息
-    router.delete("/api/dictionary/dictionary", controller.dictionary.dictionary.deleteDictionary); //删除词汇
-    // router.put("/api/dictionary/dictionary", controller.eoms.logs.getDictionaryList); //词汇列表
-    // router.delete("/api/dictionary/dictionary", controller.eoms.logs.getDictionaryList); //词汇列表
+   
     //=====================================代理服务器====================================//
     router.post("/api/proxy/proxyWebApi", controller.apidoc.proxy.proxy.proxyWebApi);
 };
