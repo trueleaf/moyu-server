@@ -5,11 +5,26 @@
  * @create             2020-07-25 11:25
  */
 
-const { STS } = require("ali-oss");
-
 module.exports = app => {
     const mongoose = app.mongoose;
     const Schema = mongoose.Schema;
+    const DeletedNode = Schema({
+        nodeName: {
+            type: String,
+        },
+        nodeId: {
+            type: mongoose.ObjectId,
+        },
+        isFolder: {
+            type: Boolean,
+        },
+        method: {
+            type: String,
+        },
+        url: {
+            type: String
+        },
+    })
     const docsHistorySchema = new Schema({
         projectId: { //项目id
             type: String 
@@ -42,10 +57,7 @@ module.exports = app => {
             orginNodeName: { //原始节点名称,适用于修改文档名称
                 type: String,
             },
-            deleteNodes: { //被删除节点信息
-                type: Array,
-                default: null
-            },
+            deleteNodes: [DeletedNode], //被删除节点信息
             exportType: { //导出文档，导出类型
                 type: String,
             },
@@ -62,7 +74,10 @@ module.exports = app => {
         },
         operator: { //操作者
             type: String
-        }
+        },
+        operatorId: { //操作者id
+            type: String
+        },
     }, { timestamps: true });
     return mongoose.model("docs_history", docsHistorySchema);
 };

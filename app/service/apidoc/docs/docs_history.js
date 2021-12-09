@@ -37,7 +37,7 @@ class docHistoryService extends Service {
             query.createdAt = { $gt: startTime, $lt: endTime };
         }
         if (url) {
-            query.url = new RegExp(escapeStringRegexp(url));
+            query["recordInfo.url"] = new RegExp(escapeStringRegexp(url));
         }
         if (docName) {
             query["info.name"] = new RegExp(escapeStringRegexp(docName));

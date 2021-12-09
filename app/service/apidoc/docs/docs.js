@@ -184,7 +184,7 @@ class DocsService extends Service {
         }
         const result = await this.ctx.model.Apidoc.Docs.Docs.create(doc);
         const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
-        //添加历史记录
+        //=====================================添加历史记录====================================//
         const record = {
             operation: "addFolder", //添加文件夹
             projectId,
@@ -193,12 +193,14 @@ class DocsService extends Service {
                 nodeId: result._id,
             },
             operator: userInfo.realName || userInfo.loginName,
+            operatorId: userInfo.id,
         };
         if (type !== "folder") {
             record.operation = "addDoc"; //添加文档
             await this.ctx.model.Apidoc.Project.Project.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }});
         }
         await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
+        //=========================================================================//
         return {
             _id: result._id,
             pid: result.pid,
