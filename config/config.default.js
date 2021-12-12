@@ -108,13 +108,13 @@ module.exports = appInfo => {
     */
     let mongoose = null;
     mongoose = {
-        url: "mongodb://mongo/moyu",
+        url: "mongodb://127.0.0.1:27017/moyu",
         options: {
             user: "",
             pass: "",
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
         },
-        plugins: []
+        plugins: [],
     };
     //sms短信服务
     const smsConfig = {
