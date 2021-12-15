@@ -240,6 +240,10 @@ class DocsController extends Controller {
                 item: {
                     type: "object",
                 },
+                preRequest: {
+                    type: "object",
+                    required: false,
+                },
                 spendTime: {
                     type: "number",
                     required: false

@@ -105,6 +105,12 @@ module.exports = app => {
                 default: 0,
             },
         },
+        preRequest: {
+            raw: { //预请求脚本信息
+                type: String,
+                default: ""
+            }
+        },
         item: {
             method: { //请求方法
                 type: String,

@@ -305,12 +305,13 @@ class DocsService extends Service {
         @return       null
     */
     async fillDoc(params) {
-        const { _id, info, item, projectId, spendTime = 0 } = params;
+        const { _id, info, item, preRequest, projectId, spendTime = 0 } = params;
         const userInfo = this.ctx.userInfo;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const description = xss(info.description);
         const result = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { 
             $set: { 
+                preRequest,
                 item, 
                 "info.description": description,
                 "info.maintainer": userInfo.realName || userInfo.loginName,
