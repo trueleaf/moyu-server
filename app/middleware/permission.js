@@ -1,4 +1,3 @@
-
 const jwt = require("jsonwebtoken");
 
 module.exports = options => {
@@ -20,12 +19,8 @@ module.exports = options => {
                 await next();
                 return;
             }
-            // console.log("toekn", tokenInfo)
             const loginName = tokenInfo.loginName;
             const userInfo = await ctx.model.Security.User.findOne({ loginName });
-            if (!userInfo) {
-                ctx.helper.throwCustomError("登录过期", 4100);
-            }
             const allServerRoutes = await ctx.model.Security.ServerRoutes.find({}, { path: 1, method: 1 });
             const roleIds = userInfo.roleIds;
             
