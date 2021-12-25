@@ -6,7 +6,7 @@
 
 module.exports = app => {
     const { router, controller } = app;
-    router.get("/test", controller.test.test.test); // 获取项目列表
+    router.post("/test", controller.test.test.test); // 获取项目列表
     //=====================================项目相关====================================//
     router.post("/api/project/add_project", controller.apidoc.project.project.addProject); // 新增项目
     router.get("/api/project/project_list", controller.apidoc.project.project.getProjectList); // 获取项目列表
@@ -61,6 +61,7 @@ module.exports = app => {
     //=====================================导出文档====================================//
     router.post("/api/project/export/pdf", controller.apidoc.docs.docsOperation.exportAsPdf); //导出为pdf
     router.post("/api/project/export/html", controller.apidoc.docs.docsOperation.exportAsHTML); //获取文档全部离线数据
+    router.post("/api/project/export/word", controller.apidoc.docs.docsOperation.exportAsWord); //导出为word
     router.post("/api/project/export/fork", controller.apidoc.docs.docsOperation.forkDocs); //导出部分文档到别的项目
     router.post("/api/project/export/moyu", controller.apidoc.docs.docsOperation.exportAsMoyuDoc); //导出为摸鱼数据
     router.post("/api/project/import/moyu", controller.apidoc.docs.docsOperation.importAsMoyuDoc); //导入摸鱼数据

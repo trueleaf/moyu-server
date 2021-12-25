@@ -9,6 +9,7 @@
   "dependencies": {
     "@alicloud/pop-core": "^1.7.9",
     "ali-oss": "^6.5.1",
+    "docx": "^7.3.0",
     "egg": "^2.15.1",
     "egg-cors": "^2.2.0",
     "egg-mongoose": "^3.2.0",

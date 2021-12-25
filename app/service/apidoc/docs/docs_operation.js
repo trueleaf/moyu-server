@@ -6,7 +6,8 @@
 
 const Service = require("egg").Service;
 const fs = require("fs-extra");
-const path = require("path")
+const path = require("path");
+const docx = require("docx");
 
 class docsOperationService extends Service {
      /** 
@@ -91,6 +92,107 @@ class docsOperationService extends Service {
         // this.ctx.set("content-type", "application/force-download");
         // this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.html`)}`);
         return docs;
+    }
+     /** 
+     * @description        导出为word
+     * @author             shuxiaokai
+     * @create             2020-11-13 09:24
+     * @param  {String}    projectId 项目id
+     * @param  {Array}     selectedNodes 被选择的需要导出的节点
+     * @return {String}    返回字符串
+     */
+      async exportAsWord(params) { 
+        const { projectId, selectedNodes = [] } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const projectInfo = await this.ctx.service.apidoc.project.project.getProjectFullInfo({ _id: projectId })
+        let docs = [];
+        if (selectedNodes.length > 0) { //选择导出
+            docs = await this.ctx.model.Apidoc.Docs.Docs.find({
+                projectId,
+                enabled: true,
+                _id: { $in: selectedNodes }
+            }, {
+                preRequest: 0,
+                enabled: 0,
+            }).lean();
+        } else { //直接导出
+            docs = await this.ctx.model.Apidoc.Docs.Docs.find({
+                projectId,
+                enabled: true,
+            }, {
+                preRequest: 0,
+                enabled: 0,
+            }).lean();
+        }
+        //=========================================================================//
+        const { Document, SectionType, TextRun, Packer, Paragraph, PageBreak, HeadingLevel, AlignmentType } = docx;
+        const document = {
+            sections: [{
+                children: [
+                    new Paragraph({
+                        text: `${projectInfo.projectName}`,
+                        heading: HeadingLevel.TITLE,
+                        alignment: AlignmentType.CENTER
+                    })
+                ]
+            }],
+        };
+        const nestDocs = this.ctx.helper.buildTree(docs);
+        this.ctx.helper.dfsForest(nestDocs, (data, level) => {
+            let headingLevel = HeadingLevel.HEADING_1;
+            switch (level) {
+            case 1:
+                headingLevel = HeadingLevel.HEADING_1;
+                break;
+            case 2:
+                headingLevel = HeadingLevel.HEADING_2;
+                break;
+            case 3:
+                headingLevel = HeadingLevel.HEADING_3;
+                break;
+            case 4:
+                headingLevel = HeadingLevel.HEADING_4;
+                break;    
+            default:
+                headingLevel = HeadingLevel.HEADING_1;
+                break;
+            }
+            if (data.isFolder) { //文件夹
+                const title = new Paragraph({
+                    text: `${data.info.name}`,
+                    heading: headingLevel,
+                })
+                document.sections[0].children.push(title); //标题
+            } else {
+                const docName = new Paragraph({
+                    children: [
+                        new TextRun({
+                            text: `${data.info.name}`,
+                            bold: true,
+                        }),
+                    ],
+                    spacing: {
+                        before: 200,
+                        after: 100,
+                    },
+                })
+                const method = new Paragraph({ //请求方法
+                    text: `请求方法：${data.item.method}`,
+                })
+                const url = new Paragraph({ //请求方法
+                    text: `请求URL：${data.item.url.host + data.item.url.path}`,
+                })
+                document.sections[0].children.push(docName);
+                document.sections[0].children.push(method);
+                document.sections[0].children.push(url);
+                // document.sections[0].children.push(docName);
+            }
+        });
+        const doc = new Document(document);
+        const file = await Packer.toBuffer(doc);
+        this.ctx.set("content-type", "application/force-download");
+        this.ctx.set("content-disposition", `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.docx`)}`);
+        return file;
     }
     /** 
      * @description        导出为摸鱼文档
