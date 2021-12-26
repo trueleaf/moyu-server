@@ -125,7 +125,7 @@ class docsOperationService extends Service {
             }).lean();
         }
         //=========================================================================//
-        const { Document, SectionType, TextRun, Packer, Paragraph, PageBreak, HeadingLevel, AlignmentType } = docx;
+        const { Document, SectionType, TextRun, TabStopType, TabStopPosition, Packer, Table, Paragraph, PageBreak, TableRow, TableCell, VerticalAlign, WidthType, HeadingLevel, AlignmentType } = docx;
         const document = {
             sections: [{
                 children: [
@@ -161,6 +161,10 @@ class docsOperationService extends Service {
                 const title = new Paragraph({
                     text: `${data.info.name}`,
                     heading: headingLevel,
+                    spacing: {
+                        before: 400,
+                        after: 200,
+                    },
                 })
                 document.sections[0].children.push(title); //标题
             } else {
@@ -172,20 +176,137 @@ class docsOperationService extends Service {
                         }),
                     ],
                     spacing: {
-                        before: 200,
-                        after: 100,
+                        after: 20,
                     },
                 })
+                const requestMethod = data.item.method;
+                const methodText = new TextRun({
+                    text: `${requestMethod}`,
+                    color: (requestMethod === "GET") ? "28a745" : (requestMethod === "POST") ? "ffc107" : (requestMethod === "PUT") ? "orange" : (requestMethod === "DELETE") ? "f56c6c" : "444444"
+                })
                 const method = new Paragraph({ //请求方法
-                    text: `请求方法：${data.item.method}`,
+                    children: [new TextRun({ text: "请求方法：" }), methodText]
                 })
                 const url = new Paragraph({ //请求方法
-                    text: `请求URL：${data.item.url.host + data.item.url.path}`,
+                    text: `请求地址：${data.item.url.host + data.item.url.path}`,
                 })
+                //=====================================queryParams====================================//
+                const queryParamsOfDoc = data.item.queryParams.filter(v => v.key).map(v => {
+                    return new TableRow({
+                        children: [
+                            new TableCell({
+                                children: [new Paragraph(v.key)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.value)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.required ? "必填" : "非必填")],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.description)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                        ],
+                    })
+                })
+                const tableOfQueryParams = new Table({
+                    width: {
+                        size: 9638,
+                        type: WidthType.DXA,
+                    },
+                    rows: [
+                        new TableRow({
+                            tableHeader: true,
+                            children: [
+                                new TableCell({
+                                    children: [new Paragraph("参数名称")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("参数值")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("是否必填")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("备注")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                            ],
+                        }),
+                        ...queryParamsOfDoc
+                    ]
+                });
+                //=====================================pathParams====================================//
+                const pathParamsOfDoc = data.item.queryParams.filter(v => v.key).map(v => {
+                    return new TableRow({
+                        children: [
+                            new TableCell({
+                                children: [new Paragraph(v.key)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.value)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.required ? "必填" : "非必填")],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.description)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                        ],
+                    })
+                })
+                const tableOfPathParams = new Table({
+                    width: {
+                        size: 9638,
+                        type: WidthType.DXA,
+                    },
+                    rows: [
+                        new TableRow({
+                            tableHeader: true,
+                            children: [
+                                new TableCell({
+                                    children: [new Paragraph("参数名称")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("参数值")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("是否必填")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("备注")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                            ],
+                        }),
+                        ...pathParamsOfDoc
+                    ]
+                });
                 document.sections[0].children.push(docName);
                 document.sections[0].children.push(method);
                 document.sections[0].children.push(url);
-                // document.sections[0].children.push(docName);
+                if (queryParamsOfDoc.length > 0) {
+                    document.sections[0].children.push(new Paragraph({ text: "Query参数", spacing: { before: 130, after: 20 } }));
+                    document.sections[0].children.push(tableOfQueryParams);
+                }
+                if (pathParamsOfDoc.length > 0) {
+                    document.sections[0].children.push(new Paragraph({ text: "Path参数", spacing: { before: 130, after: 20 } }));
+                    document.sections[0].children.push(tableOfPathParams);
+                }
             }
         });
         const doc = new Document(document);
