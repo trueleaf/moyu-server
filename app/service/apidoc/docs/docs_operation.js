@@ -188,17 +188,6 @@ class docsOperationService extends Service {
                 const contentType = new Paragraph({ //contentType
                     text: `参数类型：${data.item.contentType}`,
                 })
-                document.sections[0].children.push(new Paragraph({
-                    children: [
-                        new TextRun({
-                            text: "请求参数",
-                            bold: true,
-                        })
-                    ],
-                    spacing: {
-                        before: 250
-                    },
-                }));
                 //=====================================queryParams====================================//
                 const queryParamsOfDoc = data.item.queryParams.filter(v => v.key).map(v => {
                     return new TableRow({
@@ -482,6 +471,17 @@ class docsOperationService extends Service {
 
                 //=========================================================================//
                 document.sections[0].children.push(docName);
+                document.sections[0].children.push(new Paragraph({
+                    children: [
+                        new TextRun({
+                            text: "请求参数",
+                            bold: true,
+                        })
+                    ],
+                    spacing: {
+                        before: 250
+                    },
+                }));
                 document.sections[0].children.push(method);
                 document.sections[0].children.push(url);
                 if (contentType) {
