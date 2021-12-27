@@ -125,7 +125,7 @@ class docsOperationService extends Service {
             }).lean();
         }
         //=========================================================================//
-        const { Document, SectionType, TextRun, TabStopType, TabStopPosition, Packer, Table, Paragraph, PageBreak, TableRow, TableCell, VerticalAlign, WidthType, HeadingLevel, AlignmentType } = docx;
+        const { Document, SectionType, TextRun, InsertedTextRun, ShadingType, TabStopType, TabStopPosition, Packer, Table, Paragraph, PageBreak, TableRow, TableCell, VerticalAlign, WidthType, HeadingLevel, AlignmentType } = docx;
         const document = {
             sections: [{
                 children: [
@@ -147,14 +147,8 @@ class docsOperationService extends Service {
             case 2:
                 headingLevel = HeadingLevel.HEADING_2;
                 break;
-            case 3:
-                headingLevel = HeadingLevel.HEADING_3;
-                break;
-            case 4:
-                headingLevel = HeadingLevel.HEADING_4;
-                break;    
             default:
-                headingLevel = HeadingLevel.HEADING_1;
+                headingLevel = HeadingLevel.HEADING_2;
                 break;
             }
             if (data.isFolder) { //文件夹
@@ -163,20 +157,21 @@ class docsOperationService extends Service {
                     heading: headingLevel,
                     spacing: {
                         before: 400,
-                        after: 200,
                     },
                 })
                 document.sections[0].children.push(title); //标题
             } else {
                 const docName = new Paragraph({
+                    heading: HeadingLevel.HEADING_3,
                     children: [
                         new TextRun({
                             text: `${data.info.name}`,
-                            bold: true,
+                            size: 26,
                         }),
                     ],
                     spacing: {
-                        after: 20,
+                        before: 250,
+                        after: 30,
                     },
                 })
                 const requestMethod = data.item.method;
@@ -189,6 +184,9 @@ class docsOperationService extends Service {
                 })
                 const url = new Paragraph({ //请求方法
                     text: `请求地址：${data.item.url.host + data.item.url.path}`,
+                })
+                const contentType = new Paragraph({ //contentType
+                    text: `Content-Type：${data.item.contentType}`,
                 })
                 //=====================================queryParams====================================//
                 const queryParamsOfDoc = data.item.queryParams.filter(v => v.key).map(v => {
@@ -296,17 +294,228 @@ class docsOperationService extends Service {
                         ...pathParamsOfDoc
                     ]
                 });
+                //=====================================json类型bodyParams====================================//
+                const jsonParamsOfDoc = [];
+                this.ctx.helper.astJson(data.item.requestBody.json).forEach(str => {
+                    jsonParamsOfDoc.push(new Paragraph({ 
+                        shading: {
+                            type: ShadingType.SOLID,
+                            color: "f3f3f3",
+                        },
+                        children: [
+                            new TextRun({
+                                text: str,
+                            })
+                        ]
+                    }))
+                })
+                //=====================================formData类型bodyParams====================================//
+                const formDataParamsOfDoc = data.item.requestBody.formdata.filter(v => v.key).map(v => {
+                    return new TableRow({
+                        children: [
+                            new TableCell({
+                                children: [new Paragraph(v.key)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.value)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.required ? "必填" : "非必填")],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.description)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                        ],
+                    })
+                })
+                const tableOfFormDataParams = new Table({
+                    width: {
+                        size: 9638,
+                        type: WidthType.DXA,
+                    },
+                    rows: [
+                        new TableRow({
+                            tableHeader: true,
+                            children: [
+                                new TableCell({
+                                    children: [new Paragraph("参数名称")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("参数值")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("是否必填")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("备注")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                            ],
+                        }),
+                        ...formDataParamsOfDoc
+                    ]
+                });
+                //=====================================urlencoded类型bodyParams====================================//
+                const urlencodedParamsOfDoc = data.item.requestBody.urlencoded.filter(v => v.key).map(v => {
+                    return new TableRow({
+                        children: [
+                            new TableCell({
+                                children: [new Paragraph(v.key)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.value)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.required ? "必填" : "非必填")],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.description)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                        ],
+                    })
+                })
+                const tableOfUrlencoedParams = new Table({
+                    width: {
+                        size: 9638,
+                        type: WidthType.DXA,
+                    },
+                    rows: [
+                        new TableRow({
+                            tableHeader: true,
+                            children: [
+                                new TableCell({
+                                    children: [new Paragraph("参数名称")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("参数值")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("是否必填")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("备注")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                            ],
+                        }),
+                        ...urlencodedParamsOfDoc
+                    ]
+                });
+                //=====================================请求头====================================//
+                const headerParamsOfDoc = data.item.headers.filter(v => v.key).map(v => {
+                    return new TableRow({
+                        children: [
+                            new TableCell({
+                                children: [new Paragraph(v.key)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.value)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.required ? "必填" : "非必填")],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                            new TableCell({
+                                children: [new Paragraph(v.description)],
+                                verticalAlign: VerticalAlign.CENTER,
+                            }),
+                        ],
+                    })
+                })
+                const tableOfHeaderParams = new Table({
+                    width: {
+                        size: 9638,
+                        type: WidthType.DXA,
+                    },
+                    rows: [
+                        new TableRow({
+                            tableHeader: true,
+                            children: [
+                                new TableCell({
+                                    children: [new Paragraph("参数名称")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("参数值")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("是否必填")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                                new TableCell({
+                                    children: [new Paragraph("备注")],
+                                    verticalAlign: VerticalAlign.CENTER,
+                                }),
+                            ],
+                        }),
+                        ...headerParamsOfDoc
+                    ]
+                });
+                //=========================================================================//
                 document.sections[0].children.push(docName);
                 document.sections[0].children.push(method);
                 document.sections[0].children.push(url);
+                if (contentType) {
+                    document.sections[0].children.push(contentType);
+                }
                 if (queryParamsOfDoc.length > 0) {
-                    document.sections[0].children.push(new Paragraph({ text: "Query参数", spacing: { before: 130, after: 20 } }));
+                    document.sections[0].children.push(new Paragraph({ 
+                        text: "Query参数", 
+                        spacing: { before: 150, after: 30 },
+                        tabStops: [
+                            {
+                                type: TabStopType.CENTER,
+                                position: 2268,
+                            },
+                        ],
+                    }));
                     document.sections[0].children.push(tableOfQueryParams);
                 }
                 if (pathParamsOfDoc.length > 0) {
-                    document.sections[0].children.push(new Paragraph({ text: "Path参数", spacing: { before: 130, after: 20 } }));
+                    document.sections[0].children.push(new Paragraph({ text: "Path参数", spacing: { before: 150, after: 30 } }));
                     document.sections[0].children.push(tableOfPathParams);
                 }
+                if (data.item.contentType === "application/json") {
+                    document.sections[0].children.push(new Paragraph({ text: "Body参数(JSON)", spacing: { before: 150, after: 30 } }));
+                    document.sections[0].children.push(...jsonParamsOfDoc);
+                } else if (data.item.contentType === "multipart/form-data") {
+                    document.sections[0].children.push(new Paragraph({ text: "Body参数(multipart/*)", spacing: { before: 150, after: 30 } }));
+                    document.sections[0].children.push(tableOfFormDataParams);
+                } else if (data.item.contentType === "application/x-www-form-urlencoded") {
+                    document.sections[0].children.push(new Paragraph({ text: "Body参数(x-www-form-urlencoded)", spacing: { before: 150, after: 30 } }));
+                    document.sections[0].children.push(tableOfUrlencoedParams);
+                } else if (data.item.contentType) {
+                    document.sections[0].children.push(new Paragraph({ text: `Body参数(${data.item.contentType})`, spacing: { before: 150, after: 30 } }));
+                    document.sections[0].children.push(new Paragraph({ text: data.item.requestBody.raw.data }));
+                }
+                if (headerParamsOfDoc.length > 0) {
+                    document.sections[0].children.push(new Paragraph({ text: "请求头", spacing: { before: 150, after: 30 } }));
+                    document.sections[0].children.push(tableOfHeaderParams);
+                }
+                // document.sections[0].children.push(new Paragraph({
+                //     text: "I have borders on my top and bottom sides!",
+                //     shading: {
+                //         type: ShadingType.SOLID,
+                //         color: "f3f3f3",
+                //     },
+                // }));
             }
         });
         const doc = new Document(document);
