@@ -193,7 +193,6 @@ class docsOperationService extends Service {
                         new TextRun({
                             text: "请求参数",
                             bold: true,
-                            size: 28
                         })
                     ],
                     spacing: {
@@ -528,7 +527,6 @@ class docsOperationService extends Service {
                         new TextRun({
                             text: "返回参数",
                             bold: true,
-                            size: 28
                         })
                     ],
                     spacing: {
