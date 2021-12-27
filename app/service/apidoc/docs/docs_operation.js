@@ -535,6 +535,12 @@ class docsOperationService extends Service {
                 }));
                 data.item.responseParams.forEach(res => {
                     document.sections[0].children.push(new Paragraph({
+                        text: `名称：${res.title}`,
+                        spacing: {
+                            before: 100
+                        },
+                    }));
+                    document.sections[0].children.push(new Paragraph({
                         text: `状态码：${res.statusCode}`,
                     }));
                     document.sections[0].children.push(new Paragraph({
