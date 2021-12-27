@@ -186,8 +186,20 @@ class docsOperationService extends Service {
                     text: `请求地址：${data.item.url.host + data.item.url.path}`,
                 })
                 const contentType = new Paragraph({ //contentType
-                    text: `Content-Type：${data.item.contentType}`,
+                    text: `参数类型：${data.item.contentType}`,
                 })
+                document.sections[0].children.push(new Paragraph({
+                    children: [
+                        new TextRun({
+                            text: "请求参数",
+                            bold: true,
+                            size: 28
+                        })
+                    ],
+                    spacing: {
+                        before: 250
+                    },
+                }));
                 //=====================================queryParams====================================//
                 const queryParamsOfDoc = data.item.queryParams.filter(v => v.key).map(v => {
                     return new TableRow({
@@ -468,6 +480,7 @@ class docsOperationService extends Service {
                         ...headerParamsOfDoc
                     ]
                 });
+
                 //=========================================================================//
                 document.sections[0].children.push(docName);
                 document.sections[0].children.push(method);
@@ -509,13 +522,46 @@ class docsOperationService extends Service {
                     document.sections[0].children.push(new Paragraph({ text: "请求头", spacing: { before: 150, after: 30 } }));
                     document.sections[0].children.push(tableOfHeaderParams);
                 }
-                // document.sections[0].children.push(new Paragraph({
-                //     text: "I have borders on my top and bottom sides!",
-                //     shading: {
-                //         type: ShadingType.SOLID,
-                //         color: "f3f3f3",
-                //     },
-                // }));
+                //=====================================返回参数====================================//
+                document.sections[0].children.push(new Paragraph({
+                    children: [
+                        new TextRun({
+                            text: "返回参数",
+                            bold: true,
+                            size: 28
+                        })
+                    ],
+                    spacing: {
+                        before: 250
+                    },
+                }));
+                data.item.responseParams.forEach(res => {
+                    document.sections[0].children.push(new Paragraph({
+                        text: `状态码：${res.statusCode}`,
+                    }));
+                    document.sections[0].children.push(new Paragraph({
+                        text: `参数类型：${res.value.dataType}`,
+                    }));
+                    if (res.value.dataType === "application/json") {
+                        const jsonDoc = [];
+                        this.ctx.helper.astJson(res.value.json).forEach(str => {
+                            jsonDoc.push(new Paragraph({ 
+                                shading: {
+                                    type: ShadingType.SOLID,
+                                    color: "f3f3f3",
+                                },
+                                children: [
+                                    new TextRun({
+                                        text: str,
+                                    })
+                                ]
+                            }))
+                        })
+                        document.sections[0].children.push(...jsonDoc);
+                    } else {
+                        document.sections[0].children.push(new Paragraph({ text: res.value.text }));
+                    }
+                })
             }
         });
         const doc = new Document(document);
