@@ -471,6 +471,11 @@ class docsOperationService extends Service {
 
                 //=========================================================================//
                 document.sections[0].children.push(docName);
+                document.sections[0].children.push(method);
+                document.sections[0].children.push(url);
+                if (contentType) {
+                    document.sections[0].children.push(contentType);
+                }
                 document.sections[0].children.push(new Paragraph({
                     children: [
                         new TextRun({
@@ -482,11 +487,6 @@ class docsOperationService extends Service {
                         before: 250
                     },
                 }));
-                document.sections[0].children.push(method);
-                document.sections[0].children.push(url);
-                if (contentType) {
-                    document.sections[0].children.push(contentType);
-                }
                 if (queryParamsOfDoc.length > 0) {
                     document.sections[0].children.push(new Paragraph({ 
                         text: "Query参数", 
