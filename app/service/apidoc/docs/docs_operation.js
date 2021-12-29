@@ -537,7 +537,7 @@ class docsOperationService extends Service {
                     document.sections[0].children.push(new Paragraph({
                         text: `名称：${res.title}`,
                         spacing: {
-                            before: 100
+                            before: 200
                         },
                     }));
                     document.sections[0].children.push(new Paragraph({
