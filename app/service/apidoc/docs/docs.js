@@ -171,6 +171,12 @@ class DocsService extends Service {
                 this.ctx.helper.throwCustomError("操作不被允许，文件下面不允许嵌套文件夹", 4001);
             }
         }
+        const projectRules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById({ projectId });
+        let defaultMethod = "GET";
+        const enabledMethod = projectRules.requestMethods?.find(v => v.enabled);
+        if (enabledMethod) {
+            defaultMethod = enabledMethod.value;
+        }
         const doc = {
             pid,
             projectId,
@@ -181,6 +187,9 @@ class DocsService extends Service {
                 type,
                 creator: userInfo.realName || userInfo.loginName
             },
+            item: {
+                method: defaultMethod
+            }
         }
         const result = await this.ctx.model.Apidoc.Docs.Docs.create(doc);
         const docLen = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, isFolder: false, enabled: true }).countDocuments();
