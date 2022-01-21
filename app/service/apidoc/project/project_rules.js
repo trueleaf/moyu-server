@@ -6,7 +6,6 @@
 
 
 const Service = require("egg").Service;
-const escapeStringRegexp = require("escape-string-regexp");
 const BASE_RULES = {
     requireDescription: false, //备注是否必填
     requireValue: false, //参数值是否必填
