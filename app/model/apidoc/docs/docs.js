@@ -170,7 +170,6 @@ module.exports = app => {
                     value: {
                         dataType: {
                             type: String,
-                            enum: ["", "application/json", "application/x-www-form-urlencoded", "multipart/form-data", "text/plain", "application/xml", "text/html"],
                         },
                         json: [ProperytySchema],
                         text: String,
