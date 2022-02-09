@@ -244,6 +244,10 @@ class DocsController extends Controller {
                     type: "object",
                     required: false,
                 },
+                afterRequest: {
+                    type: "object",
+                    required: false,
+                },
                 spendTime: {
                     type: "number",
                     required: false

@@ -111,6 +111,12 @@ module.exports = app => {
                 default: ""
             }
         },
+        afterRequest: { //后置脚本
+            raw: {
+                type: String,
+                default: ""
+            },
+        },
         item: {
             method: { //请求方法
                 type: String,

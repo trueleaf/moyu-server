@@ -113,6 +113,7 @@ class docsOperationService extends Service {
                 _id: { $in: selectedNodes }
             }, {
                 preRequest: 0,
+                afterRequest: 0,
                 enabled: 0,
             }).lean();
         } else { //直接导出
@@ -121,6 +122,7 @@ class docsOperationService extends Service {
                 enabled: true,
             }, {
                 preRequest: 0,
+                afterRequest: 0,
                 enabled: 0,
             }).lean();
         }

@@ -314,13 +314,14 @@ class DocsService extends Service {
         @return       null
     */
     async fillDoc(params) {
-        const { _id, info, item, preRequest, projectId, spendTime = 0 } = params;
+        const { _id, info, item, preRequest, afterRequest, projectId, spendTime = 0 } = params;
         const userInfo = this.ctx.userInfo;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const description = xss(info.description);
         const result = await this.ctx.model.Apidoc.Docs.Docs.findByIdAndUpdate({ _id }, { 
             $set: { 
                 preRequest,
+                afterRequest,
                 item, 
                 "info.description": description,
                 "info.maintainer": userInfo.realName || userInfo.loginName,
@@ -677,6 +678,9 @@ class DocsService extends Service {
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const result = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id }, { pid: 0, sort: 0, enabled: 0 }).lean();
         result.preRequest = result.preRequest ? result.preRequest : {
+            raw: ""
+        }
+        result.afterRequest = result.afterRequest ? result.afterRequest : {
             raw: ""
         }
         return result;
