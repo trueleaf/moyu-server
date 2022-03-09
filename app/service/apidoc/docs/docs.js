@@ -175,7 +175,7 @@ class DocsService extends Service {
         let defaultMethod = "GET";
         const enabledMethod = projectRules.requestMethods?.find(v => v.enabled);
         if (enabledMethod) {
-            defaultMethod = enabledMethod.value;
+            defaultMethod = enabledMethod.value.toUpperCase();
         }
         const doc = {
             pid,
