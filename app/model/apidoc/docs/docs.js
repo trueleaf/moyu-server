@@ -142,6 +142,9 @@ module.exports = app => {
                     enum: ["json", "raw", "formdata", "urlencoded", "binary", "none"],
                     default: "json"
                 },
+                rawJson: {
+                    type: String
+                },
                 json: [ProperytySchema],
                 formdata: [ProperytySchema],
                 urlencoded: [ProperytySchema],
