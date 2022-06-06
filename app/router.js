@@ -28,9 +28,16 @@ module.exports = app => {
     //项目规则
     router.put("/api/apidoc/project/project_rules", controller.apidoc.project.projectRules.updateProjectRules); //修改项目规则
     router.get("/api/apidoc/project/project_rules", controller.apidoc.project.projectRules.readProjectRulesById); //根据id查询项目规则
-
-
-
+    //生成代码
+    router.get("/api/apidoc/project/code", controller.apidoc.project.projectCode.getProjectCodeList); //获取已有代码列表
+    router.get("/api/apidoc/project/code_enum", controller.apidoc.project.projectCode.getProjectCodeEnum); //获取项目code枚举信息
+    router.post("/api/apidoc/project/code", controller.apidoc.project.projectCode.addProjectCode); //新增代码
+    router.put("/api/apidoc/project/code", controller.apidoc.project.projectCode.editProjectCode); //修改代码信息
+    router.delete("/api/apidoc/project/code", controller.apidoc.project.projectCode.deleteProjectCode); //删除代码
+    //公共请求头
+    router.get("/api/project/common_header_by_id", controller.apidoc.project.projectCommonHeader.getProjectCommonHeaderById); //根据id获取某个请求头
+    router.get("/api/project/common_headers", controller.apidoc.project.projectCommonHeader.getProjectCommonHeaders); //获取公共请求头
+    router.put("/api/project/common_header", controller.apidoc.project.projectCommonHeader.editProjectCommonHeader); //修改公共请求头
     //=====================================文档相关====================================//
     router.post("/api/project/new_doc", controller.apidoc.docs.docs.addEmptyDoc); //新增空白文档
     router.post("/api/project/copy_doc", controller.apidoc.docs.docs.copyDoc); //拷贝文档
@@ -81,6 +88,7 @@ module.exports = app => {
     //======文档被删除纪录
     router.post("/api/docs/docs_deleted_list", controller.apidoc.docs.docs.getDocDeletedList); //获取文档修改记录
     router.put("/api/docs/docs_restore", controller.apidoc.docs.docs.restroeNode); //恢复已删除节点
+
 
     //======全局变量
     router.post("/api/project/project_variable", controller.apidoc.project.projectVariable.addProjectVariable); //新增预设参数组
@@ -174,5 +182,4 @@ module.exports = app => {
     router.delete("/api/oss/file", controller.oss.oss.deleteFile); //删除文件或者文件列表
    
     //=====================================代理服务器====================================//
-    router.post("/api/proxy/proxyWebApi", controller.apidoc.proxy.proxy.proxyWebApi);
 };

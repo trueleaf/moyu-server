@@ -117,6 +117,8 @@ module.exports = app => {
                 default: ""
             },
         },
+        //公共请求头
+        commonHeaders: [ProperytySchema],
         item: {
             method: { //请求方法
                 type: String,
