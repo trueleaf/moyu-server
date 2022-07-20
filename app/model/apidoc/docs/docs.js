@@ -211,6 +211,94 @@ module.exports = app => {
                 enum: ["application/json", "application/x-www-form-urlencoded", "multipart/form-data", "text/plain", "application/xml", "text/html", ""],
             },
         },
+        //mock信息
+        mockInfo: {
+            /**
+             * http状态码
+             */
+            httpStatusCode: {
+                type: Number,
+                default: 200,
+            },
+            /**
+             * 返回延时
+             */
+            responseDelay: {
+                type: Number,
+                default: 0,
+            },
+            /**
+             * 返回数据类型
+             */
+            responseType: {
+                type: String,
+                trim: true,
+                enum: ["json", "image", "file", "text", "customJson"]
+            },
+            /**
+             * 返回json数据
+             */
+            json: {
+                type: String,
+                default: ""
+            },
+            /**
+             * 图片返回
+             */
+            image: {
+                /**
+                 * 图片类型
+                 */
+                type: {
+                    type: String,
+                    trim: true,
+                    enum: ["png", "jpg", "gif", "svg"]
+                },
+                /**
+                 * 图片宽度
+                 */
+                width: {
+                    type: Number,
+                    default: 200
+                },
+                /**
+                 * 图片高度
+                 */
+                height: {
+                    type: Number,
+                    default: 200
+                },
+                /**
+                 * 图片额外大小
+                 */
+                size: {
+                    type: Number,
+                    default: 0,
+                },
+                /**
+                 * 文字大小
+                 */
+                fontSize: {
+                    type: Number,
+                    default: 16
+                },
+                /**
+                 * 文字颜色
+                 */
+                color: {
+                    type: String,
+                    default: "#fff"
+                },
+                /**
+                 * 背景颜色
+                 */
+                backgroundColor: {
+                    type: String,
+                    default: "#aaa"
+                },
+
+            },
+        },
         enabled: { //使能
             type: Boolean,
             default: true
