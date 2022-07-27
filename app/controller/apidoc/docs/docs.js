@@ -248,6 +248,10 @@ class DocsController extends Controller {
                     type: "object",
                     required: false,
                 },
+                mockInfo: {
+                    type: "object",
+                    require: false
+                },
                 spendTime: {
                     type: "number",
                     required: false

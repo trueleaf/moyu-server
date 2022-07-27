@@ -314,7 +314,7 @@ class DocsService extends Service {
         @return       null
     */
     async fillDoc(params) {
-        const { _id, info, item, preRequest, afterRequest, projectId, spendTime = 0 } = params;
+        const { _id, info, item, preRequest, afterRequest, projectId, mockInfo, spendTime = 0 } = params;
         const userInfo = this.ctx.userInfo;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const description = xss(info.description);
@@ -323,6 +323,7 @@ class DocsService extends Service {
                 preRequest,
                 afterRequest,
                 item, 
+                mockInfo,
                 "info.description": description,
                 "info.maintainer": userInfo.realName || userInfo.loginName,
                 "info.tag": info.tag 

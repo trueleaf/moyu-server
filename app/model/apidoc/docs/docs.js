@@ -233,7 +233,8 @@ module.exports = app => {
             responseType: {
                 type: String,
                 trim: true,
-                enum: ["json", "image", "file", "text", "customJson"]
+                enum: ["json", "image", "file", "text", "customJson"],
+                default: "json"
             },
             /**
              * 返回json数据
@@ -252,7 +253,8 @@ module.exports = app => {
                 type: {
                     type: String,
                     trim: true,
-                    enum: ["png", "jpg", "gif", "svg"]
+                    enum: ["png", "jpg", "gif", "svg"],
+                    default: "png"
                 },
                 /**
                  * 图片宽度
@@ -297,6 +299,14 @@ module.exports = app => {
                     default: "#aaa"
                 },
 
+            },
+            /**
+             * 文件类型
+             */
+            file: {
+                type: {
+                    type: String,
+                },
             },
         },
         enabled: { //使能
