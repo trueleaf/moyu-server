@@ -212,7 +212,6 @@ class userService extends Service {
         //     await this.ctx.model.Apidoc.Project.Project.create(project);
         //     await this.ctx.model.Apidoc.Docs.Docs.create(convertDocs);
         // }
-        // console.log(originDocs.map(val => !val.isFolder).length)
         return loginResult;
     }
     
@@ -733,7 +732,6 @@ class userService extends Service {
         const userInfo = this.ctx.userInfo;
         const recentVisit = await this.ctx.model.Security.User.findOne({ _id: userInfo.id }, { recentVisitProjects: 1 }).lean();
         let recentVisitProjects = recentVisit.recentVisitProjects || [];
-        // console.log(222, recentVisit, userInfo)
         const matchedVisitProjectIndex = recentVisitProjects.findIndex(val => val === projectId);
         if (matchedVisitProjectIndex  !== -1) { //匹配到数据则直接交换
             recentVisitProjects.splice(matchedVisitProjectIndex, 1);

@@ -52,7 +52,6 @@ class docHistoryService extends Service {
                 $in: operationTypes,
             }
         }
-        console.log(query)
         const rows = await this.ctx.model.Apidoc.Docs.DocsHistory.find(
             query,
             {

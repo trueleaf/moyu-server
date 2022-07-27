@@ -86,7 +86,6 @@ class ProjectCodeService extends Service {
         const { id, projectId } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const result = await this.ctx.model.Apidoc.Docs.Docs.findOne({ _id: id }, { commonHeaders: 1 }).lean();
-        console.log(result)
         return {
             _id: result._id,
             commonHeaders: result.commonHeaders.map(v => ({

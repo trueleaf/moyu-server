@@ -65,7 +65,6 @@ class ProxyController extends Controller {
                 responseType: "buffer"
             });
             // const data = await formatResponseBuffer(response.body, response.headers["content-type"]);
-            // console.log(response.body)
             this.ctx.helper.successResponseData({
                 httpVersion: response.httpVersion,
                 ip: response.ip,
