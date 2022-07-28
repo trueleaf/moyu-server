@@ -301,13 +301,40 @@ module.exports = app => {
 
             },
             /**
-             * 文件类型
+             * 文件相关数据
              */
             file: {
+                /**
+                 * 文件类型
+                 */
                 type: {
                     type: String,
+                    trim: true,
+                    enum: ["doc", "docx", "xls", "xlsx", "pdf", "zip", "custom"],
+                    default: "doc"
                 },
+                /**
+                 * 只能存小于10kb数据，requestBody有大小限制
+                 */
+                base64File: {
+                    type: String,
+                    default: ""
+                }
             },
+            /**
+             * 纯文本，html，css等
+             */
+            text: {
+                type: String,
+                default: ""
+            },
+            /**
+             * 自定义json返回
+             */
+            customResponseScript: {
+                type: String,
+                default: ""
+            }
         },
         enabled: { //使能
             type: Boolean,
