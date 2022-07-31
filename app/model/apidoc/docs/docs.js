@@ -218,6 +218,13 @@ module.exports = app => {
         //mock信息
         mockInfo: {
             /**
+             * mock地址
+             */
+            path: {
+                type: String,
+                default: ""
+            },
+            /**
              * http状态码
              */
             httpStatusCode: {
