@@ -182,7 +182,11 @@ module.exports = app => {
                         dataType: {
                             type: String,
                         },
-                        json: [ProperytySchema],
+                        strJson: { //直接展示json信息
+                            type: String, 
+                            default: ""
+                        },
+                        json: [ProperytySchema], //废弃
                         text: String,
                         file: {
                             url: String,
