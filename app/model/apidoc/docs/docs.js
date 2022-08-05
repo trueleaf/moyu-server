@@ -330,7 +330,14 @@ module.exports = app => {
                 base64File: {
                     type: String,
                     default: ""
-                }
+                },
+                /**
+                 * 自定义文件类型
+                 */
+                base64FileType: {
+                    type: String,
+                    default: ""
+                },
             },
             /**
              * 纯文本，html，css等
