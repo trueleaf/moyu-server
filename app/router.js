@@ -181,5 +181,6 @@ module.exports = app => {
     // router.post("/api/oss/file", controller.oss.oss.addFile); //上传文件
     router.delete("/api/oss/file", controller.oss.oss.deleteFile); //删除文件或者文件列表
    
-    //=====================================代理服务器====================================//
+    //=====================================mock服务器====================================//
+    router.get("/mock/image", controller.mock.mock.image); //获取mock图片数据
 };

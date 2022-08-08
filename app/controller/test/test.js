@@ -9,8 +9,9 @@ const Controller = require("egg").Controller;
 class testController extends Controller {
     async test() {
         try {
-            
-
+            console.log(12)
+            return;
+            this.ctx.body = {}
         } catch (error) {
             this.ctx.helper.throwError(error);
             return;

@@ -16,12 +16,13 @@ module.exports = appInfo => {
     // use for cookie sign key, should change to your own and keep security
     config.keys = appInfo.name;
     //=====================================中间件====================================//
-    config.middleware = ["throttle", "permission", "mock"];
+    config.middleware = ["throttle", "permission"];
    
     const mock = {};
     const permission = {
         free: true, //默认情况取消权限校验，方便用户使用
         whiteList: [
+            "/mock/image",
             "/mock",
             "/test",
             "/ssh",

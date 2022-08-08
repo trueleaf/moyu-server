@@ -21,6 +21,7 @@
     "got": "^11.8.2",
     "jsonwebtoken": "^8.5.1",
     "officegen": "^0.6.4",
+    "pureimage": "^0.3.14",
     "svg-captcha": "^1.4.0",
     "xlsx": "^0.16.5",
     "xss": "^1.0.8"
