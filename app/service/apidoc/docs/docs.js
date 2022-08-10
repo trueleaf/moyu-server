@@ -315,9 +315,6 @@ class DocsService extends Service {
     */
     async fillDoc(params) {
         const { _id, info, item, preRequest, afterRequest, projectId, mockInfo, spendTime = 0 } = params;
-        if (mockInfo?.file.base64File.length > 1024 * 2 * 10) {
-            mockInfo.file.base64File = ""
-        }
         const userInfo = this.ctx.userInfo;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
         const description = xss(info.description);

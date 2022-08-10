@@ -232,6 +232,10 @@ module.exports = app => {
                 default: 200,
             },
             /**
+             * 自定义返回头
+             */
+            responseHeaders: [ProperytySchema], //请求头
+            /**
              * 返回延时
              */
             responseDelay: {
@@ -325,16 +329,10 @@ module.exports = app => {
                     default: "doc"
                 },
                 /**
-                 * 只能存小于10kb数据，requestBody有大小限制
+                 * 自定义mock文件路径
+                 * 
                  */
-                base64File: {
-                    type: String,
-                    default: ""
-                },
-                /**
-                 * 自定义文件类型
-                 */
-                base64FileType: {
+                filePath: {
                     type: String,
                     default: ""
                 },
