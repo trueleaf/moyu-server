@@ -183,4 +183,7 @@ module.exports = app => {
    
     //=====================================mock服务器====================================//
     router.get("/mock/image", controller.mock.mock.image); //获取mock图片数据
+    router.get("/mock/base64_image", controller.mock.mock.base64Image); //base64图片数据
+    router.get("/mock/file", controller.mock.mock.file); //获取内置文件数据
+    
 };
