@@ -133,6 +133,77 @@ class mockController extends Controller {
             return;
         }  
     }
+    /**
+     * 远端mock
+     */
+    async remote() {
+        try {
+            const { id } = this.ctx.query;
+            const docInfo = await this.ctx.model.Apidoc.Docs.Docs.findById({ _id: id });
+            const { mockInfo, projectId } = docInfo;
+            const variables = await this.ctx.service.apidoc.project.projectVariable.getProjectVariableEnum({ projectId })
+            mockInfo.responseHeaders.filter(v => v.key && v.value && v.select).forEach(header => {
+                const realValue = apidocConvertValue(header.value);
+                if (realValue.match(/[\u4E00-\u9FA5]/)) {
+                    throw new Error("不允许请求头值为中文")
+                }
+                this.ctx.set(header.key, realValue)
+            })
+            const { responseType, json, image, file, text } = mockInfo;
+            await this.ctx.helper.sleep(mockInfo.responseDelay)
+            this.ctx.status = mockInfo.httpStatusCode;
+            if (responseType === "json" && json) {
+                const realJson = this.ctx.helper.convertMockJsonToRealJson(json, variables);
+                this.ctx.body = JSON.parse(realJson);
+            } else if (responseType === "json" && !json) {
+                this.ctx.body = this.ctx.helper.convertMockJsonToRealJson(responseStrJson, variables);
+            } else if (responseType === "image") {
+                const imageStream = await this.ctx.helper.createMockImage(mockInfo.image.width, mockInfo.image.height, mockInfo.image.backgroundColor);
+                this.ctx.set("Content-Type", `image/${image.type}`);
+                this.ctx.body = imageStream
+            } else if (responseType === "file" && file.type === "doc") {
+                const filePath = path.resolve(this.ctx.app.baseDir, "app/public/mock-file/mock.doc");
+                const fileData = await fs.readFile(filePath);
+                this.ctx.set("Content-Type", "application/msword");
+                this.ctx.body = fileData
+            } else if (responseType === "file" && file.type === "docx") {
+                const filePath = path.resolve(this.ctx.app.baseDir, "app/public/mock-file/mock.docx");
+                const fileData = await fs.readFile(filePath);
+                this.ctx.set("Content-Type", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                this.ctx.body = fileData
+            } else if (responseType === "file" && file.type === "xls") {
+                const filePath = path.resolve(this.ctx.app.baseDir, "app/public/mock-file/mock.xls");
+                const fileData = await fs.readFile(filePath);
+                this.ctx.set("Content-Type", "application/vnd.ms-excel");
+                this.ctx.body = fileData
+            } else if (responseType === "file" && file.type === "xlsx") {
+                const filePath = path.resolve(this.ctx.app.baseDir, "app/public/mock-file/mock.xlsx");
+                const fileData = await fs.readFile(filePath);
+                this.ctx.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                this.ctx.body = fileData
+            } else if (responseType === "file" && file.type === "pdf") {
+                const filePath = path.resolve(this.ctx.app.baseDir, "app/public/mock-file/mock.pdf");
+                const fileData = await fs.readFile(filePath);
+                this.ctx.set("Content-Type", "application/pdf");
+                this.ctx.body = fileData
+            } else if (responseType === "file" && file.type === "zip") {
+                const filePath = path.resolve(this.ctx.app.baseDir, "app/public/mock-file/mock.zip");
+                const fileData = await fs.readFile(filePath);
+                this.ctx.set("Content-Type", "application/x-zip-compressed");
+                this.ctx.body = fileData
+            } else if (responseType === "file" && file.type === "custom") {
+                this.ctx.body = "暂不支持自定义文件远程mock";
+            } else if (responseType === "text") {
+                this.ctx.set("Content-Type", "text/plain; charset=utf-8");
+                this.ctx.body = text;
+            } else {
+                this.ctx.body = "";
+            }
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }  
+    }
 }
 
 module.exports = mockController;

@@ -4,6 +4,12 @@
     @create        2020-10-08 22:10
 */
 const { v4: uuidv4 } = require("uuid")
+const json5 = require("json5")
+const Mock = require("mockjs")
+const PImage = require("pureimage");
+const path = require("path")
+const { PassThrough } = require("stream");
+
 function generateAstInfo() {
     return {
         id: "",
@@ -412,7 +418,7 @@ module.exports = {
     /**
      * 参数数组转换为json结构
      */
-     astJson(data, indent = 8) {
+    astJson(data, indent = 8) {
         if (!Array.isArray(data)) {
             return [];
         }
@@ -563,5 +569,74 @@ module.exports = {
         // console.log(strResult)
 
         return strResult;
+    },
+    //模拟延迟
+    async sleep(delay) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (!delay) {
+                    resolve();
+                }
+                setTimeout(() => {
+                    resolve();
+                }, delay)
+            } catch (error) {
+                reject(error);
+            }
+        })
+    },
+    convertMockJsonToRealJson(mockJson, variables) {
+        try {
+            return JSON.stringify(json5.parse(mockJson || "null", (key, value) => {
+                if (!value) { //null
+                    return value;
+                }
+                if (typeof value === "string") {
+                    const stringValue = value.toString();
+                    if (stringValue.startsWith("@")) {
+                        return Mock.mock(value);
+                    }
+                    if (stringValue.startsWith("$")) {
+                        return Mock.mock(value.replace(/^\$/, "@"));
+                    }
+                    const replacedStr = stringValue.replace(/\{\{\s*([^} ]+)\s*\}\}/g, ($1, varStr) => {
+                        // let realValue = "";
+                        if (varStr.startsWith("@")) {
+                            return Mock.mock(varStr);
+                        }
+                        if (varStr.startsWith("$")) {
+                            return Mock.mock(varStr.replace(/^\$/, "@"));
+                        }
+                        const matchedValue = variables.find(v => v.name === varStr)
+                        if (matchedValue) {
+                            return matchedValue.value
+                        }
+                        return $1;
+                    });
+                    return replacedStr;
+                }
+                return value;
+            }));
+        } catch (error) {
+            console.error(error);
+            return "";
+        }
+    },
+    async createMockImage(w, h, bg) {
+        console.log(w, h)
+        const font = PImage.registerFont(path.resolve(this.ctx.app.baseDir, "app/public/font/number.ttf"),"number");
+        font.loadSync()
+        const image = PImage.make(w, h);
+        const ctx = image.getContext("2d");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "#777";
+        ctx.font = `${w / 8}px number`;
+        ctx.textAlign = "center"
+        ctx.textBaseline = "middle"
+        ctx.fillText(`${w}X${h}`, w / 2, h / 2);
+        const stream = new PassThrough()
+        await PImage.encodePNGToStream(image, stream)
+        return stream;
     }
 };
