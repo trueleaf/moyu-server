@@ -46,6 +46,7 @@ module.exports = app => {
     router.delete("/api/project/doc", controller.apidoc.docs.docs.deleteDoc); //删除文档
     router.post("/api/project/doc_multi", controller.apidoc.docs.docs.addMultiDocs); //新增多个文档
     router.post("/api/project/fill_doc", controller.apidoc.docs.docs.fillDoc); //填写文档
+    router.post("/api/project/save_doc", controller.apidoc.docs.docs.saveDoc); //保存文档
     router.get("/api/project/doc_tree_node", controller.apidoc.docs.docs.getDocTreeNode); //获取文档导航
     router.get("/api/project/doc_tree_folder_node", controller.apidoc.docs.docs.getDocTreeFolderNode); //获取文档导航(仅获取文件夹信息，用于一个项目向另一个项目导入)
     router.get("/api/project/doc_detail", controller.apidoc.docs.docs.getDocDetail); //获取文档详情

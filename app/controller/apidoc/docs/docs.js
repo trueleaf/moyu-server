@@ -268,6 +268,25 @@ class DocsController extends Controller {
             return;
         }
     }
+    /**
+     * 保存接口
+     */
+     async saveDoc() { 
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                docInfo: {
+                    type: "object"
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docs.saveDoc(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
 
     /** 
         @description  获取文档结构树

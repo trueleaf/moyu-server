@@ -18,7 +18,7 @@ Mock.Random.extend({
     },
     //时间戳精确到秒
     timestamp2() {
-        return Date.now().toString().slice(0, 10);
+        return Number(Date.now().toString().slice(0, 10));
     },
     //开始时间
     startTime(date, rule) {

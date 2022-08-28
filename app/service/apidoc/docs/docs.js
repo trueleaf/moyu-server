@@ -347,6 +347,31 @@ class DocsService extends Service {
         await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
         return;
     }
+    /**
+     * 保存接口
+     */
+     async saveDoc(params) {
+        const { docInfo } = params;
+        const userInfo = this.ctx.userInfo;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(docInfo.projectId);
+        const _id = this.app.mongoose.Types.ObjectId();
+        docInfo._id = _id
+        const result = await this.ctx.model.Apidoc.Docs.Docs.create(docInfo);
+        //添加历史记录
+        const record = {
+            operation: "addDoc", //更新文档
+            projectId: docInfo.projectId,
+            recordInfo: {
+                nodeName: result.info.name,
+                nodeId: _id,
+                method: docInfo.item.method,
+                nodeSnapshot: docInfo.item,
+            },
+            operator: userInfo.realName || userInfo.loginName,
+        };
+        await this.ctx.model.Apidoc.Docs.DocsHistory.create(record);
+        return result._id;
+    }
 
 
     /** 
