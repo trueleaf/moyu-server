@@ -153,7 +153,18 @@ class userService extends Service {
             loginName: matchedUser.loginName
         };
     }  
-
+    /**
+     * 重置密码
+     */
+    async resetPassword2(params) {
+        const { userId, password } = params;
+        const hash = crypto.createHash("md5");
+        const salt = this.ctx.helper.rand(10000, 9999999).toString();
+        hash.update((password + salt).slice(2));
+        const hashPassword = hash.digest("hex");
+        await this.ctx.model.Security.User.updateOne({ _id: userId }, { $set: { salt, password: hashPassword } });
+        return;
+    }  
     /** 
      * @description        来宾用户登录
      * @author              shuxiaokai

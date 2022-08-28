@@ -154,7 +154,8 @@ class userController extends Controller {
                     type: "string"
                 },
                 phone: {
-                    type: "string"
+                    type: "string",
+                    required: false
                 },
                 roleIds: { 
                     type: "array",
@@ -260,6 +261,28 @@ class userController extends Controller {
             };
             this.ctx.validate(reqRule, params);
             const result = await this.ctx.service.security.user.resetPassword(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    /**
+     * 管理员重置密码
+     */
+     async resetPassword2() {
+        try {
+            const params = this.ctx.request.body;
+            const reqRule = {
+                userId: {
+                    type: "string"
+                },
+                password: {
+                    type: "string"
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.security.user.resetPassword2(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);
