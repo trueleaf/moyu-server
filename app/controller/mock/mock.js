@@ -138,7 +138,7 @@ class mockController extends Controller {
      */
     async remote() {
         try {
-            const { id } = this.ctx.query;
+            const { id } = this.ctx.params;
             const docInfo = await this.ctx.model.Apidoc.Docs.Docs.findById({ _id: id });
             const { mockInfo, projectId } = docInfo;
             const variables = await this.ctx.service.apidoc.project.projectVariable.getProjectVariableEnum({ projectId })
