@@ -142,6 +142,7 @@ module.exports = app => {
     router.put("/api/security/user_password", controller.security.user.changeUserPassword); //修改用户密码
     router.post("/api/security/useradd", controller.security.user.addUser); //新增用户
     router.get("/api/security/userListByName", controller.security.user.getUserListByName); //新增用户
+    router.put("/api/security/reset_password", controller.security.user.resetPassword2); //重置密码
     // router.post("/api/security/multi_useradd", controller.security.user.addMultiUser); //批量新增用户
 
     //======资源(前端路由)管理
