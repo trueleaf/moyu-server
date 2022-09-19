@@ -604,7 +604,7 @@ class DocsService extends Service {
                     type: val.info.type,
                     method: val.item.method,
                     url: val.item.url ? val.item.url.path : "",
-                    customMockUrl: val.mockInfo.path,
+                    customMockUrl: val.mockInfo?.path || "",
                     maintainer: val.info.maintainer,
                     updatedAt: val.updatedAt,
                     isFolder: val.isFolder,
