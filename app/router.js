@@ -39,6 +39,7 @@ module.exports = app => {
     router.get("/api/project/common_headers", controller.apidoc.project.projectCommonHeader.getProjectCommonHeaders); //获取公共请求头
     router.put("/api/project/common_header", controller.apidoc.project.projectCommonHeader.editProjectCommonHeader); //修改公共请求头
     //=====================================文档相关====================================//
+    router.get("/api/docs/getApiflowList", controller.apidoc.docs.docs.getApiflowList); // 接口编排获取全部接口
     router.post("/api/project/new_doc", controller.apidoc.docs.docs.addEmptyDoc); //新增空白文档
     router.post("/api/project/copy_doc", controller.apidoc.docs.docs.copyDoc); //拷贝文档
     router.put("/api/project/change_doc_pos", controller.apidoc.docs.docs.changeDocPosition); //改变文档在位置
@@ -90,7 +91,6 @@ module.exports = app => {
     router.post("/api/docs/docs_deleted_list", controller.apidoc.docs.docs.getDocDeletedList); //获取文档修改记录
     router.put("/api/docs/docs_restore", controller.apidoc.docs.docs.restroeNode); //恢复已删除节点
 
-
     //======全局变量
     router.post("/api/project/project_variable", controller.apidoc.project.projectVariable.addProjectVariable); //新增预设参数组
     router.delete("/api/project/project_variable", controller.apidoc.project.projectVariable.deleteProjectVariable); //删除预设参数组
@@ -104,6 +104,7 @@ module.exports = app => {
     router.delete("/api/project/doc_params_mind", controller.apidoc.docs.docsParamsMind.deleteMindParams); //批量删除联想参数
     router.post("/api/project/doc_params_mind", controller.apidoc.docs.docsParamsMind.addMindParams); //新增联想参数
     
+
     //======预设参数组
     router.post("/api/project/doc_preset_params", controller.apidoc.docs.docsParamsPreset.addPresetParams); //新增预设参数组
     router.delete("/api/project/doc_preset_params", controller.apidoc.docs.docsParamsPreset.deletePresetParams); //删除预设参数组

@@ -90,6 +90,9 @@ class DocsController extends Controller {
                 projectId: {
                     type: "string"
                 },
+                fromProjectId: {
+                    type: "string"
+                },
                 mountedId: {
                     type: "string",
                     required: false,
@@ -586,6 +589,25 @@ class DocsController extends Controller {
             };
             this.ctx.validate(reqRule, params);
             const result = await this.ctx.service.apidoc.docs.docs.restroeNode(params);
+            this.ctx.helper.successResponseData(result);
+        } catch (error) {
+            this.ctx.helper.throwError(error);
+            return;
+        }
+    }
+    /**
+     * 获取接口编排全部接口信息
+     */
+    async getApiflowList() { 
+        try {
+            const params = this.ctx.request.query;
+            const reqRule = {
+                projectId: {
+                    type: "string",
+                },
+            };
+            this.ctx.validate(reqRule, params);
+            const result = await this.ctx.service.apidoc.docs.docs.getApiflowList(params);
             this.ctx.helper.successResponseData(result);
         } catch (error) {
             this.ctx.helper.throwError(error);

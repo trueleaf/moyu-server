@@ -476,10 +476,11 @@ class DocsService extends Service {
         @param {Array<Doc>}    docs 文档 
     */
     async pasteDocs(params) {
-        const { projectId, docs, mountedId = "" } = params;
+        const { projectId, docs, mountedId = "", fromProjectId } = params;
         await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(fromProjectId);
         const docIds = docs.map(v => v._id);
-        const matchedDocs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId, _id: { $in: docIds } }).lean();
+        const matchedDocs = await this.ctx.model.Apidoc.Docs.Docs.find({ projectId: fromProjectId, _id: { $in: docIds } }).lean();
         const idMap = [];
         //先重新绑定pid
         matchedDocs.forEach((docInfo) => {
@@ -506,6 +507,7 @@ class DocsService extends Service {
             }
             idMap.push(mapInfo);
             docInfo._id = newId;
+            docInfo.projectId = projectId;
             docInfo.sort = Date.now();
         })
         await this.ctx.model.Apidoc.Docs.Docs.insertMany(matchedDocs);
@@ -1015,6 +1017,31 @@ class DocsService extends Service {
             },
         })
         return updateIds;
+    }
+    /**
+     * 获取接口编排全部接口信息
+     */
+    async getApiflowList(params) {
+        const { projectId } = params;
+        await this.ctx.service.apidoc.docs.docs.checkOperationDocPermission(projectId);
+        const allDocs = await this.ctx.model.Apidoc.Docs.Docs.find({
+            projectId,
+            enabled: true,
+        }, { 
+            "item.url": 1, 
+            "info.name": 1, 
+            "item.requestBody": 1, 
+            "item.method": 1, 
+            "item.paths": 1, 
+            "item.queryParams": 1, 
+            "item.headers": 1,
+            preRequest: 1,
+            afterRequest: 1,
+            projectId: 1,
+            isFolder: 1,
+        }).lean();
+       
+        return allDocs;
     }
 }
 
