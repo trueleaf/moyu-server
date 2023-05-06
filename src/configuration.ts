@@ -2,6 +2,7 @@ import { Configuration, App } from '@midwayjs/core';
 import * as koa from '@midwayjs/koa';
 import * as validate from '@midwayjs/validate';
 import * as info from '@midwayjs/info';
+import * as typegoose from '@midwayjs/typegoose';
 import { join } from 'path';
 // import { DefaultErrorFilter } from './filter/default.filter';
 // import { NotFoundFilter } from './filter/notfound.filter';
@@ -11,6 +12,7 @@ import { ReportMiddleware } from './middleware/report.middleware';
   imports: [
     koa,
     validate,
+    typegoose,
     {
       component: info,
       enabledEnvironment: ['local'],
