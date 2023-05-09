@@ -1,7 +1,4 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
-@modelOptions({
-  schemaOptions: { timestamps: true, collection: 'project' },
-})
 /*
 |--------------------------------------------------------------------------
 | 创建者信息
@@ -51,7 +48,9 @@ class Member {
   @prop({ type: PermissionEnum })
   public permission: string;
 }
-
+@modelOptions({
+  schemaOptions: { timestamps: true, collection: 'project' },
+})
 export class Project {
   /**
    * 项目名称
@@ -66,7 +65,7 @@ export class Project {
   /**
    * 创建者
    */
-  @prop({ type: () => Creator })
+  @prop()
   public owner: Creator;
   /**
    * 成员信息
