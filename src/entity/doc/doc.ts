@@ -252,6 +252,7 @@ class ResponseParams {
   @prop()
   public value: ResonseValue;
 }
+
 @modelOptions({
   schemaOptions: { timestamps: true, collection: 'doc' },
 })
