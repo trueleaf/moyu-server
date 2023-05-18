@@ -1,6 +1,6 @@
 import { Inject, Controller, Get } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
-import { UserService } from '../service/user.service';
+import { UserService } from '../service/security/user';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { User } from '../entity/security/user';
 import { ReturnModelType } from '@typegoose/typegoose';

@@ -7,7 +7,6 @@ import { join } from 'path';
 // import { DefaultErrorFilter } from './filter/default.filter';
 // import { NotFoundFilter } from './filter/notfound.filter';
 import { ReportMiddleware } from './middleware/report.middleware';
-
 @Configuration({
   imports: [
     koa,
@@ -18,7 +17,7 @@ import { ReportMiddleware } from './middleware/report.middleware';
       enabledEnvironment: ['local'],
     },
   ],
-  importConfigs: [join(__dirname, './config')],
+  importConfigs: [join(__dirname, './config/config.default')],
 })
 export class ContainerLifeCycle {
   @App()
