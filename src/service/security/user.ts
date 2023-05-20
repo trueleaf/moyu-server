@@ -1,5 +1,5 @@
 import { Config, Provide } from '@midwayjs/core';
-import { SMSDTO } from '../../types/dto/security/user.dto';
+import { RegisterByPhoneDot, SMSDto } from '../../types/dto/security/user.dto';
 import { getRandomNumber } from '../../utils/utils';
 import { GlobalConfig } from '../../types/types';
 
@@ -9,7 +9,7 @@ export class UserService {
   @Config('smsConfig')
   smsConfig: GlobalConfig;
 
-  async getSMSCode(params: SMSDTO) {
+  async getSMSCode(params: SMSDto) {
     const { phone } = params;
     const code = getRandomNumber(100000, 999999);
     console.log(this.smsConfig, phone, code) 
@@ -26,5 +26,11 @@ export class UserService {
     // };
     // await this.ctx.model.Security.Sms.updateOne({ phone }, { $set: { phone, smsCode: code }}, { upsert: true });
     // await client.request("SendSms", msgConfig, requestOption);
+  }
+
+  async registerByPhone(params: RegisterByPhoneDot) {
+    const { loginName, realName, phone, password, smsCode  } = params;
+    const code = getRandomNumber(100000, 999999);
+    console.log(this.smsConfig, phone, code) 
   }
 }

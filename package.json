@@ -15,7 +15,8 @@
     "@midwayjs/typegoose": "^3.11.6",
     "@midwayjs/validate": "^3.0.0",
     "@typegoose/typegoose": "^11.1.0",
-    "mongoose": "^7.1.0"
+    "mongoose": "^7.1.0",
+    "svg-captcha": "^1.4.0"
   },
   "devDependencies": {
     "@midwayjs/cli": "^2.0.0",
