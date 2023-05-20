@@ -1,4 +1,5 @@
 logs/
+src/config/config.local.ts
 npm-debug.log
 yarn-error.log
 node_modules/
