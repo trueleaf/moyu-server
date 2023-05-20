@@ -17,7 +17,7 @@ import { ReportMiddleware } from './middleware/report.middleware';
       enabledEnvironment: ['local'],
     },
   ],
-  importConfigs: [join(__dirname, './config/config.default')],
+  importConfigs: [join(__dirname, './config/')],
 })
 export class ContainerLifeCycle {
   @App()

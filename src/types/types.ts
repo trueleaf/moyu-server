@@ -3,17 +3,12 @@
  */
 export type GlobalConfig = {
   smsConfig: {
-    base: {
-      accessKeyId: string;
-      accessKeySecret: string;
-      endpoint: string;
-      apiVersion: string;
-    };
-    template: {
-      RegionId: string;
-      SignName: string;
-      TemplateCode: string;
-    };
+    accessKeyId: string;
+    accessKeySecret: string;
+    endpoint: string;
+    RegionId: string;
+    SignName: string;
+    templateCode: string;
     maxAge: number;
   };
 };

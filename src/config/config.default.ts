@@ -26,19 +26,12 @@ export default {
     },
   },
   smsConfig: {
-    base: {
-      //基础信息
-      accessKeyId: '',
-      accessKeySecret: '',
-      endpoint: '',
-      apiVersion: '2017-05-25',
-    },
-    template: {
-      //模板配置
-      RegionId: '',
-      SignName: '',
-      TemplateCode: '',
-    },
-    maxAge: 1000 * 60 * 5, //五分钟过期
+    accessKeyId: '',
+    accessKeySecret: '',
+    endpoint: '',
+    RegionId: '',
+    SignName: '',
+    templateCode: '',
+    maxAge: 0,
   },
 } as MidwayConfig;
