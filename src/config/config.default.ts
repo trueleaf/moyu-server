@@ -25,6 +25,9 @@ export default {
       },
     },
   },
+  validate: {
+    errorStatus: 200,
+  },
   smsConfig: {
     accessKeyId: '',
     accessKeySecret: '',

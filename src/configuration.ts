@@ -6,7 +6,8 @@ import * as typegoose from '@midwayjs/typegoose';
 import { join } from 'path';
 // import { DefaultErrorFilter } from './filter/default.filter';
 // import { NotFoundFilter } from './filter/notfound.filter';
-import { ReportMiddleware } from './middleware/report.middleware';
+import { ResponseWrapperMiddleware } from './middleware/response.middleware';
+import { ValidateErrorFilter } from './filter/validate.filter';
 @Configuration({
   imports: [
     koa,
@@ -25,8 +26,8 @@ export class ContainerLifeCycle {
 
   async onReady() {
     // add middleware
-    this.app.useMiddleware([ReportMiddleware]);
+    this.app.useMiddleware([ResponseWrapperMiddleware]);
     // add filter
-    // this.app.useFilter([NotFoundFilter, DefaultErrorFilter]);
+    this.app.useFilter([ValidateErrorFilter]);
   }
 }
