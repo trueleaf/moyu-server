@@ -5,12 +5,21 @@ import { GlobalConfig } from '../../types/types';
 import Dysmsapi20170525, * as $Dysmsapi20170525 from '@alicloud/dysmsapi20170525';
 import OpenApi, * as $OpenApi from '@alicloud/openapi-client';
 import * as $Util from '@alicloud/tea-util';
+import { Sms } from '../../entity/security/sms';
+import { InjectEntityModel } from '@midwayjs/typegoose';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Provide()
 export class UserService {
   @Config('smsConfig')
   smsConfig: GlobalConfig['smsConfig'];
 
+  @InjectEntityModel(Sms)
+  smsModel: ReturnModelType<typeof Sms>;
+
+  /**
+   * 根据手机号码获取短信验证码
+   */
   async getSMSCode(params: SMSDto) {
     const { phone } = params;
     const code = getRandomNumber(100000, 999999);
@@ -29,8 +38,15 @@ export class UserService {
     console.log(code, OpenApi)
   }
 
+  /**
+   * 使用手机号码注册账号
+   */
   async registerByPhone(params: RegisterByPhoneDot) {
+    const { phone } = params;
     // const { loginName, realName, phone, password, smsCode } = params;
-    console.log(params);
+    const smsInfo = await this.smsModel.findOne({ phone });
+    console.log(smsInfo)
+    // const isExpire = (Date.now() - new Date(smsInfo ? smsInfo.updatedAt : 0).getTime()) > smsConfig.maxAge;
+    // const hasSmsPhone = !!smsInfo;
   }
 }

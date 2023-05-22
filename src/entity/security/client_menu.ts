@@ -1,8 +1,9 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
+import { Timestamps } from '../common/common';
 @modelOptions({
   schemaOptions: { timestamps: true, collection: 'security_client_menu' },
 })
-export class ClientMenu {
+export class ClientMenu extends Timestamps {
   /**
    * 菜单名称
    */

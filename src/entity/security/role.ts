@@ -1,8 +1,9 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
+import { Timestamps } from '../common/common';
 @modelOptions({
   schemaOptions: { timestamps: true, collection: 'security_role' },
 })
-export class Role {
+export class Role extends Timestamps {
   /**
    * 角色名称
    */

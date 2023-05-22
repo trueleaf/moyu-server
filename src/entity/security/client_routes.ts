@@ -1,8 +1,9 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
+import { Timestamps } from '../common/common';
 @modelOptions({
   schemaOptions: { timestamps: true, collection: 'security_client_routes' },
 })
-export class ClientRoutes {
+export class ClientRoutes extends Timestamps {
   /**
    * 路由名称
    */
