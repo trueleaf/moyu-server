@@ -6,9 +6,9 @@ export class Timestamps {
    */
   @prop()
   public createdAt: Date;
-    /**
+  /**
    * 更新日期
    */
-    @prop()
-    public updatedAt: Date;
+  @prop()
+  public updatedAt: Date;
 }

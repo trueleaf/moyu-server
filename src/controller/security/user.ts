@@ -1,18 +1,27 @@
-import { Inject, Controller, Get, Post, Query, SetHeader } from '@midwayjs/core';
+import {
+  Inject,
+  Controller,
+  Get,
+  Post,
+  Query,
+  SetHeader,
+  Body,
+} from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { RegisterByPhoneDot, SMSDto, SvgCaptchaDto } from '../../types/dto/security/user.dto';
+import {
+  RegisterByPhoneDot,
+  SMSDto,
+  SvgCaptchaDto,
+} from '../../types/dto/security/user.dto';
 import { User } from '../../entity/security/user';
 import { UserService } from '../../service/security/user';
-import * as svgCaptcha from 'svg-captcha'
+import * as svgCaptcha from 'svg-captcha';
 /*
 |--------------------------------------------------------------------------
 | 提供如下方法
 |--------------------------------------------------------------------------
-|
-| 
-|
 */
 
 @Controller('/api/security')
@@ -31,7 +40,7 @@ export class UserController {
    */
   @Get('/sms')
   async getSMSCode(@Query() params: SMSDto) {
-    const data = await this.userService.getSMSCode(params);;
+    const data = await this.userService.getSMSCode(params);
     return { success: true, message: 'OK', data: data };
   }
   /**
@@ -41,8 +50,8 @@ export class UserController {
   @SetHeader('content-type', 'image/svg+xml')
   async getSVGCaptcha(@Query() params: SvgCaptchaDto) {
     const captcha = svgCaptcha.create({
-        width: params.width,
-        height: params.height
+      width: params.width,
+      height: params.height,
     });
     return captcha.data;
   }
@@ -50,8 +59,8 @@ export class UserController {
    * 手机号用户注册
    */
   @Post('/register')
-  async registerByPhone(@Query() params: RegisterByPhoneDot) {
-    const data = await this.userService.registerByPhone(params);;
+  async registerByPhone(@Body() params: RegisterByPhoneDot) {
+    const data = await this.userService.registerByPhone(params);
     return { success: true, message: 'OK', data: data };
   }
 }

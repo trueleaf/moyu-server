@@ -27,15 +27,18 @@ export class UserService {
       accessKeyId: this.smsConfig.accessKeyId,
       accessKeySecret: this.smsConfig.accessKeySecret,
     });
-    config.endpoint = `dysmsapi.aliyuncs.com`;
-    const client = new Dysmsapi20170525(config)
+    config.endpoint = 'dysmsapi.aliyuncs.com';
+    const client = new Dysmsapi20170525(config);
     const sendSmsRequest = new $Dysmsapi20170525.SendSmsRequest({
       phoneNumbers: phone,
       signName: this.smsConfig.SignName,
       templateCode: this.smsConfig.templateCode,
     });
-    await client.sendSmsWithOptions(sendSmsRequest, new $Util.RuntimeOptions({ }));
-    console.log(code, OpenApi)
+    await client.sendSmsWithOptions(
+      sendSmsRequest,
+      new $Util.RuntimeOptions({})
+    );
+    console.log(code, OpenApi);
   }
 
   /**
@@ -45,7 +48,7 @@ export class UserService {
     const { phone } = params;
     // const { loginName, realName, phone, password, smsCode } = params;
     const smsInfo = await this.smsModel.findOne({ phone });
-    console.log(smsInfo)
+    console.log(smsInfo);
     // const isExpire = (Date.now() - new Date(smsInfo ? smsInfo.updatedAt : 0).getTime()) > smsConfig.maxAge;
     // const hasSmsPhone = !!smsInfo;
   }

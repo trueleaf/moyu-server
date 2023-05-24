@@ -2,7 +2,9 @@ import { Middleware, IMiddleware } from '@midwayjs/core';
 import { NextFunction, Context } from '@midwayjs/koa';
 
 @Middleware()
-export class ResponseWrapperMiddleware implements IMiddleware<Context, NextFunction> {
+export class ResponseWrapperMiddleware
+  implements IMiddleware<Context, NextFunction>
+{
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
       const result = await next();
@@ -10,7 +12,7 @@ export class ResponseWrapperMiddleware implements IMiddleware<Context, NextFunct
       return {
         code: 0,
         msg: '操作成功',
-        data: result
+        data: result,
       };
     };
   }
