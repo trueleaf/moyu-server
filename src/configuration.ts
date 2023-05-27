@@ -7,7 +7,10 @@ import { join } from 'path';
 // import { DefaultErrorFilter } from './filter/default.filter';
 // import { NotFoundFilter } from './filter/notfound.filter';
 import { ResponseWrapperMiddleware } from './middleware/response.middleware';
-import { ValidateErrorFilter } from './filter/validate.filter';
+import {
+  AllServerErrorFilter,
+  ValidateErrorFilter,
+} from './filter/error.filter';
 @Configuration({
   imports: [
     koa,
@@ -28,6 +31,6 @@ export class ContainerLifeCycle {
     // add middleware
     this.app.useMiddleware([ResponseWrapperMiddleware]);
     // add filter
-    this.app.useFilter([ValidateErrorFilter]);
+    this.app.useFilter([ValidateErrorFilter, AllServerErrorFilter]);
   }
 }
