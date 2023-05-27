@@ -49,6 +49,11 @@ export class UserService {
     // const { loginName, realName, phone, password, smsCode } = params;
     const smsInfo = await this.smsModel.findOne({ phone });
     console.log(smsInfo);
+    if (!smsInfo) {
+      return {
+        code: 200,
+      };
+    }
     // const isExpire = (Date.now() - new Date(smsInfo ? smsInfo.updatedAt : 0).getTime()) > smsConfig.maxAge;
     // const hasSmsPhone = !!smsInfo;
   }
