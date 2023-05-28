@@ -11,7 +11,8 @@ import { Context } from '@midwayjs/koa';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import {
-  RegisterByPhoneDot,
+  LoginByPasswordDto,
+  RegisterByPhoneDto,
   SMSDto,
   SvgCaptchaDto,
 } from '../../types/dto/security/user.dto';
@@ -41,7 +42,7 @@ export class UserController {
   @Get('/sms')
   async getSMSCode(@Query() params: SMSDto) {
     const data = await this.userService.getSMSCode(params);
-    return { success: true, message: 'OK', data: data };
+    return data;
   }
   /**
    * 获取图形验证码
@@ -59,8 +60,16 @@ export class UserController {
    * 手机号用户注册
    */
   @Post('/register')
-  async registerByPhone(@Body() params: RegisterByPhoneDot) {
+  async registerByPhone(@Body() params: RegisterByPhoneDto) {
     const data = await this.userService.registerByPhone(params);
-    return { success: true, message: 'OK', data: data };
+    return data;
+  }
+  /**
+   * 根据账号密码登录
+   */
+  @Post('/login_password')
+  async loginByPassword(@Body() params: LoginByPasswordDto) {
+    const data = await this.userService.loginByPassword(params);
+    return data;
   }
 }

@@ -23,7 +23,7 @@ export class SvgCaptchaDto {
  * 手机号用户注册
  */
 
-export class RegisterByPhoneDot {
+export class RegisterByPhoneDto {
   /**
    * 登录名称
    */
@@ -49,4 +49,21 @@ export class RegisterByPhoneDot {
    */
   @Rule(RuleType.string())
   realName: string;
+}
+/**
+ * 用户名加密码登录
+ */
+export class LoginByPasswordDto {
+  /**
+   * 登录名称
+   */
+  loginName: string;
+  /**
+   * 密码
+   */
+  password: string;
+  /**
+   * 验证码
+   */
+  captcha?: string;
 }
