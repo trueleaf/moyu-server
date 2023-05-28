@@ -8,7 +8,9 @@ export class ResponseWrapperMiddleware
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
       const result = await next();
-      // 返回给上一个中间件的结果
+      if (result?.isCustomError) {
+        return result;
+      }
       return {
         code: 0,
         msg: '操作成功',

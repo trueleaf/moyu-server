@@ -28,9 +28,7 @@ export class ContainerLifeCycle {
   app: koa.Application;
 
   async onReady() {
-    // add middleware
     this.app.useMiddleware([ResponseWrapperMiddleware]);
-    // add filter
     this.app.useFilter([ValidateErrorFilter, AllServerErrorFilter]);
   }
 }
