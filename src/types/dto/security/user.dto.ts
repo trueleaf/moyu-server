@@ -43,7 +43,7 @@ export class RegisterByPhoneDto {
    * 手机号码(非必填)
    */
   @Rule(RuleType.string())
-  phone: string;
+  phone?: string;
   /**
    * 真实姓名(非必填)
    */
@@ -57,13 +57,32 @@ export class LoginByPasswordDto {
   /**
    * 登录名称
    */
+  @Rule(RuleType.string().required())
   loginName: string;
   /**
    * 密码
    */
+  @Rule(RuleType.string().required())
   password: string;
   /**
    * 验证码
    */
+  @Rule(RuleType.string())
   captcha?: string;
+}
+
+/**
+ * 手机号码登录
+ */
+export class LoginByPhoneDto {
+  /**
+   * 手机号码
+   */
+  @Rule(RuleType.string().required())
+  phone: string;
+  /**
+   * 验证码
+   */
+  @Rule(RuleType.string().required())
+  smsCode: string;
 }

@@ -1,6 +1,7 @@
 import { Config, Inject, Provide } from '@midwayjs/core';
 import {
   LoginByPasswordDto,
+  LoginByPhoneDto,
   RegisterByPhoneDto,
   SMSDto,
 } from '../../types/dto/security/user.dto';
@@ -16,6 +17,7 @@ import { User } from '../../entity/security/user';
 import { createHash } from 'crypto';
 import { Context } from '@midwayjs/koa';
 import { LoginRecord } from '../../entity/security/login_record';
+import * as jwt from 'jsonwebtoken';
 
 @Provide()
 export class UserService {
@@ -24,6 +26,8 @@ export class UserService {
 
   @Config('smsConfig')
   smsConfig: GlobalConfig['smsConfig'];
+  @Config('jwtConfig')
+  jwtConfig: GlobalConfig['jwtConfig'];
 
   @InjectEntityModel(Sms)
   smsModel: ReturnModelType<typeof Sms>;
@@ -125,73 +129,81 @@ export class UserService {
    * 使用密码登录
    */
   async loginByPassword(params: LoginByPasswordDto) {
-    // const { loginName, password, captcha = '' } = params;
-    // const userInfo = await this.userModel.findOne({ loginName });
-    // const result = {};
-    const { captcha } = params;
-    console.log(this.ctx.session.captcha, 99);
-    //验证码是否正确
-    if (
-      this.ctx.session.captcha &&
-      this.ctx.session.captcha.toLowerCase() !== captcha.toLowerCase()
-    ) {
-      await this.addLoginTimes();
-      this.ctx.helper.throwCustomError('验证码错误', 2003);
+    const { loginName, password } = params;
+    const userInfo = await this.userModel.findOne({ loginName });
+    if (!userInfo.enable) {
+      return throwError(2008, '用户被禁止登录');
     }
-    // //用户不存在
-    // if (!userInfo) {
-    //   await this.addLoginTimes();
-    //   if (loginRecord && loginRecord.loginTimes > 3) {
-    //     this.ctx.helper.throwCustomError('需要填写验证码', 2006);
-    //   } else {
-    //     this.ctx.helper.throwCustomError('用户名或密码错误', 2004);
-    //   }
-    // }
-    // if (!userInfo.enable) {
-    //   this.ctx.helper.throwCustomError('用户被锁定', 2008);
-    // }
-    // //判断密码
-    // const hash = crypto.createHash('md5');
-    // hash.update((password + userInfo.salt).slice(2));
-    // const hashPassword = hash.digest('hex');
-    // if (userInfo.password !== hashPassword) {
-    //   await this.addLoginTimes();
-    //   if (loginRecord && loginRecord.loginTimes > 3) {
-    //     this.ctx.helper.throwCustomError('需要填写验证码', 2006);
-    //   } else {
-    //     this.ctx.helper.throwCustomError('用户名或密码错误', 2004);
-    //   }
-    // }
-    // //登录成功
-    // await this.ctx.model.Security.LoginRecord.updateOne(
-    //   { ip: this.ctx.ip },
-    //   {
-    //     $set: { loginTimes: 0 },
-    //   }
-    // );
-    // await this.ctx.model.Security.User.findByIdAndUpdate(
-    //   { _id: userInfo._id },
-    //   {
-    //     $inc: { loginTimes: 1 },
-    //     $set: { lastLogin: new Date() },
-    //   }
-    // );
+    //判断密码
+    const hash = createHash('md5');
+    hash.update((password + userInfo.salt).slice(2));
+    const hashPassword = hash.digest('hex');
+    if (userInfo.password !== hashPassword) {
+      await this.addLoginTimes();
+      return throwError(2004, '用户名或密码错误');
+    }
+    //登录成功
+    await this.loginRecordModel.updateOne(
+      { ip: this.ctx.ip },
+      {
+        $set: { loginTimes: 0 },
+      }
+    );
+    await this.userModel.findByIdAndUpdate(
+      { _id: userInfo._id },
+      {
+        $inc: { loginTimes: 1 },
+        $set: { lastLogin: new Date() },
+      }
+    );
 
-    // Object.assign(result, {
-    //   id: userInfo.id,
-    //   roleIds: userInfo.roleIds,
-    //   loginName: userInfo.loginName,
-    //   realName: userInfo.realName,
-    //   phone: userInfo.phone,
-    // });
-    // // this.ctx.userInfo = {
-    // //     ...result,
-    // // };
-    // const { jwtConfig } = this.app.config;
-    // const token = jwt.sign(result, jwtConfig.secretOrPrivateKey, {
-    //   expiresIn: jwtConfig.expiresIn,
-    // });
-    // result.token = token;
-    // return result;
+    const loginInfo = {
+      id: userInfo.id,
+      roleIds: userInfo.roleIds,
+      loginName: userInfo.loginName,
+      realName: userInfo.realName,
+      phone: userInfo.phone,
+      token: '',
+    };
+    const token = jwt.sign(loginInfo, this.jwtConfig.secretOrPrivateKey, {
+      expiresIn: this.jwtConfig.expiresIn,
+    });
+    loginInfo.token = token;
+    return loginInfo;
+  }
+  /**
+   * 使用手机号码登录
+   */
+  async loginByPhone(params: LoginByPhoneDto) {
+    const { phone, smsCode } = params;
+    const smsInfo = await this.smsModel.findOne({ phone });
+    const updateTimestamps = new Date(smsInfo.updatedAt).getTime();
+    const isExpire = Date.now() - updateTimestamps > this.smsConfig.maxAge;
+    if (!smsInfo) {
+      return throwError(2005, '请输入正确的手机号码');
+    }
+    if (isExpire) {
+      return throwError(2003, '验证码已失效');
+    }
+    if (smsInfo.smsCode !== smsCode) {
+      return throwError(2003, '短信验证码错误');
+    }
+    const userInfo = await this.userModel.findOne({ phone });
+    if (!userInfo) {
+      return throwError(2004, '当前用户不存在');
+    }
+    const loginInfo = {
+      id: userInfo.id,
+      roleIds: userInfo.roleIds,
+      loginName: userInfo.loginName,
+      realName: userInfo.realName,
+      phone: userInfo.phone,
+      token: '',
+    };
+    const token = jwt.sign(loginInfo, this.jwtConfig.secretOrPrivateKey, {
+      expiresIn: this.jwtConfig.expiresIn,
+    });
+    loginInfo.token = token;
+    return loginInfo;
   }
 }

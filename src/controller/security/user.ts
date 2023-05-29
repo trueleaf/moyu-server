@@ -12,6 +12,7 @@ import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import {
   LoginByPasswordDto,
+  LoginByPhoneDto,
   RegisterByPhoneDto,
   SMSDto,
   SvgCaptchaDto,
@@ -70,6 +71,14 @@ export class UserController {
   @Post('/login_password')
   async loginByPassword(@Body() params: LoginByPasswordDto) {
     const data = await this.userService.loginByPassword(params);
+    return data;
+  }
+  /**
+   * 根据手机号码登录
+   */
+  @Post('/login_phone')
+  async loginByPhone(@Body() params: LoginByPhoneDto) {
+    const data = await this.userService.loginByPhone(params);
     return data;
   }
 }
