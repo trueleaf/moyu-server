@@ -16,6 +16,8 @@
     "@midwayjs/typegoose": "^3.11.6",
     "@midwayjs/validate": "^3.0.0",
     "@typegoose/typegoose": "^11.1.0",
+    "@types/jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^7.1.0",
     "svg-captcha": "^1.4.0"
   },

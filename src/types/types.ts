@@ -18,4 +18,15 @@ export type GlobalConfig = {
      */
     defaultRegisterPassword: string;
   };
+  //jwt相关配置
+  jwtConfig: {
+    /**
+     * 私钥
+     */
+    secretOrPrivateKey: string;
+    /**
+     * 过期时间
+     */
+    expiresIn: number;
+  };
 };

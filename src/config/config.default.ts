@@ -5,6 +5,7 @@ import { ClientMenu } from '../entity/security/client_menu';
 import { Role } from '../entity/security/role';
 import { ClientRoutes } from '../entity/security/client_routes';
 import { ServerRoutes } from '../entity/security/server_routes';
+import { LoginRecord } from '../entity/security/login_record';
 
 export default {
   keys: '1683383633312_1890',
@@ -30,7 +31,15 @@ export default {
           useUnifiedTopology: true,
         },
         // 关联实体
-        entities: [User, Sms, ClientMenu, ClientRoutes, Role, ServerRoutes],
+        entities: [
+          User,
+          Sms,
+          ClientMenu,
+          ClientRoutes,
+          Role,
+          ServerRoutes,
+          LoginRecord,
+        ],
       },
     },
   },
@@ -48,5 +57,9 @@ export default {
   },
   apiflow: {
     defaultRegisterPassword: '111111',
+  },
+  jwtConfig: {
+    secretOrPrivateKey: 'apiflow', //私钥
+    expiresIn: `${1000 * 60 * 60 * 24 * 7}`, //过期时间
   },
 } as MidwayConfig;
