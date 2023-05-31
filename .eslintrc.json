@@ -17,6 +17,7 @@
       "prettier/prettier": ["error", {
         "endOfLine": "auto"
       }],
+      "endOfLine": "off",
       "block-scoped-var": "error",
       "eqeqeq": ["error", "always", { "null": "ignore" }],
       "no-var": "error",
@@ -26,14 +27,14 @@
       "no-constant-condition": "off",
       "no-process-exit": "off",
       "no-trailing-spaces": "error",
-      "quotes": ["warn", "single", { "avoidEscape": true }]
+      "quotes": ["error", "single", { "avoidEscape": true }]
   },
   "overrides": [
       {
           "files": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
           "parser": "@typescript-eslint/parser",
           "extends": [
-              "plugin:@typescript-eslint/recommended"
+            "plugin:@typescript-eslint/recommended"
           ],
           "rules": {
               "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
