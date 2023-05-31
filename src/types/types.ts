@@ -29,4 +29,14 @@ export type GlobalConfig = {
      */
     expiresIn: number;
   };
+  permission: {
+    /**
+     * 接口白名单，不需要权限验证
+     */
+    whiteList: string[];
+    /**
+     * free模式无权限验证(互联网环境不安全!!!)
+     */
+    isFree: boolean;
+  };
 };
