@@ -6,11 +6,13 @@ import {
   Query,
   SetHeader,
   Body,
+  Put,
 } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import {
+  ChangePasswordByUserDto,
   LoginByPasswordDto,
   LoginByPhoneDto,
   RegisterByPhoneDto,
@@ -79,6 +81,14 @@ export class UserController {
   @Post('/login_phone')
   async loginByPhone(@Body() params: LoginByPhoneDto) {
     const data = await this.userService.loginByPhone(params);
+    return data;
+  }
+  /**
+   * 修改密码(用户主动修改)
+   */
+  @Put('/user_password')
+  async changePasswordByUser(@Body() params: ChangePasswordByUserDto) {
+    const data = await this.userService.changePasswordByUser(params);
     return data;
   }
 }

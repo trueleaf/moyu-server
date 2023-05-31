@@ -86,3 +86,18 @@ export class LoginByPhoneDto {
   @Rule(RuleType.string().required())
   smsCode: string;
 }
+/**
+ * 修改用户密码
+ */
+export class ChangePasswordByUserDto {
+  /**
+   * 原密码
+   */
+  @Rule(RuleType.string().required())
+  oldPassword: string;
+  /**
+   * 新密码
+   */
+  @Rule(RuleType.string().required())
+  newPassword: string;
+}

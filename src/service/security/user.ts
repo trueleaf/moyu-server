@@ -1,5 +1,6 @@
 import { Config, Inject, Provide } from '@midwayjs/core';
 import {
+  ChangePasswordByUserDto,
   LoginByPasswordDto,
   LoginByPhoneDto,
   RegisterByPhoneDto,
@@ -205,5 +206,36 @@ export class UserService {
     });
     loginInfo.token = token;
     return loginInfo;
+  }
+  /**
+   * 修改密码(用户主动)
+   */
+  async changePasswordByUser(params: ChangePasswordByUserDto) {
+    const { oldPassword, newPassword } = params;
+    console.log(oldPassword, newPassword);
+    // const _id = this.ctx.userInfo.id;
+    // const matchString = /[a-zA-Z]/;
+    // const matchNumber = /\d/;
+    // const inValidKey = /[^\w\d!@#]/;
+    // if (newPassword.match(inValidKey)) {
+    //     this.ctx.helper.throwCustomError("密码存在非法字段", 1007);
+    // }
+    // if (!newPassword.match(matchString) || !newPassword.match(matchNumber) || newPassword.length < 8) {
+    //     this.ctx.helper.throwCustomError("密码长度和格式不正确", 1007);
+    // }
+    // //=========================================================================//
+    // const userInfo = await this.ctx.model.Security.User.findOne({ _id });
+    // const hash = crypto.createHash("md5");
+    // hash.update((oldPassword + userInfo.salt).slice(2));
+    // const hashPassword = hash.digest("hex");
+    // if (userInfo.password !== hashPassword) {
+    //     this.ctx.helper.throwCustomError("原密码错误", 2009);
+    // }
+
+    // const hash2 = crypto.createHash("md5");
+    // const newHashPassword = hash2.update((newPassword + userInfo.salt).slice(2)).digest("hex");
+
+    // await this.ctx.model.Security.User.findByIdAndUpdate({ _id }, { $set: { password: newHashPassword }});
+    // return;
   }
 }
