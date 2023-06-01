@@ -1,8 +1,7 @@
 {
   "extends": [
       "eslint:recommended",
-      "plugin:node/recommended",
-      "prettier"
+      "plugin:node/recommended"
   ],
   "env": {
     "jest": true
@@ -10,14 +9,9 @@
   "ignorePatterns": ["node_modules", "dist", "test", "jest.config.js", "typings"],
 
   "plugins": [
-      "node",
-      "prettier"
+      "node"
   ],
   "rules": {
-      "prettier/prettier": ["error", {
-        "endOfLine": "auto"
-      }],
-      "endOfLine": "off",
       "block-scoped-var": "error",
       "eqeqeq": ["error", "always", { "null": "ignore" }],
       "no-var": "error",
@@ -27,7 +21,8 @@
       "no-constant-condition": "off",
       "no-process-exit": "off",
       "no-trailing-spaces": "error",
-      "quotes": ["error", "single", { "avoidEscape": true }]
+      "quotes": ["warn", "single", { "avoidEscape": true }],
+      "indent": ["error", 2]
   },
   "overrides": [
       {
@@ -42,7 +37,6 @@
               "@typescript-eslint/no-use-before-define": "off",
               "@typescript-eslint/no-warning-comments": "off",
               "@typescript-eslint/no-empty-function": "off",
-              "@typescript-eslint/no-explicit-any": "off",
               "@typescript-eslint/no-var-requires": "off",
               "@typescript-eslint/explicit-function-return-type": "off",
               "@typescript-eslint/explicit-module-boundary-types": "off",
