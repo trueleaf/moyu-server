@@ -1,3 +1,6 @@
+import { ObjectId } from 'mongoose';
+import { User } from '../entity/security/user';
+
 /**
  * 全局配置
  */
@@ -39,4 +42,22 @@ export type GlobalConfig = {
      */
     isFree: boolean;
   };
+  security: {
+    /**
+     * 是否严格限制密码格式
+     */
+    strictPassword: boolean;
+  };
+};
+
+/**
+ * 用户信息，登录以后塞入token里面
+ */
+export type LoginTokenInfo = {
+  id: ObjectId;
+  roleIds: User['roleIds'];
+  loginName: User['loginName'];
+  realName: User['realName'];
+  phone: User['phone'];
+  token: string;
 };

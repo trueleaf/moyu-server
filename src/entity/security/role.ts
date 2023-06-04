@@ -18,7 +18,7 @@ export class Role extends Timestamps {
    * 前端菜单
    */
   @prop({ type: () => [String] })
-  public clientBanner: string;
+  public clientBanner: string[];
   /**
    * 服务端路由
    */

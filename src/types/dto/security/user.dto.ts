@@ -5,7 +5,7 @@ import { Rule, RuleType } from '@midwayjs/validate';
  */
 export class SMSDto {
   @Rule(RuleType.string().required())
-  phone: string;
+    phone: string;
 }
 
 /**
@@ -13,10 +13,10 @@ export class SMSDto {
  */
 export class SvgCaptchaDto {
   @Rule(RuleType.number().default(100))
-  width: number;
+    width: number;
 
   @Rule(RuleType.number().default(100))
-  height: number;
+    height: number;
 }
 
 /**
@@ -28,27 +28,27 @@ export class RegisterByPhoneDto {
    * 登录名称
    */
   @Rule(RuleType.string().required())
-  loginName: string;
+    loginName: string;
   /**
    * 密码
    */
   @Rule(RuleType.string().required())
-  password: string;
+    password: string;
   /**
    * 手机验证码
    */
   @Rule(RuleType.string().required())
-  smsCode: string;
+    smsCode: string;
   /**
    * 手机号码(非必填)
    */
   @Rule(RuleType.string())
-  phone?: string;
+    phone?: string;
   /**
    * 真实姓名(非必填)
    */
   @Rule(RuleType.string())
-  realName: string;
+    realName: string;
 }
 /**
  * 用户名加密码登录
@@ -58,17 +58,17 @@ export class LoginByPasswordDto {
    * 登录名称
    */
   @Rule(RuleType.string().required())
-  loginName: string;
+    loginName: string;
   /**
    * 密码
    */
   @Rule(RuleType.string().required())
-  password: string;
+    password: string;
   /**
    * 验证码
    */
   @Rule(RuleType.string())
-  captcha?: string;
+    captcha?: string;
 }
 
 /**
@@ -79,12 +79,12 @@ export class LoginByPhoneDto {
    * 手机号码
    */
   @Rule(RuleType.string().required())
-  phone: string;
+    phone: string;
   /**
    * 验证码
    */
   @Rule(RuleType.string().required())
-  smsCode: string;
+    smsCode: string;
 }
 /**
  * 修改用户密码
@@ -94,10 +94,10 @@ export class ChangePasswordByUserDto {
    * 原密码
    */
   @Rule(RuleType.string().required())
-  oldPassword: string;
+    oldPassword: string;
   /**
    * 新密码
    */
   @Rule(RuleType.string().required())
-  newPassword: string;
+    newPassword: string;
 }

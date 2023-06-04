@@ -47,7 +47,7 @@ class RecordInfo {
   /**
    * 修改文档，节点保存期快照
    */
-  public nodeSnapshot: Record<string, any>;
+  public nodeSnapshot: Record<string, unknown>;
   /**
    * 文档位置改变，相对节点id
    */

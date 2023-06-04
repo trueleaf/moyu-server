@@ -31,13 +31,13 @@ import * as svgCaptcha from 'svg-captcha';
 @Controller('/api/security')
 export class UserController {
   @Inject()
-  ctx: Context;
+    ctx: Context;
 
   @Inject()
-  userService: UserService;
+    userService: UserService;
 
   @InjectEntityModel(User)
-  userModel: ReturnModelType<typeof User>;
+    userModel: ReturnModelType<typeof User>;
 
   /**
    * 获取手机验证码

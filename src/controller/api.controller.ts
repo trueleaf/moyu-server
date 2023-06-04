@@ -8,13 +8,13 @@ import { ReturnModelType } from '@typegoose/typegoose';
 @Controller('/api')
 export class APIController {
   @Inject()
-  ctx: Context;
+    ctx: Context;
 
   @Inject()
-  userService: UserService;
+    userService: UserService;
 
   @InjectEntityModel(User)
-  userModel: ReturnModelType<typeof User>;
+    userModel: ReturnModelType<typeof User>;
 
   @Get('/get_user')
   async getUser() {
