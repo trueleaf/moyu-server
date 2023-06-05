@@ -7,7 +7,7 @@ import {
   SMSDto,
 } from '../../types/dto/security/user.dto';
 import { getRandomNumber, throwError } from '../../utils/utils';
-import { GlobalConfig } from '../../types/types';
+import { GlobalConfig, LoginTokenInfo } from '../../types/types';
 import Dysmsapi20170525, * as $Dysmsapi20170525 from '@alicloud/dysmsapi20170525';
 import * as $OpenApi from '@alicloud/openapi-client';
 import * as $Util from '@alicloud/tea-util';
@@ -19,23 +19,24 @@ import { createHash } from 'crypto';
 import { Context } from '@midwayjs/koa';
 import { LoginRecord } from '../../entity/security/login_record';
 import * as jwt from 'jsonwebtoken';
+import { validatePassword } from '../../rules/rules';
 
 @Provide()
 export class UserService {
   @Inject()
-  ctx: Context;
+    ctx: Context & { tokenInfo: LoginTokenInfo };
 
   @Config('smsConfig')
-  smsConfig: GlobalConfig['smsConfig'];
+    smsConfig: GlobalConfig['smsConfig'];
   @Config('jwtConfig')
-  jwtConfig: GlobalConfig['jwtConfig'];
+    jwtConfig: GlobalConfig['jwtConfig'];
 
   @InjectEntityModel(Sms)
-  smsModel: ReturnModelType<typeof Sms>;
+    smsModel: ReturnModelType<typeof Sms>;
   @InjectEntityModel(User)
-  userModel: ReturnModelType<typeof User>;
+    userModel: ReturnModelType<typeof User>;
   @InjectEntityModel(LoginRecord)
-  loginRecordModel: ReturnModelType<typeof LoginRecord>;
+    loginRecordModel: ReturnModelType<typeof LoginRecord>;
 
   /**
    * 根据手机号码获取短信验证码
@@ -132,6 +133,9 @@ export class UserService {
   async loginByPassword(params: LoginByPasswordDto) {
     const { loginName, password } = params;
     const userInfo = await this.userModel.findOne({ loginName });
+    if (!userInfo) {
+      return throwError(2004, '用户不存在')
+    }
     if (!userInfo.enable) {
       return throwError(2008, '用户被禁止登录');
     }
@@ -158,7 +162,7 @@ export class UserService {
       }
     );
 
-    const loginInfo = {
+    const loginInfo: LoginTokenInfo = {
       id: userInfo.id,
       roleIds: userInfo.roleIds,
       loginName: userInfo.loginName,
@@ -193,7 +197,7 @@ export class UserService {
     if (!userInfo) {
       return throwError(2004, '当前用户不存在');
     }
-    const loginInfo = {
+    const loginInfo: LoginTokenInfo = {
       id: userInfo.id,
       roleIds: userInfo.roleIds,
       loginName: userInfo.loginName,
@@ -212,30 +216,20 @@ export class UserService {
    */
   async changePasswordByUser(params: ChangePasswordByUserDto) {
     const { oldPassword, newPassword } = params;
-    console.log(oldPassword, newPassword);
-    // const _id = this.ctx.userInfo.id;
-    // const matchString = /[a-zA-Z]/;
-    // const matchNumber = /\d/;
-    // const inValidKey = /[^\w\d!@#]/;
-    // if (newPassword.match(inValidKey)) {
-    //     this.ctx.helper.throwCustomError("密码存在非法字段", 1007);
-    // }
-    // if (!newPassword.match(matchString) || !newPassword.match(matchNumber) || newPassword.length < 8) {
-    //     this.ctx.helper.throwCustomError("密码长度和格式不正确", 1007);
-    // }
-    // //=========================================================================//
-    // const userInfo = await this.ctx.model.Security.User.findOne({ _id });
-    // const hash = crypto.createHash("md5");
-    // hash.update((oldPassword + userInfo.salt).slice(2));
-    // const hashPassword = hash.digest("hex");
-    // if (userInfo.password !== hashPassword) {
-    //     this.ctx.helper.throwCustomError("原密码错误", 2009);
-    // }
+    const { id } = this.ctx.tokenInfo;
+    if (!validatePassword(newPassword)) {
+      return throwError(1007, '密码至少8位，并且必须包含数字和字母');
+    }
+    const userInfo = await this.userModel.findOne({ _id: id });
+    const hash = createHash('md5');
+    hash.update((oldPassword + userInfo.salt).slice(2));
+    const hashPassword = hash.digest('hex');
+    if (userInfo.password !== hashPassword) {
+      return throwError(2009, '原密码错误');
+    }
 
-    // const hash2 = crypto.createHash("md5");
-    // const newHashPassword = hash2.update((newPassword + userInfo.salt).slice(2)).digest("hex");
-
-    // await this.ctx.model.Security.User.findByIdAndUpdate({ _id }, { $set: { password: newHashPassword }});
-    // return;
+    const newHash = createHash('md5');
+    const newHashPassword = newHash.update((newPassword + userInfo.salt).slice(2)).digest('hex');
+    await this.userModel.findByIdAndUpdate({ _id: id }, { $set: { password: newHashPassword }});
   }
 }
