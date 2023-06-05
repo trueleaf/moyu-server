@@ -83,4 +83,7 @@ export default {
       '/api/project/share_doc_detail',
     ],
   },
+  security: {
+    strictPassword: true,
+  },
 } as MidwayConfig;
