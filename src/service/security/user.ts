@@ -1,6 +1,7 @@
 import { Config, Inject, Provide } from '@midwayjs/core';
 import {
   ChangePasswordByUserDto,
+  DisableUserDto,
   LoginByPasswordDto,
   LoginByPhoneDto,
   RegisterByPhoneDto,
@@ -231,5 +232,14 @@ export class UserService {
     const newHash = createHash('md5');
     const newHashPassword = newHash.update((newPassword + userInfo.salt).slice(2)).digest('hex');
     await this.userModel.findByIdAndUpdate({ _id: id }, { $set: { password: newHashPassword }});
+  }
+
+  /**
+   * 批量禁用用户
+   */
+  async disableUser(params: DisableUserDto) {
+    const { ids } = params;
+    const result = await this.userModel.updateMany({ _id: { $in: ids }}, { $set: { enable: false }});
+    return result;
   }
 }

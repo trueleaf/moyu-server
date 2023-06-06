@@ -7,12 +7,14 @@ import {
   SetHeader,
   Body,
   Put,
+  Del,
 } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import {
   ChangePasswordByUserDto,
+  DisableUserDto,
   LoginByPasswordDto,
   LoginByPhoneDto,
   RegisterByPhoneDto,
@@ -28,7 +30,7 @@ import * as svgCaptcha from 'svg-captcha';
 |--------------------------------------------------------------------------
 */
 
-@Controller('/api/security')
+@Controller('/api')
 export class UserController {
   @Inject()
     ctx: Context;
@@ -42,7 +44,7 @@ export class UserController {
   /**
    * 获取手机验证码
    */
-  @Get('/sms')
+  @Get('/security/sms')
   async getSMSCode(@Query() params: SMSDto) {
     const data = await this.userService.getSMSCode(params);
     return data;
@@ -50,7 +52,7 @@ export class UserController {
   /**
    * 获取图形验证码
    */
-  @Get('/captcha')
+  @Get('/security/captcha')
   @SetHeader('content-type', 'image/svg+xml')
   async getSVGCaptcha(@Query() params: SvgCaptchaDto) {
     const captcha = svgCaptcha.create({
@@ -62,7 +64,7 @@ export class UserController {
   /**
    * 手机号用户注册
    */
-  @Post('/register')
+  @Post('/security/register')
   async registerByPhone(@Body() params: RegisterByPhoneDto) {
     const data = await this.userService.registerByPhone(params);
     return data;
@@ -70,7 +72,7 @@ export class UserController {
   /**
    * 根据账号密码登录
    */
-  @Post('/login_password')
+  @Post('/security/login_password')
   async loginByPassword(@Body() params: LoginByPasswordDto) {
     const data = await this.userService.loginByPassword(params);
     return data;
@@ -78,7 +80,7 @@ export class UserController {
   /**
    * 根据手机号码登录
    */
-  @Post('/login_phone')
+  @Post('/security/login_phone')
   async loginByPhone(@Body() params: LoginByPhoneDto) {
     const data = await this.userService.loginByPhone(params);
     return data;
@@ -86,9 +88,19 @@ export class UserController {
   /**
    * 修改密码(用户主动修改)
    */
-  @Put('/user_password')
+  @Put('/security/user_password')
   async changePasswordByUser(@Body() params: ChangePasswordByUserDto) {
     const data = await this.userService.changePasswordByUser(params);
     return data;
   }
+  /**
+   * 批量禁用用户
+   */
+  @Del('/project/delete_user') //【兼容】历史数据
+  @Del('/security/delete_user')
+  async disableUser(@Body() params: DisableUserDto) {
+    const data = await this.userService.disableUser(params);
+    return data;
+  }
+
 }

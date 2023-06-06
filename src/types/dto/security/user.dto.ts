@@ -101,3 +101,14 @@ export class ChangePasswordByUserDto {
   @Rule(RuleType.string().required())
     newPassword: string;
 }
+
+/**
+ * 批量禁用用户
+ */
+export class DisableUserDto {
+  /**
+   * 用户id集合
+   */
+  @Rule(RuleType.array().items(RuleType.string()))
+    ids: string[];
+}

@@ -25,7 +25,7 @@ export default {
   mongoose: {
     dataSource: {
       default: {
-        uri: 'mongodb://localhost:27017/test',
+        uri: 'mongodb://localhost:27017/apiflow',
         options: {
           useNewUrlParser: true,
           useUnifiedTopology: true,
