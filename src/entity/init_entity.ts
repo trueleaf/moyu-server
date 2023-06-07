@@ -992,6 +992,7 @@ const INITIAL_ROLE = [
     roleName: '权限管理-完全控制',
     serverRoutes: [
       '5edd91b25fcdf3111671cba5',
+      '60a35a7de7af1332c8669d60',
       '5edd91b25fcdf3111671cba7',
       '5edd91b25fcdf3111671cba9',
       '5edd91b25fcdf3111671cbab',
