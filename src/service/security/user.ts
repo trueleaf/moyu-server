@@ -239,7 +239,6 @@ export class UserService {
    */
   async disableUser(params: DisableUserDto) {
     const { ids } = params;
-    const result = await this.userModel.updateMany({ _id: { $in: ids }}, { $set: { enable: false }});
-    return result;
+    await this.userModel.updateMany({ _id: { $in: ids }}, { $set: { enable: false }});
   }
 }

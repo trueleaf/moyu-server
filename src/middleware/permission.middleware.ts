@@ -58,6 +58,9 @@ export class PermissionMiddleware implements IMiddleware<Context, NextFunction> 
             });
           }
         }
+        if (serverRouteInfoList.every(routeInfo => routeInfo.path !== urlWithoutQueryParams)) {
+          return throwError(4004, '路由不正确')
+        }
         const reqMethod = ctx.request.method.toLowerCase();
         const hasPermission = serverRouteInfoList.find(routeInfo => {
           const isSameMethod = routeInfo.method.toLowerCase() === reqMethod;
