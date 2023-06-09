@@ -13,11 +13,13 @@ import { Context } from '@midwayjs/koa';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import {
+  AddUserDto,
   ChangePasswordByUserDto,
   DisableUserDto,
   LoginByPasswordDto,
   LoginByPhoneDto,
   RegisterByPhoneDto,
+  ResetPasswordDto,
   SMSDto,
   SvgCaptchaDto,
 } from '../../types/dto/security/user.dto';
@@ -102,5 +104,20 @@ export class UserController {
     const data = await this.userService.disableUser(params);
     return data;
   }
-
+  /**
+   * 管理员重置密码
+   */
+  @Put('/security/reset_password')
+  async resetPasswordByAdmin(@Body() params: ResetPasswordDto) {
+    const data = await this.userService.resetPasswordByAdmin(params);
+    return data;
+  }
+  /**
+   * 手动添加用户
+   */
+  @Post('/security/useradd')
+  async addUser(@Body() params: AddUserDto) {
+    const data = await this.userService.addUser(params);
+    return data;
+  }
 }

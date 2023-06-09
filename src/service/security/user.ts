@@ -1,10 +1,12 @@
 import { Config, Inject, Provide } from '@midwayjs/core';
 import {
+  AddUserDto,
   ChangePasswordByUserDto,
   DisableUserDto,
   LoginByPasswordDto,
   LoginByPhoneDto,
   RegisterByPhoneDto,
+  ResetPasswordDto,
   SMSDto,
 } from '../../types/dto/security/user.dto';
 import { getRandomNumber, throwError } from '../../utils/utils';
@@ -240,5 +242,57 @@ export class UserService {
   async disableUser(params: DisableUserDto) {
     const { ids } = params;
     await this.userModel.updateMany({ _id: { $in: ids }}, { $set: { enable: false }});
+  }
+
+  /**
+   * 管理员重置密码
+   */
+  async resetPasswordByAdmin(params: ResetPasswordDto) {
+    const { userId, password } = params;
+    const hash = createHash('md5');
+    const salt = this.ctx.helper.rand(10000, 9999999).toString();
+    hash.update((password + salt).slice(2));
+    const hashPassword = hash.digest('hex');
+    await this.userModel.updateOne({ _id: userId }, { $set: { salt, password: hashPassword } });
+    return;
+  }
+  /**
+   * 手动添加用户
+   */
+  async addUser(params: AddUserDto) {
+    const { loginName, realName, phone, password = '111111', roleIds, roleNames } = params;
+    const hasUser = await this.userModel.findOne({ loginName });
+    const hasPhone = await this.userModel.findOne({ phone });
+    if (loginName.match(/guest/)) { //用于统计访客，内部部署可忽略
+      return throwError(2010, '用户名不能以包含guest')
+    }
+    if (hasUser) {
+      return throwError(1003, '账号已存在')
+    }
+    if (hasPhone) {
+      return throwError(1003, '该手机号已经绑定')
+    }
+    const doc: Pick<User, 'loginName' | 'realName' | 'phone' | 'password' | 'salt' | 'roleIds' | 'roleNames'> = {
+      loginName: '',
+      realName: '',
+      phone: '',
+      password: '',
+      salt: '',
+      roleIds: [],
+      roleNames: [],
+    };
+    const hash = createHash('md5');
+    const salt = this.ctx.helper.rand(10000, 9999999).toString();
+    hash.update((password + salt).slice(2));
+    const hashPassword = hash.digest('hex');
+    doc.loginName = loginName;
+    doc.realName = realName;
+    doc.phone = phone;
+    doc.password = hashPassword;
+    doc.salt = salt;
+    doc.roleIds = roleIds || [];
+    doc.roleNames = roleNames || [];
+    await this.userModel.create(doc);
+    return;
   }
 }
