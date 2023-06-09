@@ -47,6 +47,10 @@ export type GlobalConfig = {
      * 是否严格限制密码格式
      */
     strictPassword: boolean;
+    /**
+     * 初始化&新增用户默认密码
+     */
+    defaultUserPassword: string;
   };
 };
 

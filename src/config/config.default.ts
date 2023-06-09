@@ -85,5 +85,6 @@ export default {
   },
   security: {
     strictPassword: true,
+    defaultUserPassword: '111111'
   },
 } as MidwayConfig;
