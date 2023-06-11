@@ -87,4 +87,7 @@ export default {
     strictPassword: true,
     defaultUserPassword: '111111'
   },
+  pagination: {
+    max: 100,
+  },
 } as MidwayConfig;
