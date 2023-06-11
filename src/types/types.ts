@@ -52,6 +52,15 @@ export type GlobalConfig = {
      */
     defaultUserPassword: string;
   };
+  /**
+   * 分页相关配置
+   */
+  pagination: {
+    /**
+     * 没页最大显示数量
+     */
+    max: number
+  }
 };
 
 /**
