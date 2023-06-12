@@ -2,7 +2,12 @@ import { Config, Inject, Provide } from '@midwayjs/core';
 import {
   AddUserDto,
   ChangePasswordByUserDto,
+  ChangeUserInfoDto,
+  ChangeUserStateDto,
   DisableUserDto,
+  GetUserInfoByIdDto,
+  GetUserListByNameDto,
+  GetUserListDto,
   LoginByPasswordDto,
   LoginByPhoneDto,
   RegisterByPhoneDto,
@@ -23,6 +28,8 @@ import { Context } from '@midwayjs/koa';
 import { LoginRecord } from '../../entity/security/login_record';
 import * as jwt from 'jsonwebtoken';
 import { validatePassword } from '../../rules/rules';
+import { TableResponseWrapper } from '../../types/response/common/common';
+import { escapeRegExp } from 'lodash';
 
 @Provide()
 export class UserService {
@@ -33,6 +40,10 @@ export class UserService {
     smsConfig: GlobalConfig['smsConfig'];
   @Config('jwtConfig')
     jwtConfig: GlobalConfig['jwtConfig'];
+  @Config('security')
+    securityConfig: GlobalConfig['security']
+  @Config('pagination')
+    paginationConfig: GlobalConfig['pagination']
 
   @InjectEntityModel(Sms)
     smsModel: ReturnModelType<typeof Sms>;
@@ -140,7 +151,7 @@ export class UserService {
       return throwError(2004, '用户不存在')
     }
     if (!userInfo.enable) {
-      return throwError(2008, '用户被禁止登录');
+      return throwError(2008, '用户被禁止登录，管理员可以启用当前用户');
     }
     //判断密码
     const hash = createHash('md5');
@@ -248,9 +259,9 @@ export class UserService {
    * 管理员重置密码
    */
   async resetPasswordByAdmin(params: ResetPasswordDto) {
-    const { userId, password } = params;
+    const { userId, password = this.securityConfig.defaultUserPassword } = params;
     const hash = createHash('md5');
-    const salt = this.ctx.helper.rand(10000, 9999999).toString();
+    const salt = getRandomNumber(10000, 9999999).toString();
     hash.update((password + salt).slice(2));
     const hashPassword = hash.digest('hex');
     await this.userModel.updateOne({ _id: userId }, { $set: { salt, password: hashPassword } });
@@ -282,7 +293,7 @@ export class UserService {
       roleNames: [],
     };
     const hash = createHash('md5');
-    const salt = this.ctx.helper.rand(10000, 9999999).toString();
+    const salt = getRandomNumber(10000, 9999999).toString();
     hash.update((password + salt).slice(2));
     const hashPassword = hash.digest('hex');
     doc.loginName = loginName;
@@ -293,6 +304,157 @@ export class UserService {
     doc.roleIds = roleIds || [];
     doc.roleNames = roleNames || [];
     await this.userModel.create(doc);
+    return;
+  }
+  /**
+   * 获取用户列表
+   */
+  async getUserList(params: GetUserListDto) {
+    const { pageNum, pageSize, startTime, endTime, loginName, realName, phone } = params;
+    const query = {} as {
+      loginName?: RegExp;
+      realName?: RegExp;
+      phone?: RegExp;
+      createdAt?: {
+        $gt?: number,
+        $lt?: number,
+      };
+    };
+    let skipNum = 0;
+    let limit = this.paginationConfig.max;
+    if (pageSize != null && pageNum != null) {
+      skipNum = (pageNum - 1) * pageSize;
+      limit = pageSize;
+    }
+    if (startTime != null && endTime != null) {
+      query.createdAt = { $gt: startTime, $lt: endTime };
+    }
+    if (loginName) {
+      query.loginName = new RegExp(escapeRegExp(loginName));
+    }
+    if (realName) {
+      query.realName = new RegExp(escapeRegExp(realName));
+    }
+    if (phone) {
+      query.phone = new RegExp(escapeRegExp(phone));
+    }
+    const rows = await this.userModel.find(query,
+      {
+        password: 0,
+        salt: 0,
+        clientRoutes: 0,
+        clinetMenus: 0,
+        serverRoutes: 0,
+        starProjects: 0
+      }
+    ).sort({
+      loginTimes: -1
+    }).skip(skipNum).limit(limit);
+    const total = await this.userModel.find(query).countDocuments();
+    const result: TableResponseWrapper = {
+      rows: [],
+      total: 0
+    };
+    result.rows = rows;
+    result.total = total;
+    return result;
+  }
+  /**
+   * 禁用启用用户
+   */
+  async changeUserState(params: ChangeUserStateDto) {
+    const { _id, enable } = params;
+    //admin用户无法被禁用
+    await this.userModel.findOneAndUpdate({ _id, loginName: { $ne: 'admin' } }, { $set: { enable }});
+    return;
+  }
+  /**
+   * 根据id获取用户信息
+   */
+  async getUserInfoById(params: GetUserInfoByIdDto) {
+    const { _id } = params;
+    const result = await this.userModel.findById({ _id }, {
+      accessProjects: 0,
+      enable: 0,
+      password: 0,
+      salt: 0,
+      clientRoutes: 0,
+      clinetMenus: 0,
+      serverRoutes: 0,
+      starProjects: 0,
+    });
+    return result;
+  }
+  /**
+   * 获取自身登录用户信息
+   */
+  async getLoggedInUserInfo() {
+    const { id } = this.ctx.tokenInfo
+    const result = await this.userModel.findById(
+      { _id: id },
+      {
+        enable: 0,
+        roleIds: 0,
+        roleNames: 0,
+        loginTimes: 0,
+        password: 0,
+        salt: 0,
+        clientRoutes: 0,
+        clinetMenus: 0,
+        serverRoutes: 0,
+        starProjects: 0,
+      }
+    );
+    return result;
+  }
+  /**
+   * 获取自身登录用户信息
+   */
+  async getUserListByName(params: GetUserListByNameDto) {
+    const { name } = params;
+    if (!name) {
+      return [];
+    }
+    const escapeName = new RegExp(escapeRegExp(name));
+    const userList = await this.userModel.find({ $or: [
+      {
+        realName: { $regex: escapeName },
+      },
+      {
+        loginName: { $regex: escapeName }
+      }
+    ] }, { realName: 1, loginName: 1 }).lean();
+    const result = userList.map(val => {
+      return {
+        realName: val.realName,
+        loginName: val.loginName,
+        userId: val._id,
+      };
+    });
+    return result;
+  }
+  /**
+   * 改变用户权限，手机号，登录名称，真实姓名
+   */
+  async changeUserInfo(params: ChangeUserInfoDto) {
+    const { _id, roleIds, roleNames, loginName, phone, realName } = params;
+    const updateDoc: Record<string, any> = {};
+    if (roleIds) {
+      updateDoc.roleIds = roleIds;
+    }
+    if (roleNames) {
+      updateDoc.roleNames = roleNames;
+    }
+    if (loginName) {
+      updateDoc.loginName = loginName;
+    }
+    if (phone) {
+      updateDoc.phone = phone;
+    }
+    if (realName) {
+      updateDoc.realName = realName;
+    }
+    await this.userModel.findByIdAndUpdate({ _id }, updateDoc);
     return;
   }
 }

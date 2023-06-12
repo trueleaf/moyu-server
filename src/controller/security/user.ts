@@ -15,7 +15,12 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import {
   AddUserDto,
   ChangePasswordByUserDto,
+  ChangeUserInfoDto,
+  ChangeUserStateDto,
   DisableUserDto,
+  GetUserInfoByIdDto,
+  GetUserListByNameDto,
+  GetUserListDto,
   LoginByPasswordDto,
   LoginByPhoneDto,
   RegisterByPhoneDto,
@@ -118,6 +123,54 @@ export class UserController {
   @Post('/security/useradd')
   async addUser(@Body() params: AddUserDto) {
     const data = await this.userService.addUser(params);
+    return data;
+  }
+  /**
+   * 获取用户列表
+   */
+  @Get('/security/user_list')
+  async getUserList(@Query() params: GetUserListDto) {
+    const data = await this.userService.getUserList(params);
+    return data;
+  }
+  /**
+   * 禁用启用用户
+   */
+  @Put('/security/user_state')
+  async changeUserState(@Body() params: ChangeUserStateDto) {
+    const data = await this.userService.changeUserState(params);
+    return data;
+  }
+  /**
+   * 根据用户id获取用户信息
+   */
+  @Get('/security/user_info_by_id')
+  async getUserInfoById(@Query() params: GetUserInfoByIdDto) {
+    const data = await this.userService.getUserInfoById(params);
+    return data;
+  }
+  /**
+   * 获取自身登录用户信息
+   */
+  @Get('/security/user_info')
+  async getLoggedInUserInfo() {
+    const data = await this.userService.getLoggedInUserInfo();
+    return data;
+  }
+  /**
+   * 根据用户名称查询用户列表
+   */
+  @Get('/security/userListByName')
+  async getUserListByName(@Query() params: GetUserListByNameDto) {
+    const data = await this.userService.getUserListByName(params);
+    return data;
+  }
+  /**
+   * 改变用户权限，手机号，登录名称，真实姓名
+   */
+  @Put('/security/user_permission')
+  async changeUserInfo(@Body() params: ChangeUserInfoDto) {
+    const data = await this.userService.changeUserInfo(params);
     return data;
   }
 }
