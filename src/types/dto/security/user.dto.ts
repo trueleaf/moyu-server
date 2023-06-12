@@ -1,4 +1,5 @@
 import { Rule, RuleType } from '@midwayjs/validate';
+import { TableSearchParams } from '../common/common.dto';
 
 /**
  * 短信验证码DTO
@@ -124,7 +125,7 @@ export class ResetPasswordDto {
   /**
    * 重置后的密码
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string())
     password: string;
 }
 /**
@@ -162,3 +163,100 @@ export class AddUserDto {
   @Rule(RuleType.array().items(RuleType.string()))
     roleNames: string[];
 }
+/**
+ * 获取用户列表
+ */
+export class GetUserListDto extends TableSearchParams {
+  /**
+   * 登录名称
+   */
+  @Rule(RuleType.string())
+    loginName: string;
+  /**
+   * 真实姓名
+   */
+  @Rule(RuleType.string())
+    realName: string;
+  /**
+   * 手机号搜索
+   */
+  @Rule(RuleType.string())
+    phone: string;
+  /**
+   * 手机号搜索
+   */
+  @Rule(RuleType.string())
+    title: string;
+}
+/**
+ * 用户状态
+ */
+export class ChangeUserStateDto {
+  /**
+   * 用户id
+   */
+  @Rule(RuleType.string().required())
+    _id: string;
+  /**
+   * 是否启用
+   */
+  @Rule(RuleType.boolean().required())
+    enable: boolean;
+}
+/**
+ * 根据id获取用户信息
+ */
+export class GetUserInfoByIdDto {
+  /**
+   * 用户id
+   */
+  @Rule(RuleType.string().required())
+    _id: string;
+}
+/**
+ * 根据id获取用户信息
+ */
+export class GetUserListByNameDto {
+  /**
+   * 用户名称|真实姓名
+   */
+  @Rule(RuleType.string().required())
+    name: string;
+}
+/**
+ * 改变用户权限
+ */
+export class ChangeUserInfoDto {
+  /**
+   * 用户id
+   */
+  @Rule(RuleType.string().required())
+    _id: string;
+  /**
+   * 角色id列表
+   */
+  @Rule(RuleType.array().items(RuleType.string()))
+    roleIds?: string[];
+  /**
+   * 角色名称列表
+   */
+  @Rule(RuleType.array().items(RuleType.string()))
+    roleNames?: string[];
+  /**
+   * 登录名称
+   */
+  @Rule(RuleType.string())
+    loginName?: string;
+  /**
+   * 手机号码
+   */
+  @Rule(RuleType.string().length(11))
+    phone?: string;
+  /**
+   * 真实姓名
+   */
+  @Rule(RuleType.string())
+    realName?: string;
+}
+
+
