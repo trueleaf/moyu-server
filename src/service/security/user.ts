@@ -30,11 +30,17 @@ import * as jwt from 'jsonwebtoken';
 import { validatePassword } from '../../rules/rules';
 import { TableResponseWrapper } from '../../types/response/common/common';
 import { escapeRegExp } from 'lodash';
+import * as path from 'path';
+import * as fs from 'fs-extra';
+import * as fileType from 'file-type'
+
 
 @Provide()
 export class UserService {
   @Inject()
     ctx: Context & { tokenInfo: LoginTokenInfo };
+  @Inject()
+    appDir: string;
 
   @Config('smsConfig')
     smsConfig: GlobalConfig['smsConfig'];
@@ -456,5 +462,17 @@ export class UserService {
     }
     await this.userModel.findByIdAndUpdate({ _id }, updateDoc);
     return;
+  }
+  /**
+   * 改变用户权限，手机号，登录名称，真实姓名
+   */
+  async getBatchUserImportTemplate() {
+    const fileName = '用户批量导入模板';
+    const filePath = path.join(this.appDir, 'public','用户批量导入模板.xlsx');
+    const file = await fs.readFile(filePath);
+    const typeInfo = await fileType.fromBuffer(file);
+    this.ctx.set('content-type', typeInfo.mime);
+    this.ctx.set('content-disposition', `attachment;filename=${encodeURIComponent(fileName)}`);
+    return file;
   }
 }
