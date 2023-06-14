@@ -2,12 +2,13 @@ import { Middleware, IMiddleware } from '@midwayjs/core';
 import { NextFunction, Context } from '@midwayjs/koa';
 
 @Middleware()
-export class ResponseWrapperMiddleware
-  implements IMiddleware<Context, NextFunction>
-{
+export class ResponseWrapperMiddleware implements IMiddleware<Context, NextFunction> {
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
       const result = await next();
+      if (Buffer.isBuffer(result)) {
+        return result
+      }
       if (result?.isCustomError) {
         return result;
       }

@@ -173,4 +173,12 @@ export class UserController {
     const data = await this.userService.changeUserInfo(params);
     return data;
   }
+  /**
+   * 下载用户批量导入模板
+   */
+  @Get('/security/user_excel_template')
+  async getBatchUserImportTemplate() {
+    const data = await this.userService.getBatchUserImportTemplate();
+    return data;
+  }
 }
