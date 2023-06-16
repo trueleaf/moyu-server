@@ -475,4 +475,28 @@ export class UserService {
     this.ctx.set('content-disposition', `attachment;filename=${encodeURIComponent(fileName)}`);
     return file;
   }
+  /**
+   * 访客登录(默认创建一个固定密码的用户)
+   */
+  async guestLogin() {
+    const loginName = `guest_${Date.now().toString().slice(-8)}`;
+    const password = this.securityConfig.defaultUserPassword;
+    const user: Partial<User> = {};
+    const hash = createHash('md5');
+    const salt = getRandomNumber(10000, 9999999).toString();
+    hash.update((password + salt).slice(2));
+    const hashPassword = hash.digest('hex');
+    user.loginName = loginName;
+    user.realName = loginName;
+    user.password = hashPassword;
+    user.salt = salt;
+    user.roleIds = ['5ee980553c63cd01a49952e4'];
+    user.roleNames = ['公共基础权限'];
+    await this.userModel.create(user);
+    const loginTokenInfo = await this.loginByPassword({
+      loginName,
+      password,
+    });
+    return loginTokenInfo;
+  }
 }
