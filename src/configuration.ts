@@ -3,6 +3,7 @@ import * as koa from '@midwayjs/koa';
 import * as validate from '@midwayjs/validate';
 import * as info from '@midwayjs/info';
 import * as typegoose from '@midwayjs/typegoose';
+import * as upload from '@midwayjs/upload';
 import { join } from 'path';
 import { ResponseWrapperMiddleware } from './middleware/response.middleware';
 import {
@@ -20,6 +21,7 @@ import { Role } from './entity/security/role';
 @Configuration({
   imports: [
     koa,
+    upload,
     validate,
     typegoose,
     {

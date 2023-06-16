@@ -8,6 +8,7 @@ import {
   Body,
   Put,
   Del,
+  Files,
 } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
 import { InjectEntityModel } from '@midwayjs/typegoose';
@@ -180,5 +181,22 @@ export class UserController {
   async getBatchUserImportTemplate() {
     const data = await this.userService.getBatchUserImportTemplate();
     return data;
+  }
+  /**
+   * 访客登录(默认创建一个固定密码的用户)
+   */
+  @Post('/security/login_guest')
+  async guestLogin() {
+    const data = await this.userService.guestLogin();
+    return data;
+  }
+  /**
+   * 通过excel批量导入用户
+   */
+  @Post('/security/add_user_by_excel')
+  async addUserByExcel(@Files() files: any) {
+    console.log(files)
+    // const data = await this.userService.guestLogin();
+    // return data;
   }
 }

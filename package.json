@@ -14,6 +14,7 @@
     "@midwayjs/koa": "^3.0.0",
     "@midwayjs/logger": "^2.14.0",
     "@midwayjs/typegoose": "^3.11.6",
+    "@midwayjs/upload": "^3.11.11",
     "@midwayjs/validate": "^3.0.0",
     "@typegoose/typegoose": "^11.1.0",
     "@types/fs-extra": "^11.0.1",
