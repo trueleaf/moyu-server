@@ -25,7 +25,8 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mongoose": "^7.1.0",
-    "svg-captcha": "^1.4.0"
+    "svg-captcha": "^1.4.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@midwayjs/cli": "^2.0.0",
