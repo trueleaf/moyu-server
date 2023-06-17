@@ -7,6 +7,7 @@ export type ResponseWrapper<T = unknown> = {
     | 0
     | 1001
     | 1003
+    | 1006
     | 1007
     | 2001
     | 2002

@@ -15,6 +15,7 @@ import {
   SMSDto,
 } from '../../types/dto/security/user.dto';
 import { getRandomNumber, throwError } from '../../utils/utils';
+import * as XLSX from 'xlsx'
 import { GlobalConfig, LoginTokenInfo } from '../../types/types';
 import Dysmsapi20170525, * as $Dysmsapi20170525 from '@alicloud/dysmsapi20170525';
 import * as $OpenApi from '@alicloud/openapi-client';
@@ -33,6 +34,7 @@ import { escapeRegExp } from 'lodash';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as fileType from 'file-type'
+import { UploadFileInfo } from '@midwayjs/upload';
 
 
 @Provide()
@@ -498,5 +500,50 @@ export class UserService {
       password,
     });
     return loginTokenInfo;
+  }
+  /**
+   * 通过excel批量导入用户
+   */
+  async addUserByExcel(file: UploadFileInfo<string>) {
+    const filePath = file.data;
+    const workbook = XLSX.readFile(filePath);
+    const sheetname = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetname];
+    const sheetJson = XLSX.utils.sheet_to_json(worksheet);
+    const userDocs = [];
+    const userNum = sheetJson.length;
+    let validNum = 0;
+    for (let i = 0; i < sheetJson.length; i++) {
+      const user = sheetJson[i] as Record<string, string>;
+      const loginName = user['登录名称'];
+      if (loginName.match(/guest/)) {
+        throwError(2010, '用户名不能以包含guest')
+      }
+      const phone = user['手机号码'];
+      const realName = user['真实姓名'];
+      const password = this.securityConfig.defaultUserPassword;
+      const doc: Partial<User> = {};
+      const hasUser = await this.ctx.model.Security.User.findOne({ $or: [{ loginName }, { phone }] });
+      if (!hasUser && loginName && user && phone && realName) {
+        const hash = createHash('md5');
+        const salt = getRandomNumber(100000, 999999).toString();
+        hash.update((password + salt).slice(2));
+        const hashPassword = hash.digest('hex');
+        doc.loginName = loginName;
+        doc.realName = realName;
+        doc.phone = phone;
+        doc.password = hashPassword;
+        doc.salt = salt;
+        doc.roleIds = ['5ede0ba06f76185204584700', '5ee980553c63cd01a49952e4'];
+        doc.roleNames = ['权限管理-完全控制', 'api文档-完全控制'];
+        userDocs.push(doc);
+        validNum++;
+      }
+    }
+    await this.ctx.model.Security.User.insertMany(userDocs);
+    return {
+      total: userNum,
+      success: validNum,
+    };
   }
 }

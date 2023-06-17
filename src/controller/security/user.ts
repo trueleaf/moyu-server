@@ -32,6 +32,8 @@ import {
 import { User } from '../../entity/security/user';
 import { UserService } from '../../service/security/user';
 import * as svgCaptcha from 'svg-captcha';
+import { UploadFileInfo } from '@midwayjs/upload';
+import { throwError } from '../../utils/utils';
 /*
 |--------------------------------------------------------------------------
 | 提供如下方法
@@ -194,9 +196,14 @@ export class UserController {
    * 通过excel批量导入用户
    */
   @Post('/security/add_user_by_excel')
-  async addUserByExcel(@Files() files: any) {
-    console.log(files)
-    // const data = await this.userService.guestLogin();
-    // return data;
+  async addUserByExcel(@Files() files: UploadFileInfo<string>[]) {
+    if (files?.length === 0) {
+      throwError(1006, '文件格式不正确');
+    }
+    if (files?.[0].mimeType !== 'application/vnd.ms-excel' && files?.[0].mimeType !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+      throwError(1006, '文件格式不正确');
+    }
+    const data = await this.userService.addUserByExcel(files[0]);
+    return data;
   }
 }
