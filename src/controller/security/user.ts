@@ -14,6 +14,7 @@ import { Context } from '@midwayjs/koa';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import {
+  AddLastVisitedDto,
   AddUserDto,
   ChangePasswordByUserDto,
   ChangeUserInfoDto,
@@ -27,7 +28,9 @@ import {
   RegisterByPhoneDto,
   ResetPasswordDto,
   SMSDto,
+  StarProjectDto,
   SvgCaptchaDto,
+  UnStarProjectDto,
 } from '../../types/dto/security/user.dto';
 import { User } from '../../entity/security/user';
 import { UserService } from '../../service/security/user';
@@ -204,6 +207,30 @@ export class UserController {
       throwError(1006, '文件格式不正确');
     }
     const data = await this.userService.addUserByExcel(files[0]);
+    return data;
+  }
+  /**
+   * 添加最近访问页面
+   */
+  @Put('/project/visited')
+  async addLastVisited(@Body() params: AddLastVisitedDto) {
+    const data = await this.userService.addLastVisited(params);
+    return data;
+  }
+  /**
+   * 收藏项目
+   */
+  @Put('/project/star')
+  async starProject(@Body() params: StarProjectDto) {
+    const data = await this.userService.starProject(params);
+    return data;
+  }
+  /**
+   * 取消收藏项目
+   */
+  @Put('/project/unstar')
+  async unStarProject(@Body() params: UnStarProjectDto) {
+    const data = await this.userService.unStarProject(params);
     return data;
   }
 }

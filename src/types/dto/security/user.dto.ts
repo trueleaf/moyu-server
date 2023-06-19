@@ -259,4 +259,34 @@ export class ChangeUserInfoDto {
     realName?: string;
 }
 
+/**
+ * 添加最近访问页面
+ */
+export class AddLastVisitedDto {
+  /**
+   * 项目id
+   */
+  @Rule(RuleType.string().required())
+    projectId: string;
+}
+/**
+ * 收藏项目
+ */
+export class StarProjectDto {
+  /**
+   * 项目id
+   */
+  @Rule(RuleType.string().required())
+    projectId: string;
+}
+/**
+ * 取消收藏项目
+ */
+export class UnStarProjectDto {
+  /**
+   * 项目id
+   */
+  @Rule(RuleType.string().required())
+    projectId: string;
+}
 

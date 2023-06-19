@@ -1,5 +1,6 @@
 import { Config, Inject, Provide } from '@midwayjs/core';
 import {
+  AddLastVisitedDto,
   AddUserDto,
   ChangePasswordByUserDto,
   ChangeUserInfoDto,
@@ -13,6 +14,8 @@ import {
   RegisterByPhoneDto,
   ResetPasswordDto,
   SMSDto,
+  StarProjectDto,
+  UnStarProjectDto,
 } from '../../types/dto/security/user.dto';
 import { getRandomNumber, throwError } from '../../utils/utils';
 import * as XLSX from 'xlsx'
@@ -523,8 +526,8 @@ export class UserService {
       const realName = user['真实姓名'];
       const password = this.securityConfig.defaultUserPassword;
       const doc: Partial<User> = {};
-      const hasUser = await this.ctx.model.Security.User.findOne({ $or: [{ loginName }, { phone }] });
-      if (!hasUser && loginName && user && phone && realName) {
+      const hasUser = await this.userModel.findOne({ $or: [{ loginName }, { phone }] });
+      if (!hasUser && loginName && user && realName) {
         const hash = createHash('md5');
         const salt = getRandomNumber(100000, 999999).toString();
         hash.update((password + salt).slice(2));
@@ -540,10 +543,60 @@ export class UserService {
         validNum++;
       }
     }
-    await this.ctx.model.Security.User.insertMany(userDocs);
+    await this.userModel.insertMany(userDocs);
     return {
       total: userNum,
       success: validNum,
     };
+  }
+  /**
+   * 添加最近访问页面
+   */
+  async addLastVisited(params: AddLastVisitedDto) {
+    const { projectId } = params;
+    const MAX_RECENT_VISIT = 5;
+    const userInfo = this.ctx.tokenInfo;
+    const recentVisit = await this.userModel.findOne({ _id: userInfo.id }, { recentVisitProjects: 1 }).lean();
+    let recentVisitProjects = recentVisit.recentVisitProjects || [];
+    const matchedVisitProjectIndex = recentVisitProjects.findIndex(val => val === projectId);
+    if (matchedVisitProjectIndex  !== -1) { //匹配到数据则直接交换
+      recentVisitProjects.splice(matchedVisitProjectIndex, 1);
+      recentVisitProjects.unshift(projectId);
+    } else {
+      recentVisitProjects.unshift(projectId);
+    }
+    recentVisitProjects = recentVisitProjects.slice(0, MAX_RECENT_VISIT);
+    const result = await this.userModel.findByIdAndUpdate({ _id: userInfo.id }, {
+      $set: {
+        recentVisitProjects
+      }
+    }, { new: true });
+    return result.recentVisitProjects;
+  }
+  /**
+   * 收藏项目
+   */
+  async starProject(params: StarProjectDto) {
+    const { projectId } = params;
+    const userInfo = this.ctx.tokenInfo;
+    await this.userModel.findByIdAndUpdate({ _id: userInfo.id }, {
+      $addToSet: {
+        starProjects: projectId
+      }
+    });
+    return;
+  }
+  /**
+   * 取消收藏项目
+   */
+  async unStarProject(params: UnStarProjectDto) {
+    const { projectId } = params;
+    const userInfo = this.ctx.tokenInfo;
+    await this.userModel.findByIdAndUpdate({ _id: userInfo.id }, {
+      $pull: {
+        starProjects: projectId
+      }
+    });
+    return;
   }
 }
