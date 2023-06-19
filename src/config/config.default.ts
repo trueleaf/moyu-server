@@ -90,4 +90,7 @@ export default {
   pagination: {
     max: 100,
   },
+  upload: {
+    whitelist: ['.xlsx']
+  },
 } as MidwayConfig;
