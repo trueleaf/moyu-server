@@ -37,11 +37,6 @@ import { UserService } from '../../service/security/user';
 import * as svgCaptcha from 'svg-captcha';
 import { UploadFileInfo } from '@midwayjs/upload';
 import { throwError } from '../../utils/utils';
-/*
-|--------------------------------------------------------------------------
-| 提供如下方法
-|--------------------------------------------------------------------------
-*/
 
 @Controller('/api')
 export class UserController {
