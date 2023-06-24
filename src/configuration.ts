@@ -14,10 +14,11 @@ import { PermissionMiddleware } from './middleware/permission.middleware';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { User } from './entity/security/user';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { initClientRoutes, initRoles, initServerRoutes, initUser } from './entity/init_entity';
+import { initClientMenus, initClientRoutes, initRoles, initServerRoutes, initUser } from './entity/init_entity';
 import { ServerRoutes } from './entity/security/server_routes';
 import { ClientRoutes } from './entity/security/client_routes';
 import { Role } from './entity/security/role';
+import { ClientMenu } from './entity/security/client_menu';
 @Configuration({
   imports: [
     koa,
@@ -42,6 +43,8 @@ export class ContainerLifeCycle {
     clientRoutesModel: ReturnModelType<typeof ClientRoutes>;
   @InjectEntityModel(Role)
     roleModel: ReturnModelType<typeof Role>;
+  @InjectEntityModel(ClientMenu)
+    clientMenuModel: ReturnModelType<typeof ClientMenu>;
   async onReady() {
     this.app.useMiddleware([PermissionMiddleware, ResponseWrapperMiddleware]);
     this.app.useFilter([ValidateErrorFilter, AllServerErrorFilter]);
@@ -49,5 +52,6 @@ export class ContainerLifeCycle {
     await initServerRoutes(this.serverRoutesModel)
     await initClientRoutes(this.clientRoutesModel)
     await initRoles(this.roleModel)
+    await initClientMenus(this.clientMenuModel)
   }
 }
