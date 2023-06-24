@@ -5,6 +5,7 @@ import { NextFunction, Context } from '@midwayjs/koa';
 export class ResponseWrapperMiddleware implements IMiddleware<Context, NextFunction> {
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
+      const startTime = Date.now()
       const result = await next();
       if (Buffer.isBuffer(result)) {
         return result
@@ -12,6 +13,7 @@ export class ResponseWrapperMiddleware implements IMiddleware<Context, NextFunct
       if (result?.isCustomError) {
         return result;
       }
+      console.log(ctx.request.method, ctx.request.url, '耗时', Date.now() - startTime)
       return {
         code: 0,
         msg: '操作成功',
