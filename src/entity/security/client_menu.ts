@@ -22,7 +22,7 @@ export class ClientMenu extends Timestamps {
   /**
    * 路由类型inline内部路由  link外部链接(未使用)
    */
-  @prop()
+  @prop({default: 'inline'})
   public type: 'inline' | 'link';
   /**
    * 排序，数字越大越靠前
