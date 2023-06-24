@@ -3,6 +3,7 @@ import { User } from './security/user';
 import { ServerRoutes } from './security/server_routes';
 import { ClientRoutes } from './security/client_routes';
 import { Role } from './security/role';
+import { ClientMenu } from './security/client_menu';
 
 /*
 |--------------------------------------------------------------------------
@@ -977,6 +978,24 @@ const INITIAL_ROLE = [
     ],
   },
 ];
+const INITIAL_CLIENT_MENUS = [
+  {
+    _id: '5eddf6a821a5aa26cc316d28',
+    name: '权限管理',
+    path: '/v1/permission/permission',
+    pid: '',
+    sort: '1591603491200',
+    type: 'inline',
+  },
+  {
+    _id: '602e7c40b4ea582923bcb36f',
+    name: 'api文档',
+    path: '/v1/apidoc/doc-list',
+    pid: '',
+    sort: '1613638151467',
+    type: 'inline',
+  },
+];
 /*
 |--------------------------------------------------------------------------
 | 初始化逻辑
@@ -1030,6 +1049,18 @@ export async function initRoles(roleModel: ReturnModelType<typeof Role>) {
   if (!roleInfo) {
     console.log('初始化角色信息');
     await roleModel.insertMany(INITIAL_ROLE);
+  }
+  return;
+}
+
+/**
+ * 初始化前端菜单
+ */
+export async function initClientMenus(clientMenuModel: ReturnModelType<typeof ClientMenu>) {
+  const clientMenuInfo = await clientMenuModel.findOne();
+  if (!clientMenuInfo) {
+    console.log('初始化前端菜单');
+    await clientMenuModel.insertMany(INITIAL_CLIENT_MENUS);
   }
   return;
 }
