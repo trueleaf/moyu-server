@@ -22,9 +22,20 @@ export class AddClientRoutesDto {
     groupName: string;
 }
 /**
+ * 批量新增前端路由
+ */
+export class AddMultiClientRoutesDto {
+  @Rule(RuleType.array().items(RuleType.object().keys({
+    name: RuleType.string(),
+    path: RuleType.string(),
+  })).required())
+    routes: { name: string; path: string }[];
+}
+
+/**
  * 修改前端路由
  */
-export class EditClientMenuDto {
+export class EditClientRoutesDto {
   /**
    * 路由id
    */

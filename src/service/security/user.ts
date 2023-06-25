@@ -449,7 +449,7 @@ export class UserService {
    */
   async changeUserInfo(params: ChangeUserInfoDto) {
     const { _id, roleIds, roleNames, loginName, phone, realName } = params;
-    const updateDoc: Record<string, any> = {};
+    const updateDoc: Partial<ChangeUserInfoDto> = {};
     if (roleIds) {
       updateDoc.roleIds = roleIds;
     }
