@@ -44,12 +44,12 @@ export class EditClientRoutesDto {
   /**
    * 路由名称
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string())
     name: string;
   /**
    * 前端路由路径
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string())
     path: string;
   /**
    * 分组名称
