@@ -11,8 +11,6 @@ import {
   Files,
 } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
-import { InjectEntityModel } from '@midwayjs/typegoose';
-import { ReturnModelType } from '@typegoose/typegoose';
 import {
   AddLastVisitedDto,
   AddUserDto,
@@ -32,7 +30,6 @@ import {
   SvgCaptchaDto,
   UnStarProjectDto,
 } from '../../types/dto/security/user.dto';
-import { User } from '../../entity/security/user';
 import { UserService } from '../../service/security/user';
 import * as svgCaptcha from 'svg-captcha';
 import { UploadFileInfo } from '@midwayjs/upload';
@@ -45,9 +42,6 @@ export class UserController {
 
   @Inject()
     userService: UserService;
-
-  @InjectEntityModel(User)
-    userModel: ReturnModelType<typeof User>;
 
   /**
    * 获取手机验证码

@@ -7,9 +7,6 @@ import {
   Del,
   Get,
 } from '@midwayjs/core';
-import { InjectEntityModel } from '@midwayjs/typegoose';
-import { ReturnModelType } from '@typegoose/typegoose';
-import { ClientMenu } from '../../entity/security/client_menu';
 import { AddClientMenuDto, ChangeCLientMenuPositionDto, DeleteClientMenuDto, EditClientMenuDto } from '../../types/dto/security/client.menu.dto';
 import { ClientMenuService } from '../../service/security/client_menu';
 
@@ -17,8 +14,6 @@ import { ClientMenuService } from '../../service/security/client_menu';
 export class ClientMenuController {
   @Inject()
     clientMenuService: ClientMenuService;
-  @InjectEntityModel(ClientMenu)
-    clientMenuModel: ReturnModelType<typeof ClientMenu>;
   /**
    * 新增前端菜单
    */

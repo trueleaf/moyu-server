@@ -8,9 +8,6 @@ import {
   Get,
   Query,
 } from '@midwayjs/core';
-import { InjectEntityModel } from '@midwayjs/typegoose';
-import { ReturnModelType } from '@typegoose/typegoose';
-import { ClientRoutes } from '../../entity/security/client_routes';
 import { AddClientRoutesDto, AddMultiClientRoutesDto, ChangeGroupNameByIds, DeleteClientRoutesDto, EditClientRoutesDto, GetClientRoutesListDto } from '../../types/dto/security/client.routes.dto';
 import { ClientRoutesService } from '../../service/security/client_routes';
 
@@ -18,8 +15,6 @@ import { ClientRoutesService } from '../../service/security/client_routes';
 export class ClientRoutesController {
   @Inject()
     clientRoutesService: ClientRoutesService;
-  @InjectEntityModel(ClientRoutes)
-    clientRoutes: ReturnModelType<typeof ClientRoutes>;
   /**
    * 新增前端路由
    */
@@ -55,7 +50,7 @@ export class ClientRoutesController {
   /**
    * 批量修改前端路由分组名称
    */
-  @Del('/security/client_routes_type')
+  @Put('/security/client_routes_type')
   async changeGroupNameByIds(@Body() params: ChangeGroupNameByIds) {
     const data = await this.clientRoutesService.changeGroupNameByIds(params);
     return data;
@@ -72,8 +67,8 @@ export class ClientRoutesController {
    * 获取全部客户端路由
    */
   @Get('/security/client_routes')
-  async getAllServerRoutesList() {
-    const data = await this.clientRoutesService.getAllServerRoutesList();
+  async getAllClientRoutesList() {
+    const data = await this.clientRoutesService.getAllClientRoutesList();
     return data;
   }
 }

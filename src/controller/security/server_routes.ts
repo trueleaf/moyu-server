@@ -8,9 +8,6 @@ import {
   Query,
   Get,
 } from '@midwayjs/core';
-import { InjectEntityModel } from '@midwayjs/typegoose';
-import { ReturnModelType } from '@typegoose/typegoose';
-import { ServerRoutes } from '../../entity/security/server_routes';
 import { AddServerRouteDto, ChangeGroupNameByIdsDto, DeleteServerRouteDto, EditServerRouteDto, GetServerRoutesListDto } from '../../types/dto/security/server.routes.dto';
 import { ServerRoutesService } from '../../service/security/server_routes';
 
@@ -18,8 +15,6 @@ import { ServerRoutesService } from '../../service/security/server_routes';
 export class ServerMenuController {
   @Inject()
     serverRoutesService: ServerRoutesService;
-  @InjectEntityModel(ServerRoutes)
-    serverRoutesModel: ReturnModelType<typeof ServerRoutes>;
   /**
    * 新增服务端路由
    */
