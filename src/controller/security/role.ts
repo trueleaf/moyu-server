@@ -8,18 +8,13 @@ import {
   Get,
   Query,
 } from '@midwayjs/core';
-import { InjectEntityModel } from '@midwayjs/typegoose';
-import { ReturnModelType } from '@typegoose/typegoose';
 import { AddRoleDto, DeleteRoleDto, EditRoleDto, GetRoleInfoDto, GetRoleListDto } from '../../types/dto/security/role.dto';
-import { Role } from '../../entity/security/role';
 import { RoleService } from '../../service/security/role';
 
 @Controller('/api')
 export class RoleController {
   @Inject()
     roleService: RoleService;
-  @InjectEntityModel(Role)
-    RoleModel: ReturnModelType<typeof Role>;
   /**
    * 新增角色
    */

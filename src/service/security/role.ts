@@ -69,7 +69,9 @@ export class RoleService {
       skipNum = (pageNum - 1) * pageSize;
       limit = pageSize;
     }
-    if (startTime != null && endTime != null) {
+    if (startTime != null && endTime == null) {
+      query.createdAt = { $gt: startTime, $lt: Date.now() };
+    } else if (startTime != null && endTime != null) {
       query.createdAt = { $gt: startTime, $lt: endTime };
     }
     const rows = await this.roleModel.find(query, { clientRoutes: 0, clientBanner: 0, serverRoutes: 0 }).sort({ updatedAt: -1 }).skip(skipNum).limit(limit);
