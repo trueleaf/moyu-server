@@ -98,7 +98,6 @@ export class UserController {
   /**
    * 批量禁用用户
    */
-  @Del('/project/delete_user') //【兼容】历史接口在project上面
   @Del('/security/delete_user')
   async disableUser(@Body() params: DisableUserDto) {
     const data = await this.userService.disableUser(params);
