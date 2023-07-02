@@ -117,9 +117,9 @@ export class ClientRoutesService {
     return result;
   }
   /**
-   * 获取全部服务端路由
+   * 获取全部前端路由
    */
-  async getAllServerRoutesList() {
+  async getAllClientRoutesList() {
     const query: {
       enabled?: boolean;
     } = {};
