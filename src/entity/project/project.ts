@@ -1,4 +1,5 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
+import { Timestamps } from '../common/common';
 /*
 |--------------------------------------------------------------------------
 | 创建者信息
@@ -21,11 +22,6 @@ class Creator {
 | 成员信息
 |--------------------------------------------------------------------------
 */
-enum PermissionEnum {
-  readOnly = 'readOnly',
-  readAndWrite = 'readAndWrite',
-  admin = 'admin',
-}
 class Member {
   /**
    * 用户id
@@ -45,18 +41,24 @@ class Member {
   /**
    * 权限
    */
-  @prop({ type: PermissionEnum })
-  public permission: string;
+  @prop({ enum: ['readOnly', 'readAndWrite', 'admin'] })
+  public permission: 'readOnly' | 'readAndWrite' | 'admin';
 }
+
 @modelOptions({
   schemaOptions: { timestamps: true, collection: 'project' },
 })
-export class Project {
+export class Project extends Timestamps {
   /**
    * 项目名称
    */
   @prop({ minlength: 1, maxlength: 30, trim: true })
   public projectName: string;
+  /**
+   * 备注
+   */
+  @prop()
+  public remark: string;
   /**
    * 文档数量
    */
@@ -70,7 +72,7 @@ export class Project {
   /**
    * 成员信息
    */
-  @prop({ type: () => [Member] })
+  @prop({type: () => [Member]})
   public members: Member[];
   /**
    * 使能

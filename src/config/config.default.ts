@@ -6,6 +6,8 @@ import { Role } from '../entity/security/role';
 import { ClientRoutes } from '../entity/security/client_routes';
 import { ServerRoutes } from '../entity/security/server_routes';
 import { LoginRecord } from '../entity/security/login_record';
+import { Project } from '../entity/project/project';
+// import { Doc } from '../entity/doc/doc';
 
 export default {
   keys: '1683383633312_1890',
@@ -39,6 +41,8 @@ export default {
           Role,
           ServerRoutes,
           LoginRecord,
+          Project,
+          // Doc,
         ],
       },
     },

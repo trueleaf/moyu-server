@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongoose';
 import { User } from '../entity/security/user';
 
 /**
@@ -67,7 +66,7 @@ export type GlobalConfig = {
  * 用户信息，登录以后塞入token里面
  */
 export type LoginTokenInfo = {
-  id: ObjectId;
+  id: string;
   roleIds: User['roleIds'];
   loginName: User['loginName'];
   realName: User['realName'];
