@@ -67,6 +67,13 @@ const INITIAL_SERVER_ROUTES = [
     path: '/api/project/project_enum',
   },
   {
+    _id: '64a8f5a40558e0ba613f3cb0',
+    groupName: 'api文档-项目相关',
+    method: 'get',
+    name: '根据项目信息过滤项目',
+    path: '/api/project/project_list_by_url',
+  },
+  {
     _id: '5edd91af5fcdf3111671cb1b',
     groupName: 'api文档-项目相关',
     method: 'delete',
@@ -760,6 +767,13 @@ const INITIAL_SERVER_ROUTES = [
     path: '/api/project/add_user',
   },
   {
+    _id: '64a8ee811f0b581286ed8189',
+    groupName: 'api文档-项目权限',
+    method: 'get',
+    name: '获取项目成员信息',
+    path: '/api/project/project_members',
+  },
+  {
     _id: '60a35a7de7af1332c8669d60',
     groupName: 'api文档-项目权限',
     method: 'delete',
@@ -847,6 +861,10 @@ const INITIAL_ROLE = [
     remark: '对文档拥有所有权限',
     roleName: 'api文档-完全控制',
     serverRoutes: [
+      '64a8f5a40558e0ba613f3cb0',
+      '64a8ee811f0b581286ed8189',
+      '60a35ac840b59032c9225c40',
+      '60a35a65e7af1332c8669d5f',
       '5ff17a0defe2a82db087c9ea',
       '5ff1792c972b5a29804e1ac3',
       '5ff166479c0b4737b81ee490',
