@@ -24,7 +24,7 @@ export class AddProjectDto {
     realName: RuleType.string(),
     permission: RuleType.string().valid('readOnly', 'readAndWrite', 'admin'),
   })))
-    members: {
+    members?: {
       userId: string;
       loginName: string;
       realName: string;
@@ -151,7 +151,7 @@ export class GetProjectInfoByIdDto {
   /**
    * 项目id
    */
-  @Rule(RuleType.number().required())
+  @Rule(RuleType.string().required())
     _id: string;
 }
 /**
@@ -161,7 +161,7 @@ export class GetProjectFullInfoByIdDto {
   /**
    * 项目id
    */
-  @Rule(RuleType.number().required())
+  @Rule(RuleType.string().required())
     _id: string;
 }
 /**
@@ -171,7 +171,7 @@ export class GetProjectMembersByIdDto {
   /**
    * 项目id
    */
-  @Rule(RuleType.number().required())
+  @Rule(RuleType.string().required())
     _id: string;
 }
 /**
@@ -181,6 +181,6 @@ export class FilterProjectDto {
   /**
    * 项目内接口url
    */
-  @Rule(RuleType.number())
+  @Rule(RuleType.string())
     url: string;
 }
