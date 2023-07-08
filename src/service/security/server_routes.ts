@@ -5,6 +5,7 @@ import { ServerRoutes } from '../../entity/security/server_routes';
 import { throwError } from '../../utils/utils';
 import { AddServerRouteDto, ChangeGroupNameByIdsDto, DeleteServerRouteDto, EditServerRouteDto, GetServerRoutesListDto } from '../../types/dto/security/server.routes.dto';
 import { TableResponseWrapper } from '../../types/response/common/common';
+import { escapeRegExp } from 'lodash';
 
 
 @Provide()
@@ -74,9 +75,10 @@ export class ServerRoutesService {
    * 以列表形式获取服务端路由
    */
   async getServerRoutesList(params: GetServerRoutesListDto) {
-    const { pageNum, pageSize, startTime, endTime } = params;
+    const { pageNum, pageSize, startTime, endTime, path } = params;
     const query = {} as {
       enabled: boolean;
+      path?: RegExp;
       createdAt?: {
         $gt?: number,
         $lt?: number,
@@ -85,6 +87,9 @@ export class ServerRoutesService {
     let skipNum = 0;
     let limit = 100;
     query.enabled = true;
+    if (path) {
+      query.path = new RegExp(escapeRegExp(path));
+    }
     if (pageSize != null && pageNum != null) {
       skipNum = (pageNum - 1) * pageSize;
       limit = pageSize;

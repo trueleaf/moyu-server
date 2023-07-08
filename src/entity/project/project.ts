@@ -46,7 +46,7 @@ class Member {
 }
 
 @modelOptions({
-  schemaOptions: { timestamps: true, collection: 'project' },
+  schemaOptions: { timestamps: true, collection: 'projects' },
 })
 export class Project extends Timestamps {
   /**

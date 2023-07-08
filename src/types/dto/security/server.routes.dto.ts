@@ -84,4 +84,10 @@ export class ChangeGroupNameByIdsDto {
 /**
  * 以列表形式获取服务端路由
  */
-export class GetServerRoutesListDto extends TableSearchParams {}
+export class GetServerRoutesListDto extends TableSearchParams {
+  /**
+   * 路由path
+   */
+  @Rule(RuleType.string())
+    path?: string;
+}

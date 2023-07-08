@@ -28,7 +28,7 @@ export class ProjectService {
    * 新增项目
    */
   async addProject(params: AddProjectDto) {
-    const { projectName, remark, members } = params;
+    const { projectName, remark, members = [] } = params;
     const projectInfo: Partial<Project> = {};
     projectInfo.projectName = projectName;
     projectInfo.remark = remark;
@@ -209,7 +209,7 @@ export class ProjectService {
     for(let i = 0; i < ids.length; i ++) {
       await this.commonControl.checkDocOperationPermissions(ids[i]);
     }
-    const result = await this.projectModel.updateOne(
+    const result = await this.projectModel.updateMany(
       { _id: { $in: ids }},
       { $set: { enabled: false }}
     );
@@ -332,14 +332,35 @@ export class ProjectService {
   /**
    * 根据id获取项目完整信息
    */
-  async getProjectFullInfoById(params: GetProjectFullInfoByIdDto) {
-    const { _id } = params;
-    await this.commonControl.checkDocOperationPermissions(_id);
-    const result = await this.projectModel.findById(
-      { _id, enabled: true },
-      { createdAt: 0, updatedAt: 0, apidocs: 0, enabled: 0 }
-    );
-    return result;
+  async getProjectFullInfoById(params: GetProjectFullInfoByIdDto, ignorePermission?: boolean) {
+    // const { _id } = params;
+    // const result = {};
+    // if (!ignorePermission) {
+    //   await this.commonControl.checkDocOperationPermissions(_id);
+    // }
+    // const mindParams = await this.docModelParamsMind.geMindParams({ projectId: _id });
+    // const paramsTemplate = await this.docModelParamsPreset.getPresetParamsEnum({ projectId: _id })
+    // const hosts = await this.docModelServices.getServicesList({ projectId: _id });
+    // const variables = await this.ctx.service.apidoc.project.projectVariable.getProjectVariableEnum({ projectId: _id });
+    // const rules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById({ projectId: _id });
+    // const projectInfo = await this.ctx.model.Apidoc.Project.Project.findById(
+    //   {
+    //     _id,
+    //     enabled: true
+    //   },
+    //   {
+    //     projectName: 1,
+    //   },
+    // );
+    // result.mindParams = mindParams;
+    // result.projectName = projectInfo.projectName;
+    // result._id = projectInfo._id;
+    // result.paramsTemplate = paramsTemplate;
+    // result.hosts = hosts;
+    // result.variables = variables;
+    // result.rules = rules;
+    // return result;
+    return params;
   }
   /**
    * 根据id获取项目成员信息
