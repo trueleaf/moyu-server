@@ -6,7 +6,7 @@ import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { User } from '../entity/security/user';
 import { ResponseWrapper } from '../types/response/common/common';
-import { throwError } from '../utils/utils';
+import { CustomError, throwError } from '../utils/utils';
 import { ServerRoutes } from '../entity/security/server_routes';
 import { Role } from '../entity/security/role';
 
@@ -71,7 +71,11 @@ export class PermissionMiddleware implements IMiddleware<Context, NextFunction> 
           return throwError(4002, '暂无权限')
         }
         await next();
-      } catch (error: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        if ((error as CustomError).isCustomError) {
+          return error
+        }
         ctx.logger.error(error);
         return {
           code: 5000,
