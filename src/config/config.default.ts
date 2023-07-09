@@ -7,6 +7,7 @@ import { ClientRoutes } from '../entity/security/client_routes';
 import { ServerRoutes } from '../entity/security/server_routes';
 import { LoginRecord } from '../entity/security/login_record';
 import { Project } from '../entity/project/project';
+import { ProjectVariable } from '../entity/project/project_variable';
 // import { Doc } from '../entity/doc/doc';
 
 export default {
@@ -42,7 +43,7 @@ export default {
           ServerRoutes,
           LoginRecord,
           Project,
-          // Doc,
+          ProjectVariable,
         ],
       },
     },

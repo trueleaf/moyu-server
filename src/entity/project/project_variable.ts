@@ -1,10 +1,5 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
 
-enum VariableEnum {
-  string = 'string',
-  number = 'number',
-  boolean = 'boolean',
-}
 @modelOptions({
   schemaOptions: { timestamps: true, collection: 'project_variable' },
 })
@@ -22,7 +17,7 @@ export class ProjectVariable {
   /**
    * 变量类型
    */
-  @prop({ type: VariableEnum })
+  @prop({ enum: ['string', 'number', 'boolean', 'array', 'object'] })
   public type: string;
   /**
    * 变量值
