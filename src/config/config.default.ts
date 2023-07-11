@@ -8,10 +8,11 @@ import { ServerRoutes } from '../entity/security/server_routes';
 import { LoginRecord } from '../entity/security/login_record';
 import { Project } from '../entity/project/project';
 import { ProjectVariable } from '../entity/project/project_variable';
+import { ProjectCode } from '../entity/project/project_code';
 // import { Doc } from '../entity/doc/doc';
 
 export default {
-  keys: '1683383633312_1890',
+  keys: 'apiflow',
   session: {
     name: 'apiflow',
     resave: true,
@@ -44,6 +45,7 @@ export default {
           LoginRecord,
           Project,
           ProjectVariable,
+          ProjectCode,
         ],
       },
     },

@@ -22,3 +22,25 @@ export class TableSearchParams {
   @Rule(RuleType.number())
     endTime: number;
 }
+export class DocProperty {
+  /**
+   * 文档id
+   */
+  @Rule(RuleType.string())
+    _id: string;
+  /**
+   * 字段名称
+   */
+  @Rule(RuleType.string())
+    key: string;
+  /**
+   * 字段类型
+   */
+  @Rule(RuleType.string())
+    type: string;
+  /**
+   * 字段值
+   */
+  @Rule(RuleType.string())
+    value: string;
+}
