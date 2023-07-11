@@ -71,7 +71,10 @@ export class ProjectVariableService {
   async deleteProjectVariable(params: DeleteProjectVariableDto) {
     const { ids, projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
-    const result = await this.projectVariableModel.deleteMany({ _id: { $in: ids }});
+    const result = await this.projectVariableModel.updateMany(
+      { _id: { $in: ids }},
+      { $set: { enabled: false }}
+    );
     return result;
   }
   /**
@@ -102,7 +105,7 @@ export class ProjectVariableService {
     } else if (startTime != null && endTime != null) {
       query.createdAt = { $gt: startTime, $lt: endTime };
     }
-    const rows = await this.projectVariableModel.find(query, { projectId: 0, createdAt: 0, updatedAt: 0, __v: 0 }).skip(skipNum).limit(limit);
+    const rows = await this.projectVariableModel.find(query, { projectId: 0, createdAt: 0, updatedAt: 0, __v: 0, enabled: 0 }).skip(skipNum).limit(limit);
     const total = await this.projectVariableModel.find(query).countDocuments();
     const result = {
       rows,
@@ -116,7 +119,7 @@ export class ProjectVariableService {
   async getProjectVariableEnum(params: GetProjectVariableEnumDto) {
     const { projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
-    const result = await this.projectVariableModel.find({ projectId }, { name: 1, type: 1, value: 1 });
+    const result = await this.projectVariableModel.find({ projectId, enabled: true }, { name: 1, type: 1, value: 1 });
     return result;
   }
 }
