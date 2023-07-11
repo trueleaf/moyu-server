@@ -46,6 +46,41 @@ const INITIAL_USER = [
 ];
 const INITIAL_SERVER_ROUTES = [
   {
+    _id: '64aa7489a9cd132a77e81f5b',
+    groupName: 'api文档-项目相关',
+    method: 'post',
+    name: '新增脚本代码',
+    path: '/api/apidoc/project/code',
+  },
+  {
+    _id: '64aa74cd0e3aa9f43b7f9675',
+    groupName: 'api文档-项目相关',
+    method: 'put',
+    name: '修改脚本代码',
+    path: '/api/apidoc/project/code',
+  },
+  {
+    _id: '64aa74f80e3aa9f43b7f9684',
+    groupName: 'api文档-项目相关',
+    method: 'delete',
+    name: '删除脚本代码',
+    path: '/api/apidoc/project/code',
+  },
+  {
+    _id: '64aa751a0e3aa9f43b7f9693',
+    groupName: 'api文档-项目相关',
+    method: 'get',
+    name: '列表获取脚本代码',
+    path: '/api/apidoc/project/code',
+  },
+  {
+    _id: '64aa755c935ddf872a6d43e4',
+    groupName: 'api文档-项目相关',
+    method: 'get',
+    name: '枚举获取脚本代码',
+    path: '/api/apidoc/project/code_enum',
+  },
+  {
     _id: '5edd91af5fcdf3111671cb15',
     groupName: 'api文档-项目相关',
     method: 'post',
@@ -861,6 +896,11 @@ const INITIAL_ROLE = [
     remark: '对文档拥有所有权限',
     roleName: 'api文档-完全控制',
     serverRoutes: [
+      '64aa7489a9cd132a77e81f5b',
+      '64aa74cd0e3aa9f43b7f9675',
+      '64aa74f80e3aa9f43b7f9684',
+      '64aa751a0e3aa9f43b7f9693',
+      '64aa755c935ddf872a6d43e4',
       '64a8f5a40558e0ba613f3cb0',
       '64a8ee811f0b581286ed8189',
       '60a35ac840b59032c9225c40',
