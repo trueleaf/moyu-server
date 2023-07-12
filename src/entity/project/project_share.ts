@@ -3,7 +3,7 @@ import { modelOptions, prop } from '@typegoose/typegoose';
 @modelOptions({
   schemaOptions: { timestamps: true, collection: 'project_share' },
 })
-export class ProjectVariable {
+export class ProjectShare {
   /**
    * 分享id
    */

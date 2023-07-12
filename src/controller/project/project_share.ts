@@ -10,7 +10,7 @@ export class ProjectShareController {
   /**
    * 新增项目
    */
-  @Post('/project/add_project')
+  @Post('/project/add_project2')
   async addProject(@Body() params: AddProjectDto) {
     const data = await this.projectService.addProject(params);
     return data;
