@@ -30,11 +30,6 @@ export class AddProjectCodeDto {
    */
   @Rule(RuleType.boolean().default(false).required())
     isPublic?: boolean;
-  /**
-   * 使能
-   */
-  @Rule(RuleType.boolean().default(true))
-    enabled: boolean;
 }
 /**
  * 修改项目脚本代码
