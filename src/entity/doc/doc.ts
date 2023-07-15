@@ -1,4 +1,5 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
+import { Timestamps } from '../common/common';
 
 class FileInfo {
   /**
@@ -63,11 +64,6 @@ class Info {
   @prop({ required: true })
   public name: string;
   /**
-   * 文档描述
-   */
-  @prop({ default: '' })
-  public description: string;
-  /**
    * 文档版本信息
    */
   @prop()
@@ -86,17 +82,17 @@ class Info {
    * 维护人员，最近一次更新人员
    */
   @prop()
-  public maintainer: string;
+  public maintainer?: string;
   /**
    * 删除文档的人
    */
   @prop()
-  public deletePerson: string;
+  public deletePerson?: string;
   /**
    * 录入接口花费时间
    */
   @prop()
-  public spendTime: string;
+  public spendTime?: string;
 }
 /*
 |--------------------------------------------------------------------------
@@ -256,7 +252,7 @@ class ResponseParams {
 @modelOptions({
   schemaOptions: { timestamps: true, collection: 'doc' },
 })
-export class Doc {
+export class Doc extends Timestamps {
   /**
    * 父元素id
    */
