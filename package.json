@@ -26,7 +26,8 @@
     "lodash": "^4.17.21",
     "mongoose": "^7.1.0",
     "svg-captcha": "^1.4.0",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "xss": "^1.0.14"
   },
   "devDependencies": {
     "@midwayjs/cli": "^2.0.0",
