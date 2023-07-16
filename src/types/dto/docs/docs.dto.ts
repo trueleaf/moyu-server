@@ -201,11 +201,16 @@ class RequestScript {
   @Rule(RuleType.string().default(''))
     raw: string;
 }
-class DocRule {
+class DocInfo {
+  /**
+   * 文档id
+   */
+  @Rule(RuleType.string())
+    _id: string;
   /**
    * 父元素id
    */
-  @Rule(RuleType.string().default(''))
+  @Rule(RuleType.string())
     pid: string;
   /**
    * 项目id
@@ -325,8 +330,8 @@ export class PasteDocsDto {
   /**
    * docs
    */
-  @Rule(RuleType.array().items(RuleType.object(DocRule)).required())
-    docs: DocRule[];
+  @Rule(RuleType.array().items(RuleType.object<DocInfo>()).required())
+    docs: DocInfo[];
 }
 /**
  * 改变文档位置信息
@@ -454,12 +459,12 @@ export class UpdateDoc {
 /**
  * 创建文档(保存文档)
  */
-export class CreateDocDto extends DocRule {
+export class CreateDocDto {
   /**
-   * 文档id
+   * 文档
    */
-  @Rule(RuleType.string().required())
-    _id: string;
+  @Rule(RuleType.object<DocInfo>())
+    docInfo: DocInfo;
 }
 
 /**
