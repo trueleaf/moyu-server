@@ -1,5 +1,6 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
 import { Timestamps } from '../common/common';
+import { RequestMethod } from '../../types/types';
 
 class FileInfo {
   /**
@@ -177,20 +178,11 @@ class RequestInfo {
    * 请求方法
    */
   @prop({ default: 'GET' })
-  public method:
-    | 'GET'
-    | 'POST'
-    | 'PUT'
-    | 'DELETE'
-    | 'OPTIONS'
-    | 'PATCH'
-    | 'HEAD'
-    | 'CONNECTION'
-    | 'TRACE';
+  public method: RequestMethod;
   /**
    * 请求地址信息
    */
-  @prop({ default: 'GET' })
+  @prop()
   public url: RequestUrl;
   /**
    * 路径参数

@@ -9,7 +9,7 @@ import { LoginRecord } from '../entity/security/login_record';
 import { Project } from '../entity/project/project';
 import { ProjectVariable } from '../entity/project/project_variable';
 import { ProjectCode } from '../entity/project/project_code';
-// import { Doc } from '../entity/doc/doc';
+import { Doc } from '../entity/doc/doc';
 
 export default {
   keys: 'apiflow',
@@ -46,6 +46,7 @@ export default {
           Project,
           ProjectVariable,
           ProjectCode,
+          Doc,
         ],
       },
     },

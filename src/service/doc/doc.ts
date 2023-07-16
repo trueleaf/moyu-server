@@ -3,10 +3,12 @@ import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Doc } from '../../entity/doc/doc';
 import { CommonController } from '../../controller/common/common';
-import { LoginTokenInfo } from '../../types/types';
-import { AddEmptyDocDto } from '../../types/dto/docs/docs.dto';
+import { LoginTokenInfo, RequestMethod } from '../../types/types';
+import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, CreateDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc } from '../../types/dto/docs/docs.dto';
 import { throwError } from '../../utils/utils';
 import { Project } from '../../entity/project/project';
+import { Types } from 'mongoose';
+import xss from 'xss';
 
 
 @Provide()
@@ -66,5 +68,189 @@ export class DocService {
       updatedAt: result.updatedAt,
       isFolder: result.isFolder,
     };
+  }
+  /**
+   * 生成文档副本
+   */
+  async generateDocCopy(params: GenerateDocCopyDto) {
+    const { _id, projectId } = params;
+    await this.commonControl.checkDocOperationPermissions(projectId);
+    const doc = await this.docModel.findOne({ _id }).lean();
+    doc.item.method = doc.item.method.toUpperCase() as RequestMethod;
+    doc.info.name = '副本-' + doc.info.name;
+    doc._id = new Types.ObjectId();
+    doc.sort += 1;
+    const result = await this.docModel.create(doc);
+    if (!doc.isFolder) {
+      await this.projectModel.findByIdAndUpdate({ _id: doc.projectId }, { $inc: { docNum: 1 }});
+    }
+    return {
+      _id: result._id,
+      pid: result.pid,
+      sort: result.sort,
+      isFolder: result.isFolder,
+      updatedAt: result.updatedAt,
+      type: result.info.type,
+      name: result.info.name,
+      maintainer: result.info.maintainer,
+      method: result.item.method,
+      url: result.item.url.path,
+    };
+  }
+  /**
+   * 粘贴文档
+   */
+  async pasteDocs(params: PasteDocsDto) {
+    const { projectId, docs, mountedId = '', fromProjectId } = params;
+    await this.commonControl.checkDocOperationPermissions(projectId);
+    await this.commonControl.checkDocOperationPermissions(fromProjectId);
+    const docIds = docs.map(v => v._id);
+    const matchedDocs = await this.docModel.find({ projectId: fromProjectId, _id: { $in: docIds } }).lean();
+    const idMap: {
+      newId: string;
+      oldId: string;
+      newPid: string;
+    }[] = [];
+    //先重新绑定pid
+    matchedDocs.forEach((docInfo) => {
+      const newId = new Types.ObjectId().toString();
+      const oldId = docInfo._id.toString();
+      const oldPid = docInfo.pid;
+      docInfo.sort = Date.now();
+      const mapInfo = {
+        newId,
+        newPid: '',
+        oldId,
+        oldPid,
+      };
+      matchedDocs.forEach((docInfo2) => {
+        const pid2 = docInfo2.pid;
+        if (pid2 === oldId) { //说明这个是子元素
+          docInfo2.pid = newId;
+          mapInfo.newPid = newId;
+        }
+      })
+      const hasParent = matchedDocs.find((v) => v._id.toString() === docInfo.pid);
+      if (!hasParent) {
+        docInfo.pid = mountedId;
+        mapInfo.newPid = mountedId;
+      }
+      idMap.push(mapInfo);
+      docInfo._id = new Types.ObjectId(newId);
+      docInfo.projectId = projectId;
+      docInfo.sort = Date.now();
+    })
+    await this.docModel.insertMany(matchedDocs);
+    return idMap;
+  }
+  /**
+   * 改变文档位置信息
+   */
+  async changeDocPosition(params: ChangeDocPositionDto) {
+    const { _id, pid, sort, projectId } = params;
+    await this.commonControl.checkDocOperationPermissions(projectId);
+    const updateDoc = { $set: {
+      pid: '',
+      sort: 0
+    }};
+    let parentDoc = null;
+    let isFolder = null;
+    updateDoc.$set.pid = pid;
+    updateDoc.$set.sort = sort;
+    if (pid) {
+      parentDoc = await this.docModel.findById({ _id: pid });
+      isFolder = parentDoc.isFolder;
+    }
+    if (parentDoc && !isFolder) {
+      throwError(4001, '操作不被允许，pid对应的父元素不是文件夹')
+    }
+    await this.docModel.findByIdAndUpdate({ _id }, updateDoc);
+    return;
+  }
+  /**
+   * 修改文档基础信息
+   */
+  async changeDocBaseInfo(params: ChangeDocBaseInfoDto) {
+    const { _id, name, projectId } = params;
+    await this.commonControl.checkDocOperationPermissions(projectId);
+    await this.docModel.findByIdAndUpdate({ _id }, { $set: { 'info.name': name }});
+    return { _id };
+  }
+  /**
+   * 改变文档请求相关数据
+   */
+  async updateDoc(params: UpdateDoc) {
+    const { _id, info, item, preRequest, afterRequest, projectId, mockInfo, spendTime = 0 } = params;
+    await this.commonControl.checkDocOperationPermissions(projectId);
+    const { tokenInfo } = this.ctx;
+    const description = xss(info.description);
+    await this.docModel.findByIdAndUpdate({ _id }, {
+      $set: {
+        preRequest,
+        afterRequest,
+        item,
+        mockInfo,
+        'info.description': description,
+        'info.maintainer': tokenInfo.realName || tokenInfo.loginName,
+      },
+      $inc: {
+        'info.spendTime': spendTime
+      }
+    });
+    return;
+  }
+  /**
+   * 创建完整文档
+   */
+  async createDoc(params: CreateDocDto) {
+    const { docInfo } = params;
+    await this.commonControl.checkDocOperationPermissions(docInfo.projectId);
+    const _id = new Types.ObjectId().toString();
+    docInfo._id = _id
+    const result = await this.docModel.create(docInfo);
+    return result._id;
+  }
+  /**
+   * 获取文档详情
+   */
+  async getDocDetail(params: GetDocDetailDto) {
+    const { _id, projectId } = params;
+    await this.commonControl.checkDocOperationPermissions(projectId);
+    const result = await this.docModel.findOne({ _id }, { pid: 0, sort: 0, enabled: 0 }).lean();
+    result.preRequest = result.preRequest ? result.preRequest : {
+      raw: ''
+    }
+    result.afterRequest = result.afterRequest ? result.afterRequest : {
+      raw: ''
+    }
+    return result;
+  }
+  /**
+   * 删除文档
+   */
+  async deleteDoc(params: DeleteDocDto) {
+    const { ids, projectId } = params;
+    const { tokenInfo } = this.ctx;
+    const result = await this.docModel.updateMany({
+      projectId,
+      _id: { $in: ids }
+    }, {
+      $set: {
+        enabled: false,
+        'info.deletePerson': tokenInfo.realName || tokenInfo.loginName
+      }
+    }); //文档祖先包含删除元素，那么该文档也需要被删除
+    const docLen = await this.docModel.find({ projectId, isFolder: false, enabled: true }).countDocuments();
+    await this.projectModel.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }});
+    return result;
+  }
+  /**
+   * 获取mock文档数据
+   */
+  async getMockData(params: GetMockDataDto) {
+    // const { _id } = params;
+    // const doc = await this.docModel.findOne({ _id, enabled: true }).lean();
+    // const result = this.convertPlainParamsToTreeData(doc.item.responseParams);
+    return params;
   }
 }

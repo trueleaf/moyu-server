@@ -39,7 +39,7 @@ export class DocController {
    */
   @Put('/project/change_doc_pos')
   async changeDocPosition(@Body() params: ChangeDocPositionDto) {
-    const data = await this.docService.pasteDocs(params);
+    const data = await this.docService.changeDocPosition(params);
     return data;
   }
   /**
@@ -87,7 +87,7 @@ export class DocController {
    */
   @Del('/project/doc_mock')
   async getMockData(@Query() params: GetMockDataDto) {
-    const data = await this.docService.deleteDoc(params);
+    const data = await this.docService.getMockData(params);
     return data;
   }
 }
