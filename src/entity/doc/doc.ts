@@ -50,7 +50,7 @@ class BaseProperty {
   /**
    * 子元素
    */
-  @prop({ type: () => [BaseProperty] })
+  @prop({ ref: () => BaseProperty })
   public children: BaseProperty[];
 }
 /*
@@ -182,7 +182,7 @@ class RequestInfo {
   /**
    * 请求地址信息
    */
-  @prop()
+  @prop({ default: { path: '', host: '' } })
   public url: RequestUrl;
   /**
    * 路径参数
@@ -301,7 +301,7 @@ export class Doc extends Timestamps {
         statusCode: 200,
         value: {
           dataType: 'application/json',
-          json: [],
+          strJson: null,
           file: {
             url: '',
             raw: '',
@@ -311,7 +311,7 @@ export class Doc extends Timestamps {
       },
     ],
   })
-  public responseParams: ResponseParams;
+  public responseParams: ResponseParams[];
   /**
    * 使能
    */
