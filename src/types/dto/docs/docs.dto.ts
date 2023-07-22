@@ -1,10 +1,50 @@
-import { Rule, RuleType } from '@midwayjs/validate';
+import { Rule, RuleType, getSchema } from '@midwayjs/validate';
 
 /*
 |--------------------------------------------------------------------------
 | 通用校验
 |--------------------------------------------------------------------------
 */
+//基础请求参数元信息
+class BaseProperty {
+  @Rule(RuleType.string().required())
+    _id: string;
+  /**
+   * 字段名称
+   */
+  @Rule(RuleType.string().required())
+    key: string;
+  /**
+   * 字段类型
+   */
+  @Rule(RuleType.string().valid('string', 'number', 'boolean', 'array', 'object', 'file').required())
+    type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'file';
+  /**
+   * 字段描述
+   */
+  @Rule(RuleType.string().required())
+    description: string;
+  /**
+   * 字段值
+   */
+  @Rule(RuleType.string().required())
+    value: string;
+  /**
+   * 是否必填
+   */
+  @Rule(RuleType.boolean().required())
+    required: boolean;
+  /**
+   * 业务参数，是否选中
+   */
+  @Rule(RuleType.boolean().required())
+    select: boolean;
+  /**
+   * 子元素
+   */
+  @Rule(RuleType.array().items(getSchema(BaseProperty)))
+    children: BaseProperty[];
+}
 class MockImage {
   @Rule(RuleType.valid('png', 'jpg', 'gif', 'svg'))
     type: 'png' | 'jpg' | 'gif' | 'svg';
@@ -49,7 +89,7 @@ class MockInfo {
   /**
    * 自定义返回头
    */
-  @Rule(RuleType.array().items(RuleType.object<BaseProperty>()))
+  @Rule(RuleType.array().items(getSchema(BaseProperty)))
     responseHeaders: BaseProperty[];
   /**
    * 返回延时
@@ -69,12 +109,12 @@ class MockInfo {
   /**
    * 图片返回
    */
-  @Rule(RuleType.object<MockImage>())
+  @Rule(getSchema(MockImage))
     image: MockImage;
   /**
    * 文件相关数据
    */
-  @Rule(RuleType.object<MockFile>())
+  @Rule(getSchema(MockFile))
     file: MockFile;
   /**
    * 纯文本，html，css等
@@ -87,46 +127,7 @@ class MockInfo {
   @Rule(RuleType.string())
     customResponseScript: string;
 }
-//基础请求参数元信息
-class BaseProperty {
-  @Rule(RuleType.string().required())
-    _id: string;
-  /**
-   * 字段名称
-   */
-  @Rule(RuleType.string().required())
-    key: string;
-  /**
-   * 字段类型
-   */
-  @Rule(RuleType.string().valid('string', 'number', 'boolean', 'array', 'object', 'file').required())
-    type: 'string' | 'number' | 'boolean' | 'array' | 'object' | 'file';
-  /**
-   * 字段描述
-   */
-  @Rule(RuleType.string().required())
-    description: string;
-  /**
-   * 字段值
-   */
-  @Rule(RuleType.string().required())
-    value: string;
-  /**
-   * 是否必填
-   */
-  @Rule(RuleType.boolean().required())
-    required: boolean;
-  /**
-   * 业务参数，是否选中
-   */
-  @Rule(RuleType.boolean().required())
-    select: boolean;
-  /**
-   * 子元素
-   */
-  @Rule(RuleType.array().items(RuleType.object<BaseProperty>()))
-    children: BaseProperty[];
-}
+
 //文档基本信息
 class DocBaseInfo {
   /**
@@ -181,7 +182,7 @@ class ResonseValue {
     strJson: string;
   @Rule(RuleType.string())
     text: string;
-  @Rule(RuleType.object<FileInfo>())
+  @Rule(getSchema(FileInfo))
     file: FileInfo;
 }
 //返回参数
@@ -190,7 +191,7 @@ class ResponseParams {
     title: string;
   @Rule(RuleType.number().default(200))
     statusCode: number;
-  @Rule(RuleType.object<ResonseValue>())
+  @Rule(getSchema(ResonseValue))
     value: ResonseValue;
 }
 //请求脚本信息
@@ -230,33 +231,33 @@ class DocInfo {
   /**
    * 文档基本信息
    */
-  @Rule(RuleType.object<DocBaseInfo>())
+  @Rule(getSchema(DocBaseInfo))
     info: DocBaseInfo;
   /**
    * 前置脚本信息
    */
-  @Rule(RuleType.object<RequestScript>())
+  @Rule(getSchema(RequestScript))
     preRequest: RequestScript;
   /**
    * 后置脚本信息
    */
-  @Rule(RuleType.object<RequestScript>())
+  @Rule(getSchema(RequestScript))
     afterRequest: RequestScript;
   /**
    * 公共请求头
    */
-  @Rule(RuleType.array().items(RuleType.object<BaseProperty>()))
+  @Rule(RuleType.array().items(getSchema(BaseProperty)))
     commonHeaders: BaseProperty[];
   /**
    * 接口相关元素
    */
-  @Rule(RuleType.object<RequestInfo>())
-    item: RequestInfo;
+  @Rule(getSchema(DocBaseInfo))
+    item: DocBaseInfo;
   /**
    * 返回参数
    */
   @Rule(
-    RuleType.array().items(RuleType.object<ResponseParams>())
+    RuleType.array().items(getSchema(ResponseParams))
   )
     responseParams: ResponseParams[];
 }
@@ -308,6 +309,10 @@ export class GenerateDocCopyDto {
   @Rule(RuleType.string().required())
     projectId: string;
 }
+class IdMap {
+  @Rule(RuleType.string().required())
+    _id: string;
+}
 /**
  * 粘贴文档
  */
@@ -330,39 +335,39 @@ export class PasteDocsDto {
   /**
    * docs
    */
-  @Rule(RuleType.array().items(RuleType.object<DocInfo>()).required())
-    docs: DocInfo[];
+  @Rule(RuleType.array().items(getSchema(IdMap)).required())
+    docs: IdMap[];
 }
 /**
- * 改变文档位置信息
+ * 改变文档位置信息 todo 迁移前用于历史记录
  */
-class DropInfo {
-  /**
-   * 被drag节点名称
-   */
-  @Rule(RuleType.string().required())
-    nodeName: string;
-  /**
-   * 被drag节点id
-   */
-  @Rule(RuleType.string().required())
-    nodeId: string;
-  /**
-   * 文档drop时候相对的那个节点id
-   */
-  @Rule(RuleType.string().required())
-    dropNodeId: string;
-  /**
-   * 文档drop时候相对的那个节点名称
-   */
-  @Rule(RuleType.string().required())
-    dropNodeName: string;
-  /**
-   * 文档drop时候类型，
-   */
-  @Rule(RuleType.string().valid('before', 'after', 'inner').required())
-    dropType: 'before' | 'after' | 'inner';
-}
+// class DropInfo {
+//   /**
+//    * 被drag节点名称
+//    */
+//   @Rule(RuleType.string().required())
+//     nodeName: string;
+//   /**
+//    * 被drag节点id
+//    */
+//   @Rule(RuleType.string().required())
+//     nodeId: string;
+//   /**
+//    * 文档drop时候相对的那个节点id
+//    */
+//   @Rule(RuleType.string().required())
+//     dropNodeId: string;
+//   /**
+//    * 文档drop时候相对的那个节点名称
+//    */
+//   @Rule(RuleType.string().required())
+//     dropNodeName: string;
+//   /**
+//    * 文档drop时候类型，
+//    */
+//   @Rule(RuleType.string().valid('before', 'after', 'inner').required())
+//     dropType: 'before' | 'after' | 'inner';
+// }
 export class ChangeDocPositionDto {
   /**
    * 当前项目id
@@ -384,11 +389,6 @@ export class ChangeDocPositionDto {
    */
   @Rule(RuleType.number())
     sort: number;
-  /**
-   * 文档排序
-   */
-  @Rule(RuleType.object<DropInfo>())
-    dropInfo: number;
 }
 /**
  * 改变文档基本信息
@@ -432,27 +432,27 @@ export class UpdateDoc {
   /**
    * 文档信息
    */
-  @Rule(RuleType.object<DocBaseInfo>().required())
+  @Rule(getSchema(DocBaseInfo).required())
     info: DocBaseInfo;
   /**
    * 文档名称
    */
-  @Rule(RuleType.object<RequestInfo>())
-    item: RequestInfo;
+  @Rule(getSchema(DocInfo))
+    item: DocInfo;
   /**
    * 前置脚本信息
    */
-  @Rule(RuleType.object<RequestScript>())
+  @Rule(getSchema(RequestScript))
     preRequest: RequestScript;
   /**
    * 后置脚本信息
    */
-  @Rule(RuleType.object<RequestScript>())
+  @Rule(getSchema(RequestScript))
     afterRequest: RequestScript;
   /**
    * mock信息
    */
-  @Rule(RuleType.object<MockInfo>())
+  @Rule(getSchema(MockInfo))
     mockInfo: MockInfo;
 }
 
@@ -463,7 +463,7 @@ export class CreateDocDto {
   /**
    * 文档
    */
-  @Rule(RuleType.object<DocInfo>())
+  @Rule(getSchema(DocInfo))
     docInfo: DocInfo;
 }
 
