@@ -217,6 +217,9 @@ export class DocService {
     const { _id, projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
     const result = await this.docModel.findOne({ _id }, { pid: 0, sort: 0, enabled: 0 }).lean();
+    if (!result) {
+      throwError(4001, '暂无文档信息')
+    }
     result.preRequest = result.preRequest ? result.preRequest : {
       raw: ''
     }
