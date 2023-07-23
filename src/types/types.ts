@@ -58,8 +58,8 @@ export type GlobalConfig = {
     /**
      * 没页最大显示数量
      */
-    max: number
-  }
+    max: number;
+  };
 };
 
 /**
@@ -73,3 +73,14 @@ export type LoginTokenInfo = {
   phone: User['phone'];
   token: string;
 };
+
+export type RequestMethod =
+  | 'GET'
+  | 'POST'
+  | 'PUT'
+  | 'DELETE'
+  | 'OPTIONS'
+  | 'PATCH'
+  | 'HEAD'
+  | 'CONNECTION'
+  | 'TRACE';

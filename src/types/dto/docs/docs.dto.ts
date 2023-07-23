@@ -382,7 +382,7 @@ export class ChangeDocPositionDto {
   /**
    * 需要改变的文档父级id
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().empty(''))
     pid: string;
   /**
    * 文档排序
