@@ -17,6 +17,7 @@ export type ResponseWrapper<T = unknown> = {
     | 2008
     | 2009
     | 2010
+    | 4001
     | 4002
     | 4004
     | 5000;
