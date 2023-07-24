@@ -1,4 +1,5 @@
 import { Rule, RuleType, getSchema } from '@midwayjs/validate';
+import { RequestMethod, ContentType } from '../../types';
 
 /*
 |--------------------------------------------------------------------------
@@ -148,7 +149,7 @@ class DocBaseInfo {
   /**
    * 文档类型,   1.文件夹 2.普通文档 3.markdown文档
    */
-  @Rule(RuleType.string().valid('folder', 'api', 'markdown'))
+  @Rule(RuleType.string().valid('folder', 'api', 'markdown').required())
     type: 'folder' | 'api' | 'markdown';
   /**
    * 创建者
@@ -202,6 +203,99 @@ class RequestScript {
   @Rule(RuleType.string().default(''))
     raw: string;
 }
+class RequestUrl {
+  /**
+   * 接口路径
+   */
+  @Rule(RuleType.string())
+  public path: string;
+  /**
+   * 接口前缀
+   */
+  @Rule(RuleType.string())
+  public host: string;
+}
+class RawBody {
+  /**
+   * 原始数据值
+   */
+  @Rule(RuleType.string())
+  public data: string;
+  /**
+   * 原始数据类型
+   */
+  @Rule(RuleType.string())
+  public dataType: string;
+}
+class RequestBody {
+  /**
+   * 请求模式
+   */
+  @Rule(RuleType.string().valid('json', 'raw', 'formdata', 'urlencoded', 'binary', 'none'))
+  public mode: 'json' | 'raw' | 'formdata' | 'urlencoded' | 'binary' | 'none';
+  /**
+   * 原始json数据(字符串)
+   */
+  @Rule(RuleType.string())
+  public rawJson: string;
+  /**
+   * formData数据
+   */
+  @Rule(RuleType.array().items(getSchema(BaseProperty)))
+  public formdata: BaseProperty[];
+  /**
+   * urlencoded数据
+   */
+  @Rule(RuleType.array().items(getSchema(BaseProperty)))
+  public urlencoded: BaseProperty[];
+  /**
+   * raw数据
+   */
+  @Rule(getSchema(RawBody))
+  public raw: RawBody;
+  /**
+   * file数据
+   */
+  @Rule(getSchema(FileInfo))
+  public file: FileInfo;
+}
+class ItemInfo {
+  /**
+   * 请求方法
+   */
+  @Rule(RuleType.string().valid('GET','POST','PUT','DELETE','OPTIONS','PATCH','HEAD','CONNECTION','TRACE').default('GET'))
+  public method: RequestMethod;
+  /**
+   * 请求地址信息
+   */
+  @Rule(getSchema(RequestUrl).default({ path: '', host: '' }))
+  public url: RequestUrl;
+  /**
+   * 路径参数
+   */
+  @Rule(RuleType.array().items(getSchema(BaseProperty)))
+  public paths: BaseProperty[];
+  /**
+   * query参数
+   */
+  @Rule(RuleType.array().items(getSchema(BaseProperty)))
+  public queryParams: BaseProperty[];
+  /**
+   * body参数
+   */
+  @Rule(RuleType.any().default({}))
+  public requestBody: RequestBody;
+  /**
+   * 请求头
+   */
+  @Rule(RuleType.array().items(getSchema(BaseProperty)))
+  public headers: BaseProperty[];
+  /**
+   * contentType
+   */
+  @Rule(RuleType.string().valid('application/json','application/x-www-form-urlencoded','multipart/form-data','text/plain','application/xml','text/html',''))
+  public contentType: ContentType;
+}
 class DocInfo {
   /**
    * 文档id
@@ -251,14 +345,12 @@ class DocInfo {
   /**
    * 接口相关元素
    */
-  @Rule(getSchema(DocBaseInfo))
-    item: DocBaseInfo;
+  @Rule(getSchema(ItemInfo))
+    item: ItemInfo;
   /**
    * 返回参数
    */
-  @Rule(
-    RuleType.array().items(getSchema(ResponseParams))
-  )
+  @Rule(RuleType.array().items(getSchema(ResponseParams)))
     responseParams: ResponseParams[];
 }
 
@@ -427,7 +519,7 @@ export class UpdateDoc {
   /**
    * 请求耗时
    */
-  @Rule(RuleType.number().required())
+  @Rule(RuleType.number())
     spendTime: number;
   /**
    * 文档信息
@@ -435,24 +527,24 @@ export class UpdateDoc {
   @Rule(getSchema(DocBaseInfo).required())
     info: DocBaseInfo;
   /**
-   * 文档名称
+   * 接口信息
    */
-  @Rule(getSchema(DocInfo))
-    item: DocInfo;
+  @Rule(getSchema(ItemInfo).required())
+    item: ItemInfo;
   /**
    * 前置脚本信息
    */
-  @Rule(getSchema(RequestScript))
+  @Rule(getSchema(RequestScript).required())
     preRequest: RequestScript;
   /**
    * 后置脚本信息
    */
-  @Rule(getSchema(RequestScript))
+  @Rule(getSchema(RequestScript).required())
     afterRequest: RequestScript;
   /**
    * mock信息
    */
-  @Rule(getSchema(MockInfo))
+  @Rule(getSchema(MockInfo).required())
     mockInfo: MockInfo;
 }
 
