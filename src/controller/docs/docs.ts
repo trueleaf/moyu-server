@@ -51,7 +51,7 @@ export class DocController {
     return data;
   }
   /**
-   * 改变文档请求相关数据
+   *更新文档
    */
   @Post('/project/fill_doc')
   async updateDoc(@Body() params: UpdateDoc) {

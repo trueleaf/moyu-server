@@ -8,8 +8,7 @@ import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, CreateDocDt
 import { throwError } from '../../utils/utils';
 import { Project } from '../../entity/project/project';
 import { Types } from 'mongoose';
-import xss from 'xss';
-
+import { filterXSS } from 'xss';
 
 @Provide()
 export class DocService {
@@ -183,7 +182,7 @@ export class DocService {
     const { _id, info, item, preRequest, afterRequest, projectId, mockInfo, spendTime = 0 } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
     const { tokenInfo } = this.ctx;
-    const description = xss(info.description);
+    const description = filterXSS(info.description);
     await this.docModel.findByIdAndUpdate({ _id }, {
       $set: {
         preRequest,
