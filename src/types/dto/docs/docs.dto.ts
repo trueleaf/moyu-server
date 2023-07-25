@@ -47,7 +47,7 @@ class BaseProperty {
     children: BaseProperty[];
 }
 class MockImage {
-  @Rule(RuleType.valid('png', 'jpg', 'gif', 'svg'))
+  @Rule(RuleType.valid('png', 'jpg', 'gif', 'svg').required())
     type: 'png' | 'jpg' | 'gif' | 'svg';
   @Rule(RuleType.number())
     width: number;
@@ -56,13 +56,13 @@ class MockImage {
   /**
    * 图片额外大小,可以mock较大数据图片来测试网络延迟
    */
-  @Rule(RuleType.number())
+  @Rule(RuleType.number().required())
     size: number;
-  @Rule(RuleType.number())
+  @Rule(RuleType.number().required())
     fontSize: number;
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().required().allow(''))
     color: string;
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().required().allow(''))
     backgroundColor: string;
 }
 
@@ -72,7 +72,7 @@ class MockFile {
   /**
    * 自定义mock文件路径
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
     filePath: string;
 }
 
@@ -80,52 +80,52 @@ class MockInfo {
   /**
    * mock地址
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().required().allow(''))
     path: string;
   /**
    * http状态码
    */
-  @Rule(RuleType.number())
+  @Rule(RuleType.number().required())
     httpStatusCode: number;
   /**
    * 自定义返回头
    */
-  @Rule(RuleType.array().items(getSchema(BaseProperty)))
+  @Rule(RuleType.array().items(getSchema(BaseProperty)).required())
     responseHeaders: BaseProperty[];
   /**
    * 返回延时
    */
-  @Rule(RuleType.number())
+  @Rule(RuleType.number().required())
     responseDelay: number;
   /**
    * 返回数据类型
    */
-  @Rule(RuleType.valid('json', 'image', 'file', 'text', 'customJson'))
+  @Rule(RuleType.valid('json', 'image', 'file', 'text', 'customJson').required())
     responseType: 'json' | 'image' | 'file' | 'text' | 'customJson';
   /**
    * 返回json数据
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().required().allow(''))
     json: string;
   /**
    * 图片返回
    */
-  @Rule(getSchema(MockImage))
+  @Rule(getSchema(MockImage).required())
     image: MockImage;
   /**
    * 文件相关数据
    */
-  @Rule(getSchema(MockFile))
+  @Rule(getSchema(MockFile).required())
     file: MockFile;
   /**
    * 纯文本，html，css等
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().required().allow(''))
     text: string;
   /**
    * 自定义json返回
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().required().allow(''))
     customResponseScript: string;
 }
 
@@ -139,7 +139,7 @@ class DocBaseInfo {
   /**
    * 文档描述
    */
-  @Rule(RuleType.string().default(''))
+  @Rule(RuleType.string().allow(''))
     description: string;
   /**
    * 文档版本信息
@@ -173,7 +173,7 @@ class DocBaseInfo {
     spendTime: string;
 }
 class FileInfo {
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().required().allow(''))
     url: string;
 }
 class ResonseValue {
@@ -190,7 +190,7 @@ class ResonseValue {
 class ResponseParams {
   @Rule(RuleType.string())
     title: string;
-  @Rule(RuleType.number().default(200))
+  @Rule(RuleType.number().allow(200))
     statusCode: number;
   @Rule(getSchema(ResonseValue))
     value: ResonseValue;
@@ -200,31 +200,31 @@ class RequestScript {
   /**
    * 请求脚本信息
    */
-  @Rule(RuleType.string().default(''))
+  @Rule(RuleType.string().allow(''))
     raw: string;
 }
 class RequestUrl {
   /**
    * 接口路径
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
   public path: string;
   /**
    * 接口前缀
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
   public host: string;
 }
 class RawBody {
   /**
    * 原始数据值
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().required().allow(''))
   public data: string;
   /**
    * 原始数据类型
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().required().allow(''))
   public dataType: string;
 }
 class RequestBody {
@@ -236,27 +236,27 @@ class RequestBody {
   /**
    * 原始json数据(字符串)
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().required())
   public rawJson: string;
   /**
    * formData数据
    */
-  @Rule(RuleType.array().items(getSchema(BaseProperty)))
+  @Rule(RuleType.array().items(getSchema(BaseProperty)).required())
   public formdata: BaseProperty[];
   /**
    * urlencoded数据
    */
-  @Rule(RuleType.array().items(getSchema(BaseProperty)))
+  @Rule(RuleType.array().items(getSchema(BaseProperty)).required())
   public urlencoded: BaseProperty[];
   /**
    * raw数据
    */
-  @Rule(getSchema(RawBody))
+  @Rule(getSchema(RawBody).required())
   public raw: RawBody;
   /**
    * file数据
    */
-  @Rule(getSchema(FileInfo))
+  @Rule(getSchema(FileInfo).required())
   public file: FileInfo;
 }
 class ItemInfo {
@@ -268,7 +268,7 @@ class ItemInfo {
   /**
    * 请求地址信息
    */
-  @Rule(getSchema(RequestUrl).default({ path: '', host: '' }))
+  @Rule(getSchema(RequestUrl))
   public url: RequestUrl;
   /**
    * 路径参数
@@ -283,7 +283,7 @@ class ItemInfo {
   /**
    * body参数
    */
-  @Rule(RuleType.any().default({}))
+  @Rule(getSchema(RequestBody).required())
   public requestBody: RequestBody;
   /**
    * 请求头
@@ -474,7 +474,7 @@ export class ChangeDocPositionDto {
   /**
    * 需要改变的文档父级id
    */
-  @Rule(RuleType.string().empty(''))
+  @Rule(RuleType.string().allow(''))
     pid: string;
   /**
    * 文档排序
@@ -544,7 +544,7 @@ export class UpdateDoc {
   /**
    * mock信息
    */
-  @Rule(getSchema(MockInfo).required())
+  @Rule(getSchema(MockInfo))
     mockInfo: MockInfo;
 }
 
