@@ -4,7 +4,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { Doc } from '../../entity/doc/doc';
 import { CommonController } from '../../controller/common/common';
 import { LoginTokenInfo, RequestMethod } from '../../types/types';
-import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, CreateDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc } from '../../types/dto/docs/docs.dto';
+import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, UpdateFullDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc } from '../../types/dto/docs/docs.dto';
 import { throwError } from '../../utils/utils';
 import { Project } from '../../entity/project/project';
 import { Types } from 'mongoose';
@@ -183,7 +183,7 @@ export class DocService {
     await this.commonControl.checkDocOperationPermissions(projectId);
     const { tokenInfo } = this.ctx;
     const description = filterXSS(info.description);
-    await this.docModel.findByIdAndUpdate({ _id }, {
+    const updateInfo = {
       $set: {
         preRequest,
         afterRequest,
@@ -195,13 +195,14 @@ export class DocService {
       $inc: {
         'info.spendTime': spendTime
       }
-    });
+    }
+    await this.docModel.findByIdAndUpdate({ _id }, updateInfo);
     return;
   }
   /**
    * 创建完整文档
    */
-  async createDoc(params: CreateDocDto) {
+  async updateFullDoc(params: UpdateFullDocDto) {
     const { docInfo } = params;
     await this.commonControl.checkDocOperationPermissions(docInfo.projectId);
     const _id = new Types.ObjectId().toString();
