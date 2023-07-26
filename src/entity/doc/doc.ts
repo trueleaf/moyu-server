@@ -93,7 +93,7 @@ class Info {
    * 录入接口花费时间
    */
   @prop()
-  public spendTime?: string;
+  public spendTime?: number;
 }
 /*
 |--------------------------------------------------------------------------
@@ -165,12 +165,12 @@ class RequestBody {
   /**
    * raw数据
    */
-  @prop({ default: { data: '', dataType: 'text/plain' } })
+  @prop({ default: { data: '', dataType: 'text/plain' }, _id: false })
   public raw: RawBody;
   /**
    * file数据
    */
-  @prop()
+  @prop({_id: false})
   public file: FileInfo;
 }
 class RequestInfo {
@@ -182,7 +182,7 @@ class RequestInfo {
   /**
    * 请求地址信息
    */
-  @prop({ default: { path: '', host: '' } })
+  @prop({ default: { path: '', host: '' }, _id: false })
   public url: RequestUrl;
   /**
    * 路径参数
@@ -197,7 +197,7 @@ class RequestInfo {
   /**
    * body参数
    */
-  @prop()
+  @prop({_id: false})
   public requestBody: RequestBody;
   /**
    * 请求头
@@ -229,7 +229,7 @@ class ResonseValue {
   public strJson: string;
   @prop()
   public text: string;
-  @prop()
+  @prop({_id: false})
   public file: FileInfo;
 }
 class ResponseParams {
@@ -237,7 +237,7 @@ class ResponseParams {
   public title: string;
   @prop({ default: 200 })
   public statusCode: number;
-  @prop()
+  @prop({_id: false})
   public value: ResonseValue;
 }
 
@@ -268,17 +268,17 @@ export class Doc extends Timestamps {
   /**
    * 文档基本信息
    */
-  @prop()
+  @prop({_id: false})
   public info: Info;
   /**
    * 前置脚本信息
    */
-  @prop()
+  @prop({_id: false})
   public preRequest: RequestScript;
   /**
    * 后置脚本信息
    */
-  @prop()
+  @prop({_id: false})
   public afterRequest: RequestScript;
   /**
    * 公共请求头
@@ -288,13 +288,14 @@ export class Doc extends Timestamps {
   /**
    * 接口相关元素
    */
-  @prop()
+  @prop({_id: false})
   public item: RequestInfo;
   /**
    * 返回参数
    */
   @prop({
     type: () => [ResponseParams],
+    _id: false,
     default: [
       {
         title: '成功返回',

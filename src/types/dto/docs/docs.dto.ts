@@ -169,8 +169,8 @@ class DocBaseInfo {
   /**
    * 录入接口花费时间
    */
-  @Rule(RuleType.string())
-    spendTime: string;
+  @Rule(RuleType.number())
+    spendTime: number;
 }
 class FileInfo {
   @Rule(RuleType.string().required().allow(''))
@@ -517,7 +517,7 @@ export class UpdateDoc {
   @Rule(RuleType.string().required())
     projectId: string;
   /**
-   * 请求耗时
+   * 录入耗时
    */
   @Rule(RuleType.number())
     spendTime: number;
@@ -551,7 +551,7 @@ export class UpdateDoc {
 /**
  * 创建文档(保存文档)
  */
-export class CreateDocDto {
+export class UpdateFullDocDto {
   /**
    * 文档
    */
