@@ -78,14 +78,14 @@ export class DocController {
    * 删除文档
    */
   @Del('/project/doc')
-  async deleteDoc(@Query() params: DeleteDocDto) {
+  async deleteDoc(@Body() params: DeleteDocDto) {
     const data = await this.docService.deleteDoc(params);
     return data;
   }
   /**
    * 获取mock文档数据
    */
-  @Del('/project/doc_mock')
+  @Get('/project/doc_mock')
   async getMockData(@Query() params: GetMockDataDto) {
     const data = await this.docService.getMockData(params);
     return data;
