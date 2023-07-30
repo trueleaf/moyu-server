@@ -2,7 +2,7 @@
  * 脚本代码生成能力
  */
 import { Inject, Controller, Body, Post, Del, Get, Put, Query } from '@midwayjs/core';
-import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, UpdateDoc, GenerateDocCopyDto, PasteDocsDto, UpdateFullDocDto, GetDocDetailDto, DeleteDocDto, GetMockDataDto } from '../../types/dto/docs/docs.dto';
+import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, UpdateDoc, GenerateDocCopyDto, PasteDocsDto, ReplaceFullDocDto, GetDocDetailDto, DeleteDocDto, GetMockDataDto } from '../../types/dto/docs/docs.dto';
 import { DocService } from '../../service/doc/doc';
 
 @Controller('/api')
@@ -59,11 +59,11 @@ export class DocController {
     return data;
   }
   /**
-   * 创建完整文档
+   * 覆盖文档
    */
   @Post('/project/save_doc')
-  async updateFullDoc(@Body() params: UpdateFullDocDto) {
-    const data = await this.docService.updateFullDoc(params);
+  async replaceFullDoc(@Body() params: ReplaceFullDocDto) {
+    const data = await this.docService.replaceFullDoc(params);
     return data;
   }
   /**

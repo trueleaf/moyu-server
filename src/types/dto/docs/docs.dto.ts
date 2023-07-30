@@ -551,7 +551,7 @@ export class UpdateDoc {
 /**
  * 创建文档(保存文档)
  */
-export class UpdateFullDocDto {
+export class ReplaceFullDocDto {
   /**
    * 文档
    */

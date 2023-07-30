@@ -4,7 +4,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { Doc } from '../../entity/doc/doc';
 import { CommonController } from '../../controller/common/common';
 import { LoginTokenInfo, RequestMethod } from '../../types/types';
-import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, UpdateFullDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc } from '../../types/dto/docs/docs.dto';
+import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, ReplaceFullDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc } from '../../types/dto/docs/docs.dto';
 import { throwError } from '../../utils/utils';
 import { Project } from '../../entity/project/project';
 import { Types } from 'mongoose';
@@ -200,9 +200,9 @@ export class DocService {
     return;
   }
   /**
-   * 创建完整文档
+   * 覆盖文档
    */
-  async updateFullDoc(params: UpdateFullDocDto) {
+  async replaceFullDoc(params: ReplaceFullDocDto) {
     const { docInfo } = params;
     await this.commonControl.checkDocOperationPermissions(docInfo.projectId);
     const _id = new Types.ObjectId().toString();
