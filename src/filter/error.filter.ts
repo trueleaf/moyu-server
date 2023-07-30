@@ -14,8 +14,11 @@ export class ValidateErrorFilter {
 }
 @Catch()
 export class AllServerErrorFilter {
-  async catch(err: MidwayHttpError, ctx: Context): Promise<ResponseWrapper> {
+  async catch(err: MidwayHttpError & { isCustomError?: boolean }, ctx: Context) {
     ctx.logger.error(err);
+    if (err?.isCustomError) {
+      return err;
+    }
     return {
       code: 5000,
       msg: `内部错误：${err.message}`,
