@@ -600,3 +600,13 @@ export class GetMockDataDto {
   @Rule(RuleType.string().required())
     _id: string;
 }
+/**
+ * 以树形结构获取文档
+ */
+export class GetDocsAsTreeDto {
+  /**
+   * 项目id
+   */
+  @Rule(RuleType.string().required())
+    projectId: string;
+}

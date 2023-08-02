@@ -2,7 +2,7 @@
  * 脚本代码生成能力
  */
 import { Inject, Controller, Body, Post, Del, Get, Put, Query } from '@midwayjs/core';
-import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, UpdateDoc, GenerateDocCopyDto, PasteDocsDto, ReplaceFullDocDto, GetDocDetailDto, DeleteDocDto, GetMockDataDto } from '../../types/dto/docs/docs.dto';
+import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, UpdateDoc, GenerateDocCopyDto, PasteDocsDto, ReplaceFullDocDto, GetDocDetailDto, DeleteDocDto, GetMockDataDto, GetDocsAsTreeDto } from '../../types/dto/docs/docs.dto';
 import { DocService } from '../../service/doc/doc';
 
 @Controller('/api')
@@ -88,6 +88,14 @@ export class DocController {
   @Get('/project/doc_mock')
   async getMockData(@Query() params: GetMockDataDto) {
     const data = await this.docService.getMockData(params);
+    return data;
+  }
+  /**
+   * 以树形结构获取文档
+   */
+  @Get('/project/doc_tree_node')
+  async getDocsAsTree(@Query() params: GetDocsAsTreeDto) {
+    const data = await this.docService.getDocsAsTree(params);
     return data;
   }
 }

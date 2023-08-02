@@ -4,7 +4,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { Doc } from '../../entity/doc/doc';
 import { CommonController } from '../../controller/common/common';
 import { LoginTokenInfo, RequestMethod } from '../../types/types';
-import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, ReplaceFullDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc } from '../../types/dto/docs/docs.dto';
+import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, ReplaceFullDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc, GetDocsAsTreeDto } from '../../types/dto/docs/docs.dto';
 import { throwError } from '../../utils/utils';
 import { Project } from '../../entity/project/project';
 import { Types } from 'mongoose';
@@ -255,5 +255,78 @@ export class DocService {
     // const doc = await this.docModel.findOne({ _id, enabled: true }).lean();
     // const result = this.convertPlainParamsToTreeData(doc.item.responseParams);
     return params;
+  }
+  /**
+   * 以树形结构获取文档
+   */
+  async getDocsAsTree(params: GetDocsAsTreeDto, ignorePermission?: boolean) {
+    const { projectId } = params;
+    if (!ignorePermission) {
+      await this.commonControl.checkDocOperationPermissions(projectId);
+    }
+    const result: Partial<Doc>[] = [];
+    const docsInfo = await this.docModel.find({
+      projectId: projectId,
+      enabled: true
+    }, {
+      pid: 1,
+      info: 1,
+      'item.method': 1,
+      'item.url': 1,
+      'mockInfo.path': 1,
+      isFolder: 1,
+      sort: 1,
+      updatedAt: 1,
+    }).sort({
+      isFolder: -1,
+      sort: 1
+    }).lean();
+    const pickedData =  docsInfo.map(val => {
+      if (val.isFolder) {
+        return {
+          _id: val._id,
+          pid: val.pid,
+          sort: val.sort,
+          name: val.info.name,
+          type: val.info.type,
+          maintainer: val.info.maintainer,
+          updatedAt: val.updatedAt,
+          isFolder: val.isFolder,
+          children: [],
+        };
+      } else {
+        return {
+          _id: val._id,
+          pid: val.pid,
+          sort: val.sort,
+          name: val.info.name,
+          type: val.info.type,
+          method: val.item.method,
+          url: val.item.url ? val.item.url.path : '',
+          customMockUrl: val.mockInfo?.path || '',
+          maintainer: val.info.maintainer,
+          updatedAt: val.updatedAt,
+          isFolder: val.isFolder,
+          children: [],
+        };
+      }
+    })
+    for (let i = 0; i < pickedData.length; i++) {
+      const docInfo = pickedData[i];
+      if (!docInfo.pid) { //根元素
+        docInfo.children = [];
+        result.push(docInfo);
+      }
+      const id = docInfo._id.toString();
+      for (let j = 0; j < pickedData.length; j++) {
+        if (id === pickedData[j].pid) { //项目中新增的数据使用标准id
+          if (docInfo.children == null) {
+            docInfo.children = [];
+          }
+          docInfo.children.push(pickedData[j]);
+        }
+      }
+    }
+    return result;
   }
 }
