@@ -9,6 +9,113 @@ class FileInfo {
   @prop()
   public url: string;
 }
+class MockImageInfo {
+  /**
+   * 图片类型
+   */
+  @prop({ default: 'png' })
+  public type: 'png' | 'jpg' | 'gif' | 'svg';
+  /**
+   * 图片宽度
+   */
+  @prop({ default: 200 })
+  public width: number;
+  /**
+   * 图片宽度
+   */
+  @prop({ default: 200 })
+  public height: number;
+  /**
+   * 图片额外大小
+   */
+  @prop({ default: 0 })
+  public size: number;
+  /**
+   * 文字大小
+   */
+  @prop({ default: 16 })
+  public fontSize: number;
+  /**
+   * 文字颜色
+   */
+  @prop({ default: '#fff' })
+  public color: string;
+  /**
+   * 背景颜色
+   */
+  @prop({ default: '#aaa' })
+  public backgroundColor: string;
+}
+class MockFileInfo {
+  /**
+   * 文件类型
+   */
+  @prop({ default: 'doc' })
+  public type: 'doc' | 'docx' | 'xls' | 'xlsx' | 'pdf' | 'zip' | 'custom';
+  /**
+   * 文件类型
+   */
+  @prop({ default: '' })
+  public filePath: string;
+}
+/*
+|--------------------------------------------------------------------------
+| mock信息
+|--------------------------------------------------------------------------
+*/
+class MockInfo {
+  /**
+   * mock地址
+   */
+  @prop()
+  public path: string;
+  /**
+   * http状态码
+   */
+  @prop()
+  public httpStatusCode: number;
+  /**
+   * 自定义返回头
+   */
+  @prop({type: () => [BaseProperty]})
+  public responseHeaders: BaseProperty[];
+  /**
+   * 返回延时
+   */
+  @prop({default: 0})
+  public responseDelay: number;
+  /**
+   * 返回数据类型
+   */
+  @prop({default: 'json'})
+  public responseType: 'json' | 'image' | 'file' | 'text' | 'customJson';
+  /**
+   * json数据
+   */
+  @prop()
+  public json: string;
+  /**
+   * 纯文本，html，css等
+   */
+  @prop()
+  public text: string;
+  /**
+   * mock图片信息
+   */
+  @prop({type: () => MockImageInfo})
+  public image: MockImageInfo;
+  /**
+   * mock文件信息
+   */
+  @prop({type: () => MockFileInfo})
+  public file: MockFileInfo;
+  /**
+   * 自定义json返回
+   */
+  @prop()
+  public customResponseScript: string;
+}
+
 /*
 |--------------------------------------------------------------------------
 | 文档参数
@@ -313,6 +420,11 @@ export class Doc extends Timestamps {
     ],
   })
   public responseParams: ResponseParams[];
+  /**
+   * mock信息
+   */
+  @prop({ type: () => MockInfo })
+  public mockInfo: MockInfo
   /**
    * 使能
    */
