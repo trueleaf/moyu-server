@@ -4,7 +4,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { Doc } from '../../entity/doc/doc';
 import { CommonController } from '../../controller/common/common';
 import { LoginTokenInfo, RequestMethod } from '../../types/types';
-import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, ReplaceFullDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc, GetDocsAsTreeDto } from '../../types/dto/docs/docs.dto';
+import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, ReplaceFullDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc, GetDocsAsTreeDto } from '../../types/dto/doc/doc.dto';
 import { throwError } from '../../utils/utils';
 import { Project } from '../../entity/project/project';
 import { Types } from 'mongoose';
@@ -306,6 +306,65 @@ export class DocService {
           customMockUrl: val.mockInfo?.path || '',
           maintainer: val.info.maintainer,
           updatedAt: val.updatedAt,
+          isFolder: val.isFolder,
+          children: [],
+        };
+      }
+    })
+    for (let i = 0; i < pickedData.length; i++) {
+      const docInfo = pickedData[i];
+      if (!docInfo.pid) { //根元素
+        docInfo.children = [];
+        result.push(docInfo);
+      }
+      const id = docInfo._id.toString();
+      for (let j = 0; j < pickedData.length; j++) {
+        if (id === pickedData[j].pid) { //项目中新增的数据使用标准id
+          if (docInfo.children == null) {
+            docInfo.children = [];
+          }
+          docInfo.children.push(pickedData[j]);
+        }
+      }
+    }
+    return result;
+  }
+  /**
+   * 以树形结构获取文件夹信息(仅获取文件夹信息，用于一个项目向另一个项目导入)
+   */
+  async getFoldersAsTree(params: GetDocsAsTreeDto) {
+    const { projectId } = params;
+    await this.commonControl.checkDocOperationPermissions(projectId);
+    const result: Partial<Doc>[] = [];
+    const docsInfo = await this.docModel.find({
+      projectId: projectId,
+      isFolder: true,
+      enabled: true,
+    }).sort({
+      isFolder: -1,
+      sort: 1
+    }).lean();
+    const pickedData =  docsInfo.map(val => {
+      if (val.isFolder) {
+        return {
+          _id: val._id,
+          pid: val.pid,
+          sort: val.sort,
+          name: val.info.name,
+          type: val.info.type,
+          maintainer: val.info.maintainer,
+          isFolder: val.isFolder,
+          children: [],
+        };
+      } else {
+        return {
+          _id: val._id,
+          pid: val.pid,
+          sort: val.sort,
+          name: val.info.name,
+          type: val.info.type,
+          method: val.item.method,
+          maintainer: val.info.maintainer,
           isFolder: val.isFolder,
           children: [],
         };
