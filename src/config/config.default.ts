@@ -10,6 +10,8 @@ import { Project } from '../entity/project/project';
 import { ProjectVariable } from '../entity/project/project_variable';
 import { ProjectCode } from '../entity/project/project_code';
 import { Doc } from '../entity/doc/doc';
+import { DocPrefix } from '../entity/doc/doc_prefix';
+import { DocMindParams } from '../entity/doc/doc_mind_params';
 
 export default {
   keys: 'apiflow',
@@ -47,6 +49,8 @@ export default {
           ProjectVariable,
           ProjectCode,
           Doc,
+          DocPrefix,
+          DocMindParams,
         ],
       },
     },
@@ -71,7 +75,7 @@ export default {
     expiresIn: `${1000 * 60 * 60 * 24 * 7}`, //过期时间
   },
   permission: {
-    isFree: true,
+    isFree: false,
     whiteList: [
       '/mock/image',
       '/mock',
