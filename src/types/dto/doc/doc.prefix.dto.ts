@@ -19,7 +19,7 @@ export class AddDocPrefixDto {
    * 前缀url
    */
   @Rule(RuleType.string().required())
-    url: string[];
+    url: string;
 }
 /**
  * 删除前缀
@@ -74,15 +74,15 @@ export class EditDocPrefix {
    * 前缀id
    */
   @Rule(RuleType.string().required())
-    id: string;
+    _id: string;
   /**
    * 前缀名称
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string())
     name: string;
   /**
    * 前缀url
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string())
     url: string[];
 }

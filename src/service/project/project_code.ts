@@ -16,7 +16,7 @@ export class ProjectCodeService {
   @Inject()
     ctx: Context & { tokenInfo: LoginTokenInfo };
   /**
-   * 新增变量
+   * 新增脚本代码
    */
   async addProjectCode(params: AddProjectCodeDto) {
     const { codeName, projectId, remark, code, isPublic  } = params;
@@ -33,7 +33,7 @@ export class ProjectCodeService {
     return;
   }
   /**
-   * 修改全局变量
+   * 修改脚本代码
    */
   async editProjectCode(params: EditProjectCodeDto) {
     const { codeName, projectId, remark, code, isPublic, _id  } = params;
@@ -55,7 +55,7 @@ export class ProjectCodeService {
     return;
   }
   /**
-   * 删除全局变量
+   * 删除脚本代码
    */
   async deleteProjectCode(params: DeleteProjectCodeDto) {
     const { ids, projectId } = params;
@@ -67,7 +67,7 @@ export class ProjectCodeService {
     return result;
   }
   /**
-   * 列表方式获取全局变量
+   * 列表方式获取脚本代码
    */
   async getProjectCodeList(params: GetProjectCodeListDto) {
     const { pageNum, pageSize, startTime, endTime, projectId } = params;

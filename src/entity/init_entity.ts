@@ -193,6 +193,13 @@ const INITIAL_SERVER_ROUTES = [
     path: '/api/project/doc_params_mind',
   },
   {
+    _id: '64ce39363c6754b86f2f9a73',
+    groupName: 'api文档-文档辅助',
+    method: 'delete',
+    name: '删除联想参数',
+    path: '/api/project/doc_params_mind',
+  },
+  {
     _id: '5edd91b05fcdf3111671cb49',
     groupName: 'api文档-文档辅助',
     method: 'post',

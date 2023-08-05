@@ -1,5 +1,8 @@
-import { prop } from '@typegoose/typegoose';
+import { modelOptions, prop } from '@typegoose/typegoose';
 
+@modelOptions({
+  schemaOptions: { timestamps: true, collection: 'docs_service' },
+})
 export class DocPrefix {
   /**
    * 前缀名称
@@ -15,7 +18,7 @@ export class DocPrefix {
    * 项目id
    */
   @prop()
-  public projectId: number;
+  public projectId: string;
   /**
    * 维护人名称
    */
@@ -29,6 +32,6 @@ export class DocPrefix {
   /**
    * 使能
    */
-  @prop()
+  @prop({ default: true })
   public enabled: boolean;
 }
