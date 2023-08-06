@@ -4,7 +4,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { CommonController } from '../../controller/common/common';
 import { DocPrefix } from '../../entity/doc/doc_prefix';
 import { LoginTokenInfo } from '../../types/types';
-import { AddDocPrefixDto, DeleteDocPrefix, GetDocPrefixList, GetDocPrefixInfo, EditDocPrefix } from '../../types/dto/doc/doc.prefix.dto';
+import { AddDocPrefixDto, DeleteDocPrefix, GetDocPrefixList, GetDocPrefixInfo, EditDocPrefix, GetDocPrefixEnum } from '../../types/dto/doc/doc.prefix.dto';
 import { throwError } from '../../utils/utils';
 import { TableResponseWrapper } from '../../types/response/common/common';
 
@@ -78,6 +78,16 @@ export class DocPrefixServer {
     };
     result.rows = await this.docPrefixModel.find(query, { name: 1, url: 1 }).skip(skipNum).limit(limit);
     result.total = await this.docPrefixModel.find(query).countDocuments();
+    return result;
+  }
+  /**
+   * 枚举形式获取前缀
+   */
+  async getDocPrefixEnum(params: GetDocPrefixEnum) {
+    const { projectId } = params;
+    await this.commonControl.checkDocOperationPermissions(projectId)
+    const limit = 100;
+    const result = await this.docPrefixModel.find({ projectId, enabled: true }, { name: 1, url: 1 }).limit(limit);
     return result;
   }
   /**
