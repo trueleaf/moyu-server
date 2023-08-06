@@ -123,6 +123,13 @@ const INITIAL_SERVER_ROUTES = [
     path: '/api/project/edit_project',
   },
   {
+    _id: '64cefefc162e81c50c5b497f',
+    groupName: 'api文档-项目相关',
+    method: 'get',
+    name: '根据id获取项目完整信息',
+    path: '/api/project/project_full_info',
+  },
+  {
     _id: '5edd91af5fcdf3111671cb29',
     groupName: 'api文档-文档操作',
     method: 'post',
@@ -903,6 +910,7 @@ const INITIAL_ROLE = [
     remark: '对文档拥有所有权限',
     roleName: 'api文档-完全控制',
     serverRoutes: [
+      '64cefefc162e81c50c5b497f',
       '64aa7489a9cd132a77e81f5b',
       '64aa74cd0e3aa9f43b7f9675',
       '64aa74f80e3aa9f43b7f9684',
