@@ -46,13 +46,27 @@ export class DocMindParamsServer {
    * 删除联想参数
    */
   async deleteDocMindParams(params: DeleteDocMindParams) {
-    const { ids, projectId } = params;
-    await this.commonControl.checkDocOperationPermissions(projectId)
-    const result = await this.docMindParamsModel.updateMany(
-      { _id: { $in: ids }},
-      { $set: { enabled: false }}
-    );
+    const { projectId, ids } = params;
+    const result = await this.docMindParamsModel.updateMany({
+      projectId,
+      'mindParams._id': { $in: ids }
+    }, {
+      $set: { 'mindParams.$[elem].enabled': false }
+    }, {
+      arrayFilters: [{ 'elem._id': { $in: ids } }]
+    });
     return result;
+  }
+  /**
+   * 获取联想参数
+   */
+  async geMindParams(params: GetDocMindParamsList) {
+    const { projectId } = params;
+    const result = await this.docMindParamsModel.findOne({ projectId });
+    if (!result) {
+      return [];
+    }
+    return result.mindParams.filter(v => v.enabled);
   }
   /**
    * 列表形式获取前缀

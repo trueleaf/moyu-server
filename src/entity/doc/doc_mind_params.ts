@@ -26,6 +26,11 @@ class BaseProperty {
    */
   @prop()
   public paramsPosition: 'path' | 'queryParams' | 'requestBody' | 'responseParams';
+  /**
+   * 使能
+   */
+  @prop({ default: true })
+  public enabled: boolean;
 
 }
 @modelOptions({
