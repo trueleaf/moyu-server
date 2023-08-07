@@ -323,6 +323,29 @@ class RequestInfo {
     | 'application/xml'
     | 'text/html'
     | '';
+  /**
+   * 返回参数
+   */
+  @prop({
+    type: () => [ResponseParams],
+    _id: false,
+    default: [
+      {
+        title: '成功返回',
+        statusCode: 200,
+        value: {
+          dataType: 'application/json',
+          strJson: null,
+          file: {
+            url: '',
+            raw: '',
+          },
+          text: '',
+        },
+      },
+    ],
+  })
+  public responseParams: ResponseParams[];
 }
 /*
 |--------------------------------------------------------------------------
@@ -397,29 +420,6 @@ export class Doc extends Timestamps {
    */
   @prop({_id: false})
   public item: RequestInfo;
-  /**
-   * 返回参数
-   */
-  @prop({
-    type: () => [ResponseParams],
-    _id: false,
-    default: [
-      {
-        title: '成功返回',
-        statusCode: 200,
-        value: {
-          dataType: 'application/json',
-          strJson: null,
-          file: {
-            url: '',
-            raw: '',
-          },
-          text: '',
-        },
-      },
-    ],
-  })
-  public responseParams: ResponseParams[];
   /**
    * mock信息
    */
