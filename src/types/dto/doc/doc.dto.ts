@@ -296,7 +296,7 @@ class ItemInfo {
   @Rule(RuleType.string().valid('application/json','application/x-www-form-urlencoded','multipart/form-data','text/plain','application/xml','text/html',''))
   public contentType: ContentType;
 }
-class DocInfo {
+export class DocInfo {
   /**
    * 文档id
    */

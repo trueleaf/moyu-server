@@ -10,16 +10,27 @@ import { LoginTokenInfo } from '../../types/types';
 import { throwError } from '../../utils/utils';
 import { CommonController } from '../../controller/common/common';
 import { escapeRegExp } from 'lodash';
+import { DocMindParams } from '../../entity/doc/doc_mind_params';
+import { DocMindParamsServer } from '../doc/doc_mind_params';
+import { DocPrefixServer } from '../doc/doc_prefix';
+import { ProjectVariableService } from './project_variable';
 
 @Provide()
 export class ProjectService {
   @InjectEntityModel(Project)
     projectModel: ReturnModelType<typeof Project>;
+  @InjectEntityModel(DocMindParams)
+    docMindParamsModel: ReturnModelType<typeof DocMindParams>;
   @InjectEntityModel(Doc)
     docModel: ReturnModelType<typeof Doc>;
   @InjectEntityModel(User)
     userModel: ReturnModelType<typeof User>;
-
+  @Inject()
+    docMindParamsService: DocMindParamsServer;
+  @Inject()
+    projectVariableService: ProjectVariableService;
+  @Inject()
+    docPrefixService: DocPrefixServer;
   @Inject()
     commonControl: CommonController
   @Inject()
@@ -333,34 +344,30 @@ export class ProjectService {
    * 根据id获取项目完整信息
    */
   async getProjectFullInfoById(params: GetProjectFullInfoByIdDto, ignorePermission?: boolean) {
-    // const { _id } = params;
-    // const result = {};
-    // if (!ignorePermission) {
-    //   await this.commonControl.checkDocOperationPermissions(_id);
-    // }
-    // const mindParams = await this.docModelParamsMind.geMindParams({ projectId: _id });
-    // const paramsTemplate = await this.docModelParamsPreset.getPresetParamsEnum({ projectId: _id })
-    // const hosts = await this.docModelServices.getServicesList({ projectId: _id });
-    // const variables = await this.ctx.service.apidoc.project.projectVariable.getProjectVariableEnum({ projectId: _id });
-    // const rules = await this.ctx.service.apidoc.project.projectRules.readProjectRulesById({ projectId: _id });
-    // const projectInfo = await this.ctx.model.Apidoc.Project.Project.findById(
-    //   {
-    //     _id,
-    //     enabled: true
-    //   },
-    //   {
-    //     projectName: 1,
-    //   },
-    // );
-    // result.mindParams = mindParams;
-    // result.projectName = projectInfo.projectName;
-    // result._id = projectInfo._id;
-    // result.paramsTemplate = paramsTemplate;
-    // result.hosts = hosts;
-    // result.variables = variables;
-    // result.rules = rules;
-    // return result;
-    return params;
+    const { _id } = params;
+    if (!ignorePermission) {
+      await this.commonControl.checkDocOperationPermissions(_id);
+    }
+    const mindParams = await this.docMindParamsService.geMindParams({ projectId: _id });
+    const hosts = await this.docPrefixService.getDocPrefixEnum({ projectId: _id });
+    const variables = await this.projectVariableService.getProjectVariableEnum({ projectId: _id });
+    const projectInfo = await this.projectModel.findById(
+      {
+        _id,
+        enabled: true
+      },
+      {
+        projectName: 1,
+      },
+    );
+    const result = {
+      mindParams,
+      projectName: projectInfo.projectName,
+      _id: projectInfo._id,
+      hosts,
+      variables,
+    }
+    return result;
   }
   /**
    * 根据id获取项目成员信息

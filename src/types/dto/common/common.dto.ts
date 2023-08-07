@@ -5,22 +5,22 @@ export class TableSearchParams {
    * 页码
    */
   @Rule(RuleType.number())
-    pageNum: number;
+    pageNum?: number;
   /**
    * 每页数量
    */
   @Rule(RuleType.number())
-    pageSize: number;
+    pageSize?: number;
   /**
    * 开始日期
    */
   @Rule(RuleType.number())
-    startTime: number;
+    startTime?: number;
   /**
    * 结束日期
    */
   @Rule(RuleType.number())
-    endTime: number;
+    endTime?: number;
 }
 export class DocProperty {
   /**

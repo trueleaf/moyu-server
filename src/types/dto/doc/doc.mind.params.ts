@@ -27,6 +27,11 @@ class BaseProperty {
    */
   @Rule(RuleType.string().valid('path', 'queryParams', 'requestBody', 'responseParams').required())
     paramsPosition: 'path' | 'queryParams' | 'requestBody' | 'responseParams';
+  /**
+   * 使能
+   */
+  @Rule(RuleType.boolean())
+    enabled: boolean;
 }
 /**
  * 新增文档联想参数

@@ -46,6 +46,18 @@ export class GetDocPrefixList extends TableSearchParams {
   @Rule(RuleType.string().required())
     projectId: string;
 }
+
+/**
+ * 以枚举形式获取前缀
+ */
+export class GetDocPrefixEnum {
+  /**
+   * 项目id
+   */
+  @Rule(RuleType.string().required())
+    projectId: string;
+}
+
 /**
  * 获取前缀信息
  */
