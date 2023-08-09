@@ -2,7 +2,6 @@ import {
   Controller,
   Body,
   Post,
-  Query,
   Inject,
 } from '@midwayjs/core';
 import { ExportAsApiflowDto, ExportAsHTMLDto, ExportAsWordDto, ImportApiflowDto } from '../../types/dto/doc/doc.import.export';
@@ -25,7 +24,7 @@ export class DocImportAndExport {
    * 导出为word
    */
   @Post('/project/export/word')
-  async exportAsWord(@Query() params: ExportAsWordDto) {
+  async exportAsWord(@Body() params: ExportAsWordDto) {
     const data = await this.docImportAndExportService.exportAsWord(params);
     return data;
   }
@@ -33,7 +32,7 @@ export class DocImportAndExport {
    * 导出为apiflow文档
    */
   @Post('/project/export/moyu')
-  async exportAsApiflow(@Query() params: ExportAsApiflowDto) {
+  async exportAsApiflow(@Body() params: ExportAsApiflowDto) {
     const data = await this.docImportAndExportService.exportAsApiflow(params);
     return data;
   }
