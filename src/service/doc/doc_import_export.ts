@@ -9,7 +9,19 @@ import { ProjectService } from '../project/project';
 import { Context } from '@midwayjs/koa';
 import { readFile } from 'fs-extra'
 import path from 'path'
-import docx from 'docx'
+import { Document,
+  TextRun,
+  ShadingType,
+  TabStopType,
+  Packer,
+  Table,
+  Paragraph,
+  TableRow,
+  TableCell,
+  VerticalAlign,
+  WidthType,
+  HeadingLevel,
+  AlignmentType } from 'docx'
 import { convertPlainArrayDataToTreeData, dfsForest } from '../../utils/utils';
 import { Project } from '../../entity/project/project';
 import { DocPrefixServer } from './doc_prefix';
@@ -63,7 +75,7 @@ export class DocImportAndExportService {
     file = file.replace(/<title>[^<]*<\/title>/, `<title>${projectInfo.projectName}</title>`);
     this.ctx.set('content-type', 'application/force-download');
     this.ctx.set('content-disposition', `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.html`)}`);
-    return file;
+    return Buffer.from(file, 'utf-8');
   }
   /**
    * 导出为word
@@ -71,7 +83,7 @@ export class DocImportAndExportService {
   async exportAsWord(params: ExportAsWordDto) {
     const { projectId, selectedNodes = [] } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
-    const projectInfo = await this.ctx.service.apidoc.project.project.getProjectFullInfo({ _id: projectId })
+    const projectInfo = await this.projectService.getProjectFullInfoById({ _id: projectId })
     let docs: Partial<Doc>[] = [];
     if (selectedNodes.length > 0) { //选择导出
       docs = await this.docModel.find({
@@ -94,24 +106,9 @@ export class DocImportAndExportService {
       }).lean();
     }
     //=========================================================================//
-    const {
-      Document,
-      TextRun,
-      ShadingType,
-      TabStopType,
-      Packer,
-      Table,
-      Paragraph,
-      TableRow,
-      TableCell,
-      VerticalAlign,
-      WidthType,
-      HeadingLevel,
-      AlignmentType
-    } = docx;
     const document: {
       sections: {
-        children: (docx.Paragraph | docx.Table)[]
+        children: (Paragraph | Table)[]
       }[]
     } = {
       sections: [{
@@ -253,7 +250,7 @@ export class DocImportAndExportService {
           ]
         });
         //=====================================json类型bodyParams====================================//
-        const jsonParamsOfDoc: (docx.Paragraph)[] = [];
+        const jsonParamsOfDoc: (Paragraph)[] = [];
         jsonParamsOfDoc.push(new Paragraph({
           shading: {
             type: ShadingType.SOLID,
@@ -566,7 +563,7 @@ export class DocImportAndExportService {
     await this.commonControl.checkDocOperationPermissions(projectId);
     const projectInfo = await this.projectModel.findOne({ _id: projectId });
     const hosts = await this.docPrefixService.getDocPrefixEnum(params);
-    let docs = [];
+    let docs: Partial<Doc>[] = [];
     if (selectedNodes.length > 0) { //选择导出
       docs = await this.docModel.find({
         projectId,
@@ -579,8 +576,6 @@ export class DocImportAndExportService {
         enabled: true,
       }).lean();
     }
-    this.ctx.set('content-type', 'application/force-download');
-    this.ctx.set('content-disposition', `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.json`)}`);
     const result = {
       type: 'moyu',
       info: {
@@ -589,7 +584,9 @@ export class DocImportAndExportService {
       docs,
       hosts
     };
-    return result;
+    this.ctx.set('content-type', 'application/force-download');
+    this.ctx.set('content-disposition', `attachment;filename=${encodeURIComponent(`${projectInfo.projectName}.json`)}`);
+    return Buffer.from(JSON.stringify(result), 'utf-8');
   }
   /**
    * 导入文档

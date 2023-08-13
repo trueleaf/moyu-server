@@ -21,7 +21,6 @@ export class ResponseWrapperMiddleware implements IMiddleware<Context, NextFunct
       };
     };
   }
-
   static getName(): string {
     return 'responseWrapper';
   }

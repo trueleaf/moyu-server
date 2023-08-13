@@ -61,7 +61,7 @@ export class UserController {
       width: params.width,
       height: params.height,
     });
-    return captcha.data;
+    return Buffer.from(captcha.data, 'utf-8');
   }
   /**
    * 手机号用户注册
