@@ -304,7 +304,9 @@ class RequestInfo {
   /**
    * body参数
    */
-  @prop({_id: false})
+  @prop({_id: false, default: {
+    requestBody: {}
+  }})
   public requestBody: RequestBody;
   /**
    * 请求头
