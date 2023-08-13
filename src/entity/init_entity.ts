@@ -676,6 +676,13 @@ const INITIAL_SERVER_ROUTES = [
     path: '/api/project/export/html',
   },
   {
+    _id: '64d3a7b9a9647387b308467c',
+    groupName: 'api文档-导入导出',
+    method: 'post',
+    name: '导出为word',
+    path: '/api/project/export/word',
+  },
+  {
     _id: '5fc6f4314d7b47a1cc2fb8d9',
     groupName: 'api文档-项目相关',
     method: 'get',
@@ -910,6 +917,7 @@ const INITIAL_ROLE = [
     remark: '对文档拥有所有权限',
     roleName: 'api文档-完全控制',
     serverRoutes: [
+      '64d3a7b9a9647387b308467c',
       '64cefefc162e81c50c5b497f',
       '64aa7489a9cd132a77e81f5b',
       '64aa74cd0e3aa9f43b7f9675',
@@ -987,6 +995,7 @@ const INITIAL_ROLE = [
       '5fade1e3b229918054fb4f90',
       '5fc6f4314d7b47a1cc2fb8d9',
       '5fc6f43e4d7b47a1cc2fb8da',
+      '601f546054cf18489c4a071a',
     ],
   },
   {
