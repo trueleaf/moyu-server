@@ -20,7 +20,12 @@ export type ResponseWrapper<T = unknown> = {
     | 4001
     | 4002
     | 4004
-    | 5000;
+    | 5000
+    | 101001
+    | 101002
+    | 101003
+    | 101004
+    | 101005;
   msg: string;
   data?: T;
 };
