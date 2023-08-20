@@ -45,6 +45,29 @@ const INITIAL_USER = [
   },
 ];
 const INITIAL_SERVER_ROUTES = [
+  //=========================================================================//
+  {
+    _id: '64e1d43690009434b395eeef',
+    groupName: 'api文档-项目相关',
+    method: 'get',
+    name: '获取某个请求头',
+    path: '/api/project/common_header_by_id',
+  },
+  {
+    _id: '64e1d47d62cd860d73bdebfc',
+    groupName: 'api文档-项目相关',
+    method: 'get',
+    name: '获取所有公共请求头',
+    path: '/api/project/common_headers',
+  },
+  {
+    _id: '64e1d530636bd4b5b317cb79',
+    groupName: 'api文档-项目相关',
+    method: 'put',
+    name: '修改公共请求头',
+    path: '/api/project/common_header',
+  },
+  //=========================================================================//
   {
     _id: '64aa7489a9cd132a77e81f5b',
     groupName: 'api文档-项目相关',
@@ -966,6 +989,9 @@ const INITIAL_ROLE = [
     remark: '对文档拥有所有权限',
     roleName: 'api文档-完全控制',
     serverRoutes: [
+      '64e1d43690009434b395eeef',
+      '64e1d47d62cd860d73bdebfc',
+      '64e1d530636bd4b5b317cb79',
       '64e1813e2cdf348b21007947',
       '64e1815e4e2b7265936e2f2b',
       '64e1819072bd12f578811ed5',
