@@ -343,11 +343,9 @@ export class ProjectService {
   /**
    * 根据id获取项目完整信息
    */
-  async getProjectFullInfoById(params: GetProjectFullInfoByIdDto, ignorePermission?: boolean) {
+  async getProjectFullInfoById(params: GetProjectFullInfoByIdDto) {
     const { _id } = params;
-    if (!ignorePermission) {
-      await this.commonControl.checkDocOperationPermissions(_id);
-    }
+    await this.commonControl.checkDocOperationPermissions(_id);
     const mindParams = await this.docMindParamsService.geMindParams({ projectId: _id });
     const hosts = await this.docPrefixService.getDocPrefixEnum({ projectId: _id });
     const variables = await this.projectVariableService.getProjectVariableEnum({ projectId: _id });
