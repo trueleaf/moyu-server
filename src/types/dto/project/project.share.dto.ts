@@ -127,11 +127,6 @@ export class GetSharedProjectBannerDto {
 //获取分享项目基本信息
 export class GetSharedProjectInfoDto {
   /**
-   * 在线链接id
-   */
-  @Rule(RuleType.string().required())
-    _id: string;
-  /**
    * 随机生成在线链接id
    */
   @Rule(RuleType.string().required())

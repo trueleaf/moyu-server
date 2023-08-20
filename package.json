@@ -26,6 +26,7 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mongoose": "^7.1.0",
+    "nanoid": "^3.3.5",
     "svg-captcha": "^1.4.0",
     "xlsx": "^0.18.5",
     "xss": "^1.0.14"

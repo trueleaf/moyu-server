@@ -12,6 +12,7 @@ import { ProjectCode } from '../entity/project/project_code';
 import { Doc } from '../entity/doc/doc';
 import { DocPrefix } from '../entity/doc/doc_prefix';
 import { DocMindParams } from '../entity/doc/doc_mind_params';
+import { ProjectShare } from '../entity/project/project_share';
 
 export default {
   keys: 'apiflow',
@@ -48,6 +49,7 @@ export default {
           Project,
           ProjectVariable,
           ProjectCode,
+          ProjectShare,
           Doc,
           DocPrefix,
           DocMindParams,

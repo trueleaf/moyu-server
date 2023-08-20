@@ -6,24 +6,30 @@ import { CommonController } from '../../controller/common/common';
 import { LoginTokenInfo } from '../../types/types';
 import { GenerateSharedProjectLinkDto, GetSharedProjectLinkListDto, DeleteSharedProjectLinkDto, GetSharedLinkInfoDto, CheckOnlineProjectPasswordDto, GetSharedProjectBannerDto, GetSharedProjectInfoDto, GetSharedDocDetailDto, EditSharedProjectLinkDto } from '../../types/dto/project/project.share.dto';
 import { Project } from '../../entity/project/project';
-import { uniqueId } from 'lodash';
+import { nanoid } from 'nanoid'
 import { throwError } from '../../utils/utils';
 import { DocService } from '../doc/doc';
 import { ProjectService } from '../project/project';
 import { Doc } from '../../entity/doc/doc';
+import { DocPrefix } from '../../entity/doc/doc_prefix';
+import { ProjectVariable } from '../../entity/project/project_variable';
 
 @Provide()
 export class ProjectShareService {
-  @Inject()
-    docService: DocService;
-  @Inject()
-    projectService: ProjectService;
   @InjectEntityModel(ProjectShare)
     projectShareModel: ReturnModelType<typeof ProjectShare>;
+  @InjectEntityModel(DocPrefix)
+    docPrefixModel: ReturnModelType<typeof DocPrefix>;
   @InjectEntityModel(Doc)
     docModel: ReturnModelType<typeof Doc>;
   @InjectEntityModel(Project)
     projectModel: ReturnModelType<typeof Project>;
+  @InjectEntityModel(ProjectVariable)
+    projectVariableModel: ReturnModelType<typeof ProjectVariable>;
+  @Inject()
+    docService: DocService;
+  @Inject()
+    projectService: ProjectService;
   @Inject()
     commonControl: CommonController;
   @Inject()
@@ -42,7 +48,7 @@ export class ProjectShareService {
     }
     const projectInfo = await this.projectModel.findOne({ _id: projectId }, { projectName: 1 }).lean();
     const shareInfo = {
-      shareId: uniqueId(),
+      shareId: nanoid(),
       shareName,
       projectId,
       password,
@@ -98,7 +104,7 @@ export class ProjectShareService {
     return;
   }
   /**
-   * 根据分享id获取分享项目链接基本信息
+   * 获取分享项目链接基本信息
    */
   async getSharedLinkInfo(params: GetSharedLinkInfoDto) {
     const { shareId } = params;
@@ -138,9 +144,6 @@ export class ProjectShareService {
       throwError(101003, '文档错误')
     }
   }
-  /**
-   * 根据id和密码获取分享文档的banner信息
-   */
   checkPassword(params: { expire: number; password: string; projectPassword: string; }) {
     const { expire, password, projectPassword } = params;
     const nowTime = Date.now();
@@ -152,6 +155,9 @@ export class ProjectShareService {
     }
     return false;
   }
+  /**
+ * 根据id和密码获取分享文档的banner信息
+ */
   async getSharedProjectBanner(params: GetSharedProjectBannerDto) {
     const sharedProjectInfo = await this.projectShareModel.findOne({ shareId: params.shareId }).lean();
     if (!sharedProjectInfo) {
@@ -186,7 +192,23 @@ export class ProjectShareService {
     if (!valid) {
       throwError(101005, '无效的的id和密码')
     }
-    const result = await this.projectService.getProjectFullInfoById({ _id: sharedProjectInfo.projectId }, true);
+    const hosts = await this.docPrefixModel.find({ projectId: sharedProjectInfo.projectId, enabled: true }, { name: 1, url: 1 });
+    const variables = await this.projectVariableModel.find({ projectId: sharedProjectInfo.projectId, enabled: true }, { name: 1, type: 1, value: 1 });
+    const projectInfo = await this.projectModel.findById(
+      {
+        _id: sharedProjectInfo.projectId,
+        enabled: true
+      },
+      {
+        projectName: 1,
+      },
+    );
+    const result = {
+      projectName: projectInfo.projectName,
+      _id: projectInfo._id,
+      hosts,
+      variables,
+    }
     return result;
   }
   /**
@@ -207,6 +229,9 @@ export class ProjectShareService {
       throwError(101005, '无效的的id和密码')
     }
     const result = await this.docModel.findOne({ _id: params._id }, { pid: 0, isFolder: 0, sort: 0, enabled: 0 });
+    if (!result) {
+      throwError(4001, '暂无文档信息')
+    }
     return result;
   }
 }
