@@ -13,6 +13,7 @@ import { Doc } from '../entity/doc/doc';
 import { DocPrefix } from '../entity/doc/doc_prefix';
 import { DocMindParams } from '../entity/doc/doc_mind_params';
 import { ProjectShare } from '../entity/project/project_share';
+// import * as koa from '@midwayjs/koa';
 
 export default {
   keys: 'apiflow',
@@ -60,6 +61,14 @@ export default {
   validate: {
     errorStatus: 200,
   },
+  // cors: {
+  //   credentials: true,
+  //   origin(request: koa.Application['request']) {
+  //     const origin = request.header.host;
+  //     console.log(request)
+  //     return origin;
+  //   }
+  // },
   smsConfig: {
     accessKeyId: '',
     accessKeySecret: '',
