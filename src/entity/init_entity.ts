@@ -982,7 +982,6 @@ const INITIAL_ROLE = [
     clientRoutes: [
       '5edd91bf5fcdf3111671cbe6',
       '5edd91bf5fcdf3111671cbe8',
-      '5edd91bf5fcdf3111671cbee',
       '5edd91bf5fcdf3111671cbec',
       '5edd91c05fcdf3111671cbf4',
     ],
