@@ -75,3 +75,14 @@ export const dfsForest = <T extends { children: T[], [propsName: string]: unknow
   };
   foo(forestData, fn, 1);
 }
+
+export function uniqueByKey<T, K extends keyof T>(data: T[], key: K): T[] {
+  const result: T[] = [];
+  for (let i = 0, len = data.length; i < len; i += 1) {
+    const isInResult = result.find((val) => val[key] === data[i][key]);
+    if (data[i][key] != null && !isInResult) {
+      result.push(data[i]);
+    }
+  }
+  return result;
+}
