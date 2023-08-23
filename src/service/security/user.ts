@@ -17,7 +17,7 @@ import {
   StarProjectDto,
   UnStarProjectDto,
 } from '../../types/dto/security/user.dto';
-import { getRandomNumber, throwError } from '../../utils/utils';
+import { getRandomNumber, throwError, uniqueByKey } from '../../utils/utils';
 import * as XLSX from 'xlsx'
 import { GlobalConfig, LoginTokenInfo } from '../../types/types';
 import Dysmsapi20170525, * as $Dysmsapi20170525 from '@alicloud/dysmsapi20170525';
@@ -38,6 +38,9 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as fileType from 'file-type'
 import { UploadFileInfo } from '@midwayjs/upload';
+import { ClientMenu } from '../../entity/security/client_menu';
+import { ClientRoutes } from '../../entity/security/client_routes';
+import { Role } from '../../entity/security/role';
 
 
 @Provide()
@@ -58,6 +61,12 @@ export class UserService {
 
   @InjectEntityModel(Sms)
     smsModel: ReturnModelType<typeof Sms>;
+  @InjectEntityModel(Role)
+    roleModel: ReturnModelType<typeof Role>;
+  @InjectEntityModel(ClientMenu)
+    clientMenuModel: ReturnModelType<typeof ClientMenu>;
+  @InjectEntityModel(ClientRoutes)
+    clientRoutesModel: ReturnModelType<typeof ClientRoutes>;
   @InjectEntityModel(User)
     userModel: ReturnModelType<typeof User>;
   @InjectEntityModel(LoginRecord)
@@ -419,10 +428,11 @@ export class UserService {
     return result;
   }
   /**
-   * 获取自身登录用户信息
+   * 根据用户名称查询用户列表
    */
   async getUserListByName(params: GetUserListByNameDto) {
     const { name } = params;
+    const { tokenInfo } = this.ctx;
     if (!name) {
       return [];
     }
@@ -434,7 +444,7 @@ export class UserService {
       {
         loginName: { $regex: escapeName }
       }
-    ] }, { realName: 1, loginName: 1 }).lean();
+    ], _id: { $ne: tokenInfo.id } }, { realName: 1, loginName: 1 }).lean();
     const result = userList.map(val => {
       return {
         realName: val.realName,
@@ -598,5 +608,56 @@ export class UserService {
       }
     });
     return;
+  }
+  /**
+   * 获取用户基本信息
+   */
+  async getUserBaseInfo() {
+    const { tokenInfo } = this.ctx;
+    const roleIds = tokenInfo.roleIds;
+    const allClientRoutes = await this.clientRoutesModel.find({enabled: true}, { name: 1, path: 1 }); //系统所有前端路由
+    const allClientMenu = await this.clientMenuModel.find({enabled: true}, { name: 1, path: 1, sort: 1 }); //系统所有前端菜单
+    // const globalConfig = await this.ctx.model.Global.Config.findOne({});
+    let clientRoutesResult: Partial<ClientRoutes & { id: string }>[] = [];
+    let clientMenuResult: Partial<ClientMenu & { id: string }>[] = [];
+    for (let i = 0; i < roleIds.length; i++) {
+      const roleInfo = await this.roleModel.findById({ _id: roleIds[i] });
+      if (roleInfo) {
+        //前端路由
+        const clientRoutes = roleInfo.clientRoutes.map(val => {
+          const matchedData = allClientRoutes.find(val2 => {
+            return val2._id.toString() === val;
+          });
+          return matchedData
+        });
+        clientRoutesResult = clientRoutesResult.concat(clientRoutes);
+        //前端菜单
+        const clientBanner = roleInfo.clientBanner.map(val => {
+          return allClientMenu.find(val2 => {
+            return val2._id.toString() === val;
+          });
+        });
+        clientMenuResult = clientMenuResult.concat(clientBanner);
+      }
+    }
+    clientRoutesResult = uniqueByKey(clientRoutesResult, 'id');
+    clientMenuResult = uniqueByKey(clientMenuResult, 'id');
+    return {
+      ...tokenInfo,
+      clientBanner: clientMenuResult.sort((a, b) => {
+        return b.sort - a.sort;
+      }),
+      clientRoutes: clientRoutesResult,
+      globalConfig: {
+        title: '快乐摸鱼',
+        version: '0.8.0',
+        consoleWelcome: true,
+        enableRegister: true,
+        enableGuest: true,
+        enableDocLink: true,
+        autoUpdate: false,
+        updateUrl: '',
+      }
+    };
   }
 }
