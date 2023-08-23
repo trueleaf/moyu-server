@@ -220,7 +220,7 @@ export class GetUserListByNameDto {
   /**
    * 用户名称|真实姓名
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().empty(''))
     name: string;
 }
 /**

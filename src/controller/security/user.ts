@@ -221,4 +221,12 @@ export class UserController {
     const data = await this.userService.unStarProject(params);
     return data;
   }
+  /**
+   * 获取用户基本信息
+   */
+  @Get('/security/user_base_info')
+  async getUserBaseInfo() {
+    const data = await this.userService.getUserBaseInfo();
+    return data;
+  }
 }
