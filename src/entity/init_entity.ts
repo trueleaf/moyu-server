@@ -988,6 +988,7 @@ const INITIAL_ROLE = [
     remark: '对文档拥有所有权限',
     roleName: 'api文档-完全控制',
     serverRoutes: [
+      '60a35a7de7af1332c8669d60',
       '64e1d43690009434b395eeef',
       '64e1d47d62cd860d73bdebfc',
       '64e1d530636bd4b5b317cb79',
