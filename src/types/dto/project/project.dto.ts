@@ -13,7 +13,7 @@ export class AddProjectDto {
   /**
    * 备注
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().empty(''))
     remark: string;
   /**
    * 用户列表

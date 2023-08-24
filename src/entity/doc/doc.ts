@@ -337,7 +337,7 @@ class RequestInfo {
         statusCode: 200,
         value: {
           dataType: 'application/json',
-          strJson: null,
+          json: [],
           file: {
             url: '',
             raw: '',

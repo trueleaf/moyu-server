@@ -377,7 +377,7 @@ export class AddEmptyDocDto {
   /**
    * 父元素id
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().empty(''))
     pid: string;
   /**
    * 所属项目id

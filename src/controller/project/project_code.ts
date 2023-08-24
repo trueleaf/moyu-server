@@ -1,6 +1,3 @@
-/**
- * 脚本代码生成能力
- */
 import { Inject, Controller, Body, Post, Del, Get, Put, Query } from '@midwayjs/core';
 import { AddProjectCodeDto, EditProjectCodeDto, DeleteProjectCodeDto, GetProjectCodeListDto, GetProjectCodeEnumDto } from '../../types/dto/project/project.code.dto';
 import { ProjectCodeService } from '../../service/project/project_code';
