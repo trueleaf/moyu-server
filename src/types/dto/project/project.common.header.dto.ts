@@ -17,11 +17,11 @@ export class GetProjectCommonHeaderByIdDto {
 }
 
 class HeaderProperty {
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().required().allow(''))
     key: string;
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().required().allow(''))
     value: string;
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().required().allow(''))
     description: string;
 }
 /**

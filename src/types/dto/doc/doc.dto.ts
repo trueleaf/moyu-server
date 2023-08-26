@@ -13,7 +13,7 @@ class BaseProperty {
   /**
    * 字段名称
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().required().allow(''))
     key: string;
   /**
    * 字段类型
@@ -23,12 +23,12 @@ class BaseProperty {
   /**
    * 字段描述
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().required().allow(''))
     description: string;
   /**
    * 字段值
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().empty('').required().allow(''))
     value: string;
   /**
    * 是否必填
@@ -236,7 +236,7 @@ class RequestBody {
   /**
    * 原始json数据(字符串)
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().required().allow(''))
   public rawJson: string;
   /**
    * formData数据

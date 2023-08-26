@@ -23,7 +23,7 @@ export class AddProjectCodeDto {
   /**
    * 源码字符串
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().required().allow(''))
     code: string;
   /**
    * 是否公开

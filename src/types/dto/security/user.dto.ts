@@ -68,7 +68,7 @@ export class LoginByPasswordDto {
   /**
    * 验证码
    */
-  @Rule(RuleType.string().empty(''))
+  @Rule(RuleType.string().allow(''))
     captcha?: string;
 }
 
