@@ -14,6 +14,7 @@ import { DocMindParams } from '../../entity/doc/doc_mind_params';
 import { DocMindParamsServer } from '../doc/doc_mind_params';
 import { DocPrefixServer } from '../doc/doc_prefix';
 import { ProjectVariableService } from './project_variable';
+import { ProjectRulesService } from './project_rules';
 
 @Provide()
 export class ProjectService {
@@ -27,6 +28,8 @@ export class ProjectService {
     userModel: ReturnModelType<typeof User>;
   @Inject()
     docMindParamsService: DocMindParamsServer;
+  @Inject()
+    projectRulesService: ProjectRulesService;
   @Inject()
     projectVariableService: ProjectVariableService;
   @Inject()
@@ -349,6 +352,7 @@ export class ProjectService {
     const mindParams = await this.docMindParamsService.geMindParams({ projectId: _id });
     const hosts = await this.docPrefixService.getDocPrefixEnum({ projectId: _id });
     const variables = await this.projectVariableService.getProjectVariableEnum({ projectId: _id });
+    const rules = await this.projectRulesService.getProjectRulesById({ projectId: _id });
     const projectInfo = await this.projectModel.findById(
       {
         _id,
@@ -364,6 +368,7 @@ export class ProjectService {
       _id: projectInfo._id,
       hosts,
       variables,
+      rules,
     }
     return result;
   }

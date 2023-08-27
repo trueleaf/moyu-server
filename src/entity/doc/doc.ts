@@ -8,6 +8,11 @@ class FileInfo {
    */
   @prop()
   public url: string;
+  /**
+   * 原始数据
+   */
+  @prop()
+  public raw: string;
 }
 class MockImageInfo {
   /**
@@ -102,12 +107,12 @@ class MockInfo {
   /**
    * mock图片信息
    */
-  @prop({type: () => MockImageInfo})
+  @prop({type: () => MockImageInfo, _id: false})
   public image: MockImageInfo;
   /**
    * mock文件信息
    */
-  @prop({type: () => MockFileInfo})
+  @prop({type: () => MockFileInfo, _id: false})
   public file: MockFileInfo;
   /**
    * 自定义json返回
@@ -154,11 +159,11 @@ class BaseProperty {
    */
   @prop()
   public select: boolean;
-  /**
-   * 子元素
-   */
-  @prop({ ref: () => BaseProperty })
-  public children: BaseProperty[];
+  // /**
+  //  * 子元素
+  //  */
+  // @prop({ ref: () => BaseProperty })
+  // public children: BaseProperty[];
 }
 /*
 |--------------------------------------------------------------------------
@@ -257,7 +262,7 @@ class RequestBody {
   /**
    * 原始json数据(字符串)
    */
-  @prop({ default: 'json' })
+  @prop({ default: '' })
   public rawJson: string;
   /**
    * formData数据
@@ -337,7 +342,7 @@ class RequestInfo {
         statusCode: 200,
         value: {
           dataType: 'application/json',
-          json: [],
+          strJson: '',
           file: {
             url: '',
             raw: '',
@@ -425,7 +430,7 @@ export class Doc extends Timestamps {
   /**
    * mock信息
    */
-  @prop({ type: () => MockInfo })
+  @prop({ type: () => MockInfo, _id: false })
   public mockInfo: MockInfo
   /**
    * 使能

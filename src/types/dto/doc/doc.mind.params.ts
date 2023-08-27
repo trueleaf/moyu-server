@@ -3,9 +3,19 @@ import { TableSearchParams } from '../common/common.dto';
 
 class BaseProperty {
   /**
+   * 参数所属项目id
+   */
+  @Rule(RuleType.string().allow(''))
+    projectId: string;
+  /**
+   * 字段id
+   */
+  @Rule(RuleType.string().allow(''))
+    _id: string;
+  /**
    * 字段名称
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().required().allow(''))
     key: string;
   /**
    * 字段类型
@@ -15,12 +25,22 @@ class BaseProperty {
   /**
    * 字段描述
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().required().allow(''))
     description: string;
+  /**
+   * 是否必填
+   */
+  @Rule(RuleType.boolean())
+  public required?: boolean;
+  /**
+   * 业务参数，是否选中
+   */
+  @Rule(RuleType.boolean())
+  public select?: boolean;
   /**
    * 字段值
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().required().allow(''))
     value: string;
   /**
    * 参数位置

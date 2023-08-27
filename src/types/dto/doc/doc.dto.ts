@@ -28,7 +28,7 @@ class BaseProperty {
   /**
    * 字段值
    */
-  @Rule(RuleType.string().empty('').required().allow(''))
+  @Rule(RuleType.string().required().allow(''))
     value: string;
   /**
    * 是否必填
@@ -38,13 +38,8 @@ class BaseProperty {
   /**
    * 业务参数，是否选中
    */
-  @Rule(RuleType.boolean().required())
-    select: boolean;
-  /**
-   * 子元素
-   */
-  @Rule(RuleType.array().items(getSchema(BaseProperty)))
-    children: BaseProperty[];
+  @Rule(RuleType.boolean())
+    select?: boolean;
 }
 class MockImage {
   @Rule(RuleType.valid('png', 'jpg', 'gif', 'svg').required())
@@ -175,19 +170,23 @@ class DocBaseInfo {
 class FileInfo {
   @Rule(RuleType.string().required().allow(''))
     url: string;
+  @Rule(RuleType.string().required().allow(''))
+    raw: string;
 }
 class ResonseValue {
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
     dataType: string;
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
     strJson: string;
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
     text: string;
   @Rule(getSchema(FileInfo))
     file: FileInfo;
 }
 //返回参数
 class ResponseParams {
+  @Rule(RuleType.boolean())
+    isMock?: boolean;
   @Rule(RuleType.string())
     title: string;
   @Rule(RuleType.number().allow(200))
@@ -256,7 +255,7 @@ class RequestBody {
   /**
    * file数据
    */
-  @Rule(getSchema(FileInfo).required())
+  @Rule(getSchema(FileInfo))
   public file: FileInfo;
 }
 class ItemInfo {
@@ -285,6 +284,11 @@ class ItemInfo {
    */
   @Rule(getSchema(RequestBody).required())
   public requestBody: RequestBody;
+  /**
+   * 返回参数
+   */
+  @Rule(RuleType.array().items(getSchema(ResponseParams)))
+    responseParams: ResponseParams[];
   /**
    * 请求头
    */

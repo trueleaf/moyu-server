@@ -2,6 +2,11 @@ import { modelOptions, prop } from '@typegoose/typegoose';
 
 class BaseProperty {
   /**
+   * 参数所属项目
+   */
+  @prop()
+  public projectId: string;
+  /**
    * 字段名称
    */
   @prop()
@@ -31,7 +36,6 @@ class BaseProperty {
    */
   @prop({ default: true })
   public enabled: boolean;
-
 }
 @modelOptions({
   schemaOptions: { timestamps: true, collection: 'docs_params_mind' },
@@ -45,7 +49,7 @@ export class DocMindParams {
   /**
    * 联想参数
    */
-  @prop({ type: () => [BaseProperty] })
+  @prop({ type: () => [BaseProperty], _id: false })
   public mindParams: BaseProperty[];
   /**
    * 使能
