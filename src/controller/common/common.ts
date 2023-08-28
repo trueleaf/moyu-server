@@ -152,7 +152,7 @@ export class CommonController {
       currentUserPermission.permission === 'readOnly' &&
       !accessableReadonlyUrl
     ) {
-      return throwError(4002, '暂无当前操作权限');
+      return throwError(4002, '只读用户不允许当前操作');
     }
   }
 }

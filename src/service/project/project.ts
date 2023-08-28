@@ -220,15 +220,23 @@ export class ProjectService {
    */
   async deleteProject(params: DeleteProjectDto) {
     const { ids } = params;
+    const userInfo = this.ctx.tokenInfo;
     for(let i = 0; i < ids.length; i ++) {
       await this.commonControl.checkDocOperationPermissions(ids[i]);
+    }
+    const delProjects = await this.projectModel.find({ _id: { $in: ids }}, { members: 1 });
+    for (let i = 0; i < delProjects.length; i++) {
+      const projectInfo = delProjects[i];
+      const matchedPermissionInfo = projectInfo.members.find(memberInfo => memberInfo.userId === userInfo.id)
+      if (matchedPermissionInfo.permission !== 'admin') {
+        return throwError(4002, '管理员才允许删除项目')
+      }
     }
     const result = await this.projectModel.updateMany(
       { _id: { $in: ids }},
       { $set: { enabled: false }}
     );
     //同时删除每个用户可访问项目
-    const delProjects = await this.projectModel.find({ _id: { $in: ids }}, { members: 1 });
     const members: string[] = []
     delProjects.forEach(projectInfo => {
       projectInfo.members.forEach(member => {
