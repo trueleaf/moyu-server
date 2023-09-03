@@ -95,4 +95,12 @@ export class DocController {
     const data = await this.docService.getDocsAsTree(params);
     return data;
   }
+  /**
+   * 以树形结构获取文件夹信息
+   */
+  @Get('/project/doc_tree_folder_node')
+  async getFoldersAsTree(@Query() params: GetDocsAsTreeDto) {
+    const data = await this.docService.getFoldersAsTree(params);
+    return data;
+  }
 }

@@ -331,7 +331,7 @@ export class DocService {
     return result;
   }
   /**
-   * 以树形结构获取文件夹信息(仅获取文件夹信息，用于一个项目向另一个项目导入)
+   * 以树形结构获取文件夹信息
    */
   async getFoldersAsTree(params: GetDocsAsTreeDto) {
     const { projectId } = params;
