@@ -174,7 +174,7 @@ class Info {
   /**
    * 文档名称
    */
-  @prop({ required: true })
+  @prop({ required: true, max: 100 })
   public name: string;
   /**
    * 文档版本信息
