@@ -174,7 +174,7 @@ class Info {
   /**
    * 文档名称
    */
-  @prop({ required: true, max: 100 })
+  @prop({ required: true, maxlength: 100 })
   public name: string;
   /**
    * 文档版本信息
@@ -206,6 +206,11 @@ class Info {
    */
   @prop()
   public spendTime?: number;
+  /**
+   * 备注信息
+   */
+  @prop({ maxlength: 1024 })
+  public description: string;
 }
 /*
 |--------------------------------------------------------------------------

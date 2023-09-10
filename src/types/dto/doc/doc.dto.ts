@@ -139,7 +139,7 @@ class DocBaseInfo {
   /**
    * 文档版本信息
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().empty('').default('1.0'))
     version: string;
   /**
    * 文档类型,   1.文件夹 2.普通文档 3.markdown文档
@@ -154,12 +154,12 @@ class DocBaseInfo {
   /**
    * 维护人员，最近一次更新人员
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().empty(''))
     maintainer: string;
   /**
    * 删除文档的人
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().empty(''))
     deletePerson: string;
   /**
    * 录入接口花费时间
@@ -168,9 +168,9 @@ class DocBaseInfo {
     spendTime: number;
 }
 class FileInfo {
-  @Rule(RuleType.string().required().allow(''))
+  @Rule(RuleType.string().allow(''))
     url: string;
-  @Rule(RuleType.string().required().allow(''))
+  @Rule(RuleType.string().allow(''))
     raw: string;
 }
 class ResonseValue {
@@ -356,6 +356,11 @@ export class DocInfo {
    */
   @Rule(RuleType.array().items(getSchema(ResponseParams)))
     responseParams: ResponseParams[];
+  /**
+   * mock信息
+  */
+  @Rule(getSchema(MockInfo))
+    mockInfo: MockInfo;
 }
 
 /*
@@ -555,7 +560,7 @@ export class UpdateDoc {
 /**
  * 创建文档(保存文档)
  */
-export class ReplaceFullDocDto {
+export class CreateDocDto {
   /**
    * 文档
    */

@@ -4,11 +4,10 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { Doc } from '../../entity/doc/doc';
 import { CommonController } from '../../controller/common/common';
 import { LoginTokenInfo, RequestMethod } from '../../types/types';
-import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, ReplaceFullDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc, GetDocsAsTreeDto } from '../../types/dto/doc/doc.dto';
+import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, CreateDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc, GetDocsAsTreeDto } from '../../types/dto/doc/doc.dto';
 import { throwError } from '../../utils/utils';
 import { Project } from '../../entity/project/project';
 import { Types } from 'mongoose';
-import { filterXSS } from 'xss';
 
 @Provide()
 export class DocService {
@@ -183,14 +182,13 @@ export class DocService {
     const { _id, info, item, preRequest, afterRequest, projectId, mockInfo, spendTime = 0 } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
     const { tokenInfo } = this.ctx;
-    const description = filterXSS(info.description);
     const updateInfo = {
       $set: {
         preRequest,
         afterRequest,
         item,
         mockInfo,
-        'info.description': description,
+        'info.description': info.description,
         'info.maintainer': tokenInfo.realName || tokenInfo.loginName,
       },
       $inc: {
@@ -201,9 +199,9 @@ export class DocService {
     return;
   }
   /**
-   * 覆盖文档
+   * 创建文档
    */
-  async replaceFullDoc(params: ReplaceFullDocDto) {
+  async createDoc(params: CreateDocDto) {
     const { docInfo } = params;
     await this.commonControl.checkDocOperationPermissions(docInfo.projectId);
     const _id = new Types.ObjectId().toString();
