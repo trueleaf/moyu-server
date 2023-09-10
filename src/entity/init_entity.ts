@@ -191,8 +191,15 @@ const INITIAL_SERVER_ROUTES = [
     _id: '5edd91af5fcdf3111671cb35',
     groupName: 'api文档-文档操作',
     method: 'post',
-    name: '填写文档',
+    name: '更新文档',
     path: '/api/project/fill_doc',
+  },
+  {
+    _id: '64f499d55495280730b3df8f',
+    groupName: 'api文档-文档操作',
+    method: 'post',
+    name: '创建文档',
+    path: '/api/project/save_doc',
   },
   {
     _id: '5edd91af5fcdf3111671cb37',
@@ -988,6 +995,7 @@ const INITIAL_ROLE = [
     remark: '对文档拥有所有权限',
     roleName: 'api文档-完全控制',
     serverRoutes: [
+      '64f499d55495280730b3df8f',
       '603c8d7c1a326e4d089f99b3',
       '6056ca3ec8731d1cd490e95d',
       '605844fa5de62017b64ec29b',

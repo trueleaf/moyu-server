@@ -1,5 +1,5 @@
 import { Inject, Controller, Body, Post, Del, Get, Put, Query } from '@midwayjs/core';
-import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, UpdateDoc, GenerateDocCopyDto, PasteDocsDto, ReplaceFullDocDto, GetDocDetailDto, DeleteDocDto, GetMockDataDto, GetDocsAsTreeDto } from '../../types/dto/doc/doc.dto';
+import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, UpdateDoc, GenerateDocCopyDto, PasteDocsDto, CreateDocDto, GetDocDetailDto, DeleteDocDto, GetMockDataDto, GetDocsAsTreeDto } from '../../types/dto/doc/doc.dto';
 import { DocService } from '../../service/doc/doc';
 
 @Controller('/api')
@@ -56,11 +56,11 @@ export class DocController {
     return data;
   }
   /**
-   * 覆盖文档
+   * 创建文档
    */
   @Post('/project/save_doc')
-  async replaceFullDoc(@Body() params: ReplaceFullDocDto) {
-    const data = await this.docService.replaceFullDoc(params);
+  async createDoc(@Body() params: CreateDocDto) {
+    const data = await this.docService.createDoc(params);
     return data;
   }
   /**
