@@ -45,8 +45,8 @@ class BaseProperty {
   /**
    * 参数位置
    */
-  @Rule(RuleType.string().valid('path', 'queryParams', 'requestBody', 'responseParams').required())
-    paramsPosition: 'path' | 'queryParams' | 'requestBody' | 'responseParams';
+  @Rule(RuleType.string().valid('paths', 'queryParams', 'requestBody', 'responseParams').required())
+    paramsPosition: 'paths' | 'queryParams' | 'requestBody' | 'responseParams';
   /**
    * 使能
    */

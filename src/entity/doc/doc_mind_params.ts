@@ -30,7 +30,7 @@ class BaseProperty {
    * 参数位置
    */
   @prop()
-  public paramsPosition: 'path' | 'queryParams' | 'requestBody' | 'responseParams';
+  public paramsPosition: 'paths' | 'queryParams' | 'requestBody' | 'responseParams';
   /**
    * 使能
    */
