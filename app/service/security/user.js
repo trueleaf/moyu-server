@@ -41,7 +41,7 @@ class userService extends Service {
             method: "POST"
         };
         await this.ctx.model.Security.Sms.updateOne({ phone }, { $set: { phone, smsCode: code }}, { upsert: true });
-        await client.request("SendSms", msgConfig, requestOption);
+        // await client.request("SendSms", msgConfig, requestOption);
         return;
     }
 
