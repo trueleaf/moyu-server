@@ -17,7 +17,8 @@ class AppBootHook {
         this.app.on("request", ctx => {});
         this.app.on("response", ctx => {
             const used = Date.now() - ctx.starttime;
-            ctx.logger.info("操作用时", used, ctx.request.url, ctx.ip);
+            const ip = ctx.get('x-forwarded-for');
+            ctx.logger.info("操作用时", used, ctx.request.url, ip);
         });
     }
 }
