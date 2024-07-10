@@ -449,7 +449,9 @@ module.exports = {
         })
         return result;
     },
-
+    getType(variable) {
+      return Object.prototype.toString.call(variable).slice(8, -1).toLocaleLowerCase();
+    },
     /**
      * 参数数组转换为json结构
      */
@@ -601,9 +603,71 @@ module.exports = {
             }
             strResult.push(str)
         }
-        // console.log(strResult)
-
         return strResult;
+    },
+    convertJSONToStringList(data, indent = 8) {
+      const result = [];
+      const foo = (jsonData, level) => {
+        if (this.getType(jsonData) === 'string' || this.getType(jsonData) === 'number' || this.getType(jsonData) === 'boolean') {
+          result.push(`${' '.repeat(indent * level)}${JSON.stringify(jsonData)}`);
+          return result;
+        } else if (this.getType(jsonData) === 'object') {
+          if (level === 1) {
+            result.push("{");
+          }
+          Object.keys(jsonData).forEach(key => {
+            const value = jsonData[key];
+            if (this.getType(value) === 'string') {
+              result.push(`${' '.repeat(indent * level)}"${key}":  "${value}",`);
+            } else if (this.getType(value) === 'number') {
+              result.push(`${' '.repeat(indent * level)}"${key}":  ${value},`);
+            } else if (this.getType(value) === 'boolean') {
+              result.push(`${' '.repeat(indent * level)}"${key}":  ${value},`);
+            } else if (this.getType(value) === 'null') {
+              result.push(`${' '.repeat(indent * level)}"${key}":  null,`);
+            } else if (this.getType(value) === 'object') {
+              result.push(`${' '.repeat(indent * level)}"${key}":  {`);
+              foo(value, level + 1)
+              result.push(`${' '.repeat(indent * level)}}`);
+            } else if (this.getType(value) === 'array') {
+              result.push(`${' '.repeat(indent * level)}"${key}":  [`);
+              foo(value, level + 1)
+              result.push(`${' '.repeat(indent * level)}]`);
+            }
+          })
+          if (level === 1) {
+            result.push("}");
+          }
+        } else if (this.getType(jsonData) === 'array') {
+          if (level === 1) {
+            result.push("[");
+          }
+          jsonData.forEach((item) => {
+            if (this.getType(item) === 'string') {
+              result.push(`${' '.repeat(indent * level)}"${item}",`);
+            } else if (this.getType(item) === 'number') {
+              result.push(`${' '.repeat(indent * level)}${item},`);
+            } else if (this.getType(item) === 'boolean') {
+              result.push(`${' '.repeat(indent * level)}${item},`);
+            } else if (this.getType(item) === 'null') {
+              result.push(`${' '.repeat(indent * level)}null,`);
+            } else if (this.getType(item) === 'object') {
+              result.push(`${' '.repeat(indent * level)}{`);
+              foo(item, level + 1)
+              result.push(`${' '.repeat(indent * level)}}`);
+            } else if (this.getType(item) === 'array') {
+              result.push(`${' '.repeat(indent * level)}[`);
+              foo(item, level + 1)
+              result.push(`${' '.repeat(indent * level)}]`);
+            }
+          })
+          if (level === 1) {
+            result.push("]");
+          }
+        }
+      }
+      foo(data, 1);
+      return result;
     },
     //模拟延迟
     async sleep(delay) {
