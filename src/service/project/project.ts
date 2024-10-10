@@ -2,7 +2,7 @@ import { Context, Inject, Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { FilterQuery } from 'mongoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { AddProjectDto, AddUserToProjectDto, ChangeUserPermissionInProjectDto, DeleteProjectDto, DeleteUserFromProjectDto, EditProjectDto, FilterProjectDto, GetProjectFullInfoByIdDto, GetProjectInfoByIdDto, GetProjectListDto, GetProjectMembersByIdDto } from '../../types/dto/project/project.dto';
+import { AddProjectDto, AddUserToProjectDto, ChangeUserPermissionInProjectDto, DeleteProjectDto, DeleteUserFromProjectDto, EditProjectDto, FilterProjectDto, GetProjectByKeywordDto, GetProjectFullInfoByIdDto, GetProjectInfoByIdDto, GetProjectListDto, GetProjectMembersByIdDto } from '../../types/dto/project/project.dto';
 import { Project } from '../../entity/project/project';
 import { Doc } from '../../entity/doc/doc';
 import { User } from '../../entity/security/user';
@@ -437,5 +437,52 @@ export class ProjectService {
       }
     })
     return result
+  }
+  /**
+   * 根据关键字获取项目列表
+   */
+  async getProjectListByKeyword(params: GetProjectByKeywordDto) {
+    const { keyword } = params;
+    const query: {
+      enabled: boolean;
+      $or: Record<string, string>[]
+    } = { enabled: true, $or: [] }
+    const limit = 100;
+    // if (projectName != null) {
+    //   query.projectName = new RegExp(escapeRegExp(projectName));
+    // }
+    query.$or = [
+      {
+        'members.userId': this.ctx.tokenInfo.id
+      }
+    ];
+    const allProjects = await this.projectModel.find(query, { enabled: 0, createdAt: 0 }).limit(limit).sort({ updatedAt: -1 }).lean();
+    const projectIds = allProjects.map(v => v._id);
+
+    const docs = await this.docModel.find({
+      projectId: { $in: projectIds },
+      'item.url.path': new RegExp(escapeRegExp(keyword))
+    }, {
+      projectId: 1,
+    }).lean();
+
+    const filteredProjects = allProjects.filter(project => {
+      return docs.find(docInfo => docInfo.projectId === project._id.toString()) 
+    });
+    const tokenInfo = this.ctx.tokenInfo;
+    const visitAndStar = await this.userModel.findOne({ _id: tokenInfo.id }, { recentVisitProjects: 1, starProjects: 1 }).lean();
+    const result: {
+      list: Omit<Project, 'enabled' | 'createdAt'>[];
+      recentVisitProjects: string[];
+      starProjects: string[];
+    } = {
+      list: [],
+      recentVisitProjects: [],
+      starProjects: [],
+    };
+    result.list = filteredProjects;
+    result.recentVisitProjects = visitAndStar.recentVisitProjects || [];
+    result.starProjects = visitAndStar.starProjects || [];
+    return result;
   }
 }

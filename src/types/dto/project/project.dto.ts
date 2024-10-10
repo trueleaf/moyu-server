@@ -184,3 +184,13 @@ export class FilterProjectDto {
   @Rule(RuleType.string())
     url: string;
 }
+/**
+ * 根据项目关键字过滤项目
+ */
+export class GetProjectByKeywordDto {
+  /**
+   * 项目关键字，接口url、备注、body参数等
+   */
+  @Rule(RuleType.string())
+    keyword: string;
+}

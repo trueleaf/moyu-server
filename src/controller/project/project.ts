@@ -1,5 +1,5 @@
 import { Inject, Controller, Get, Query, Body, Post, Del, Put } from '@midwayjs/core';
-import { AddProjectDto, AddUserToProjectDto, ChangeUserPermissionInProjectDto, DeleteProjectDto, DeleteUserFromProjectDto, EditProjectDto, FilterProjectDto, GetProjectFullInfoByIdDto, GetProjectInfoByIdDto, GetProjectListDto, GetProjectMembersByIdDto } from '../../types/dto/project/project.dto';
+import { AddProjectDto, AddUserToProjectDto, ChangeUserPermissionInProjectDto, DeleteProjectDto, DeleteUserFromProjectDto, EditProjectDto, FilterProjectDto, GetProjectByKeywordDto, GetProjectFullInfoByIdDto, GetProjectInfoByIdDto, GetProjectListDto, GetProjectMembersByIdDto } from '../../types/dto/project/project.dto';
 import { ProjectService } from '../../service/project/project';
 
 @Controller('/api')
@@ -102,6 +102,14 @@ export class ProjectController {
   @Get('/project/project_list_by_url')
   async filterProject(@Query() params: FilterProjectDto) {
     const data = await this.projectService.filterProject(params);
+    return data;
+  }
+  /**
+   * 根据关键字获取项目列表
+   */
+  @Get('/project/project_list_by_keyword')
+  async getProjectListByKeyword(@Query() params: GetProjectByKeywordDto) {
+    const data = await this.projectService.getProjectListByKeyword(params);
     return data;
   }
 }

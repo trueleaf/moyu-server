@@ -132,6 +132,13 @@ const INITIAL_SERVER_ROUTES = [
     path: '/api/project/project_list_by_url',
   },
   {
+    _id: '64a8f5a40558e0ba613f3cb1',
+    groupName: 'api文档-项目相关',
+    method: 'get',
+    name: '根据关键字筛选项目',
+    path: '/api/project/project_list_by_keyword',
+  },
+  {
     _id: '5edd91af5fcdf3111671cb1b',
     groupName: 'api文档-项目相关',
     method: 'delete',
@@ -1020,6 +1027,7 @@ const INITIAL_ROLE = [
       '64aa751a0e3aa9f43b7f9693',
       '64aa755c935ddf872a6d43e4',
       '64a8f5a40558e0ba613f3cb0',
+      '64a8f5a40558e0ba613f3cb1',
       '64a8ee811f0b581286ed8189',
       '60a35ac840b59032c9225c40',
       '60a5c271e7af1332c866a57e',
