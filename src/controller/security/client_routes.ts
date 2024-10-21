@@ -35,8 +35,8 @@ export class ClientRoutesController {
    * 修改前端路由
    */
   @Put('/security/client_routes')
-  async editClientMenu(@Body() params: EditClientRoutesDto) {
-    const data = await this.clientRoutesService.editClientMenu(params);
+  async editClientRoutes(@Body() params: EditClientRoutesDto) {
+    const data = await this.clientRoutesService.editClientRoutes(params);
     return data;
   }
   /**

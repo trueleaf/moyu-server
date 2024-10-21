@@ -1,7 +1,6 @@
 import { Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { ServerRoutes } from '../../entity/security/server_routes';
 import { throwError } from '../../utils/utils';
 import { TableResponseWrapper } from '../../types/response/common/common';
 import { ClientRoutes } from '../../entity/security/client_routes';
@@ -10,7 +9,7 @@ import { AddClientRoutesDto, AddMultiClientRoutesDto, ChangeGroupNameByIds, Dele
 
 @Provide()
 export class ClientRoutesService {
-  @InjectEntityModel(ServerRoutes)
+  @InjectEntityModel(ClientRoutes)
     clientRoutesModel: ReturnModelType<typeof ClientRoutes>;
   /**
    * 新增前端路由
@@ -47,7 +46,7 @@ export class ClientRoutesService {
   /**
    * 修改前端路由
    */
-  async editClientMenu(params: EditClientRoutesDto) {
+  async editClientRoutes(params: EditClientRoutesDto) {
     const { _id, name, path, groupName } = params;
     const updateDoc: Partial<ClientRoutes> = {};
     if (name) {
