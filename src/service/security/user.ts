@@ -455,7 +455,7 @@ export class UserService {
     return result;
   }
   /**
-   * 改变用户权限，手机号，登录名称，真实姓名
+   * 改变用户权限，手机号，登录名称，昵称
    */
   async changeUserInfo(params: ChangeUserInfoDto) {
     const { _id, roleIds, roleNames, loginName, phone, realName } = params;
@@ -479,7 +479,7 @@ export class UserService {
     return;
   }
   /**
-   * 改变用户权限，手机号，登录名称，真实姓名
+   * 改变用户权限，手机号，登录名称，昵称
    */
   async getBatchUserImportTemplate() {
     const fileName = '用户批量导入模板';
@@ -533,7 +533,7 @@ export class UserService {
         throwError(2010, '用户名不能以包含guest')
       }
       const phone = user['手机号码'];
-      const realName = user['真实姓名'];
+      const realName = user['昵称'];
       const password = this.securityConfig.defaultUserPassword;
       const doc: Partial<User> = {};
       const hasUser = await this.userModel.findOne({ $or: [{ loginName }, { phone }] });

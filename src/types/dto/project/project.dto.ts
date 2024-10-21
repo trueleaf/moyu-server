@@ -51,7 +51,7 @@ export class AddUserToProjectDto {
   @Rule(RuleType.string().required())
     loginName: string;
   /**
-   * 真实姓名
+   * 昵称
    */
   @Rule(RuleType.string())
     realName: string;

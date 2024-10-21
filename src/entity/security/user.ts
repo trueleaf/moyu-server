@@ -10,7 +10,7 @@ export class User extends Timestamps {
   @prop()
   public loginName: string;
   /**
-   * 真实姓名
+   * 昵称
    */
   @prop()
   public realName: string;

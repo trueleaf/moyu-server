@@ -160,7 +160,7 @@ export class UserController {
     return data;
   }
   /**
-   * 改变用户权限，手机号，登录名称，真实姓名
+   * 改变用户权限，手机号，登录名称，昵称
    */
   @Put('/security/user_permission')
   async changeUserInfo(@Body() params: ChangeUserInfoDto) {

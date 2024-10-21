@@ -34,7 +34,7 @@ class Member {
   @prop()
   public loginName: string;
   /**
-   * 真实姓名(冗余字段)
+   * 昵称(冗余字段)
    */
   @prop()
   public realName: string;

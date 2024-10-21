@@ -26,21 +26,21 @@ export class DocProperty {
   /**
    * 文档id
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
     _id: string;
   /**
    * 字段名称
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
     key: string;
   /**
    * 字段类型
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
     type: string;
   /**
    * 字段值
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
     value: string;
 }

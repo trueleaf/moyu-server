@@ -46,7 +46,7 @@ export class RegisterByPhoneDto {
   @Rule(RuleType.string())
     phone?: string;
   /**
-   * 真实姓名(非必填)
+   * 昵称(非必填)
    */
   @Rule(RuleType.string())
     realName: string;
@@ -138,9 +138,9 @@ export class AddUserDto {
   @Rule(RuleType.string().required())
     loginName: string;
   /**
-   * 真实姓名
+   * 昵称
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().allow(''))
     realName: string;
   /**
    * 手机号码
@@ -170,23 +170,18 @@ export class GetUserListDto extends TableSearchParams {
   /**
    * 登录名称
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
     loginName: string;
   /**
-   * 真实姓名
+   * 昵称
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
     realName: string;
   /**
    * 手机号搜索
    */
   @Rule(RuleType.string())
     phone: string;
-  /**
-   * 手机号搜索
-   */
-  @Rule(RuleType.string())
-    title: string;
 }
 /**
  * 用户状态
@@ -218,7 +213,7 @@ export class GetUserInfoByIdDto {
  */
 export class GetUserListByNameDto {
   /**
-   * 用户名称|真实姓名
+   * 用户名称|昵称
    */
   @Rule(RuleType.string().empty(''))
     name: string;
@@ -253,7 +248,7 @@ export class ChangeUserInfoDto {
   @Rule(RuleType.string().length(11))
     phone?: string;
   /**
-   * 真实姓名
+   * 昵称
    */
   @Rule(RuleType.string())
     realName?: string;
