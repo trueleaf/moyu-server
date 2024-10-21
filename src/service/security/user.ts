@@ -144,7 +144,7 @@ export class UserService {
     userInfo.salt = salt;
     //数据库初始化时候默认生成，创建用户默认权限，可能改变
     userInfo.roleIds = ['5ede0ba06f76185204584700', '5ee980553c63cd01a49952e4'];
-    userInfo.roleNames = ['api文档-完全控制', '公共基础权限'];
+    userInfo.roleNames = ['普通用户'];
     await this.userModel.create(userInfo);
   }
   /**
@@ -298,7 +298,7 @@ export class UserService {
       return throwError(2010, '用户名不能以包含guest')
     }
     if (hasUser) {
-      return throwError(1003, '账号已存在')
+      return throwError(1003, '登录名称已存在')
     }
     if (hasPhone) {
       return throwError(1003, '该手机号已经绑定')
@@ -506,7 +506,7 @@ export class UserService {
     user.password = hashPassword;
     user.salt = salt;
     user.roleIds = ['5ee980553c63cd01a49952e4'];
-    user.roleNames = ['公共基础权限'];
+    user.roleNames = ['普通用户'];
     await this.userModel.create(user);
     const loginTokenInfo = await this.loginByPassword({
       loginName,
@@ -548,7 +548,7 @@ export class UserService {
         doc.password = hashPassword;
         doc.salt = salt;
         doc.roleIds = ['5ede0ba06f76185204584700', '5ee980553c63cd01a49952e4'];
-        doc.roleNames = ['权限管理-完全控制', 'api文档-完全控制'];
+        doc.roleNames = ['管理员', '普通用户'];
         userDocs.push(doc);
         validNum++;
       }

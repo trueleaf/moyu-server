@@ -155,7 +155,7 @@ export class AddUserDto {
   /**
    * 角色id列表
    */
-  @Rule(RuleType.array().items(RuleType.string()))
+  @Rule(RuleType.array().items(RuleType.string()).min(1).error(new Error('请选择角色')))
     roleIds: string[];
   /**
    * 角色名称列表
@@ -245,7 +245,7 @@ export class ChangeUserInfoDto {
   /**
    * 手机号码
    */
-  @Rule(RuleType.string().length(11))
+  @Rule(RuleType.string())
     phone?: string;
   /**
    * 昵称
