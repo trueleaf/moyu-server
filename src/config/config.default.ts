@@ -14,6 +14,7 @@ import { DocPrefix } from '../entity/doc/doc_prefix';
 import { DocMindParams } from '../entity/doc/doc_mind_params';
 import { ProjectShare } from '../entity/project/project_share';
 import { ProjectRules } from '../entity/project/project_rules';
+import * as koa from '@midwayjs/koa';
 
 export default {
   keys: 'apiflow',
@@ -37,6 +38,8 @@ export default {
         options: {
           useNewUrlParser: true,
           useUnifiedTopology: true,
+          user: '',
+          pass: ''
         },
         // 关联实体
         entities: [
@@ -109,4 +112,15 @@ export default {
   upload: {
     whitelist: ['.xlsx']
   },
+  cors: {
+    origin(app: koa.Context) {
+      const origin = app.headers.origin;
+      return origin;
+    },
+    credentials: true,
+    allowMethods: 'GET,PUT,POST,DELETE',
+    exposeHeaders: 'content-disposition',
+    allowHeaders: ['Authorization', 'x-csrf-token', 'content-type'],
+    maxAge: 60 * 60 * 24
+  }
 } as MidwayConfig;

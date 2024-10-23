@@ -5,11 +5,11 @@ import * as info from '@midwayjs/info';
 import * as typegoose from '@midwayjs/typegoose';
 import * as upload from '@midwayjs/upload';
 import { join } from 'path';
-import { ResponseWrapperMiddleware } from './middleware/response.middleware';
 import {
-  AllServerErrorFilter,
-  ValidateErrorFilter,
-} from './filter/error.filter';
+    AllServerErrorFilter,
+    ValidateErrorFilter,
+  } from './filter/error.filter';
+import { ResponseWrapperMiddleware } from './middleware/response.middleware';
 import { PermissionMiddleware } from './middleware/permission.middleware';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { User } from './entity/security/user';
@@ -19,10 +19,11 @@ import { ServerRoutes } from './entity/security/server_routes';
 import { ClientRoutes } from './entity/security/client_routes';
 import { Role } from './entity/security/role';
 import { ClientMenu } from './entity/security/client_menu';
-import cors from '@koa/cors'
+import * as crossDomain from '@midwayjs/cross-domain';
 @Configuration({
   imports: [
     koa,
+    crossDomain,
     upload,
     validate,
     typegoose,
@@ -46,19 +47,8 @@ export class ContainerLifeCycle {
     roleModel: ReturnModelType<typeof Role>;
   @InjectEntityModel(ClientMenu)
     clientMenuModel: ReturnModelType<typeof ClientMenu>;
+
   async onReady() {
-    this.app.use(cors({
-      origin(app) {
-        const origin = app.request.headers.origin;
-        console.log(origin)
-        return origin
-      },
-      credentials: true,
-      allowMethods: 'GET,PUT,POST,DELETE',
-      exposeHeaders: 'content-disposition',
-      allowHeaders: ['Authorization', 'x-csrf-token', 'content-type'],
-      maxAge: 60 * 60 * 24
-    }))
     this.app.useMiddleware([PermissionMiddleware, ResponseWrapperMiddleware]);
     this.app.useFilter([ValidateErrorFilter, AllServerErrorFilter]);
     await initUser(this.userModel);
