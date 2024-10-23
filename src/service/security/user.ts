@@ -529,9 +529,6 @@ export class UserService {
     for (let i = 0; i < sheetJson.length; i++) {
       const user = sheetJson[i] as Record<string, string>;
       const loginName = user['登录名称'];
-      if (loginName.match(/guest/)) {
-        throwError(2010, '用户名不能以包含guest')
-      }
       const phone = user['手机号码'];
       const realName = user['昵称'];
       const password = this.securityConfig.defaultUserPassword;
@@ -547,8 +544,8 @@ export class UserService {
         doc.phone = phone;
         doc.password = hashPassword;
         doc.salt = salt;
-        doc.roleIds = ['5ede0ba06f76185204584700', '5ee980553c63cd01a49952e4'];
-        doc.roleNames = ['管理员', '普通用户'];
+        doc.roleIds = ['5ede0ba06f76185204584700'];
+        doc.roleNames = ['管理员'];
         userDocs.push(doc);
         validNum++;
       }
