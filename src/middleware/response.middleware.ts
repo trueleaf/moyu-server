@@ -13,7 +13,7 @@ export class ResponseWrapperMiddleware implements IMiddleware<Context, NextFunct
       if (result?.isCustomError) {
         return result;
       }
-      console.log(ctx.request.method, ctx.request.url, '耗时', Date.now() - startTime)
+      console.log(ctx.request.method, ctx.request.url, '耗时', Date.now() - startTime, ctx.origin)
       return {
         code: 0,
         msg: '操作成功',
