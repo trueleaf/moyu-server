@@ -125,7 +125,7 @@ export class ResetPasswordDto {
   /**
    * 重置后的密码
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().min(6).required())
     password: string;
 }
 /**
