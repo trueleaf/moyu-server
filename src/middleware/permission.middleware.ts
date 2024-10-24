@@ -41,8 +41,9 @@ export class PermissionMiddleware implements IMiddleware<Context, NextFunction> 
           { path: 1, method: 1 }
         );
         for (let i = 0; i < roleIds.length; i++) {
-          const roleInfo = await this.roleModel.findById({
+          const roleInfo = await this.roleModel.findOne({
             _id: roleIds[i],
+            enabled: true
           });
           if (roleInfo) {
             roleInfo.serverRoutes.forEach(routeId => {
@@ -59,7 +60,7 @@ export class PermissionMiddleware implements IMiddleware<Context, NextFunction> 
           }
         }
         if (serverRouteInfoList.every(routeInfo => routeInfo.path !== urlWithoutQueryParams)) {
-          return throwError(4004, '路由不正确')
+          return throwError(4004, '暂无当前接口权限')
         }
         const reqMethod = ctx.request.method.toLowerCase();
         const hasPermission = serverRouteInfoList.find(routeInfo => {
