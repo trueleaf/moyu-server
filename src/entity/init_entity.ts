@@ -859,13 +859,6 @@ const INITIAL_SERVER_ROUTES = [
     path: '/api/project/import',
   },
   {
-    _id: '6075022f97e5d8281b6e9506',
-    groupName: '词条管理',
-    method: 'get',
-    name: '根据id获取词条信息',
-    path: '/api/dictionary/dictionary_by_id',
-  },
-  {
     _id: '60853b9306497c6d180f75e4',
     groupName: 'api文档-mock',
     method: 'get',
