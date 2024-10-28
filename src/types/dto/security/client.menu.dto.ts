@@ -22,7 +22,7 @@ export class AddClientMenuDto {
   /**
    * 父级菜单id
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
     pid: string;
 }
 /**
