@@ -22,7 +22,7 @@ export class RoleService {
     doc.clientBanner = clientBanner;
     doc.serverRoutes = serverRoutes;
     doc.remark = remark;
-    const hasRole = await this.roleModel.findOne({ roleName });
+    const hasRole = await this.roleModel.findOne({ roleName, enabled: true});
     if (hasRole) {
       throwError(1003, '角色名称已经存在')
     }
