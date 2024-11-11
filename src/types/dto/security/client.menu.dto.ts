@@ -72,7 +72,7 @@ export class ChangeCLientMenuPositionDto {
   /**
    * 父级菜单id,如果传入则代表拖到父级菜单内部
    */
-  @Rule(RuleType.string())
+  @Rule(RuleType.string().allow(''))
     pid: string;
   /**
    * 排序值
