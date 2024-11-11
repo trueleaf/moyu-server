@@ -633,8 +633,8 @@ export class UserService {
           return allClientMenu.find(val2 => {
             return val2._id.toString() === val;
           });
-        });
-        clientMenuResult = clientMenuResult.concat(clientBanner);
+        }).filter(val => val); //过滤掉被删除的角色
+        clientMenuResult = clientMenuResult.concat(clientBanner || []);
       }
     }
     clientRoutesResult = uniqueByKey(clientRoutesResult, 'id');
