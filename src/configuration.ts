@@ -49,7 +49,7 @@ export class ContainerLifeCycle {
     clientMenuModel: ReturnModelType<typeof ClientMenu>;
 
   async onReady() {
-    this.app.useMiddleware([PermissionMiddleware, ResponseWrapperMiddleware]);
+    this.app.useMiddleware([ResponseWrapperMiddleware, PermissionMiddleware]);
     this.app.useFilter([ValidateErrorFilter, AllServerErrorFilter]);
     await initUser(this.userModel);
     await initServerRoutes(this.serverRoutesModel)
