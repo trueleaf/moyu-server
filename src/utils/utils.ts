@@ -86,3 +86,19 @@ export function uniqueByKey<T, K extends keyof T>(data: T[], key: K): T[] {
   }
   return result;
 }
+
+//模拟延迟
+export async function sleep(delay: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    try {
+      if (!delay) {
+        resolve();
+      }
+      setTimeout(() => {
+        resolve();
+      }, delay)
+    } catch (error) {
+      reject(error);
+    }
+  })
+}
