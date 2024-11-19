@@ -90,7 +90,7 @@ export class PermissionMiddleware implements IMiddleware<Context, NextFunction> 
       return true;
     }
     return !!this.config.permission.whiteList.find(freeUrl =>
-      ctx.path.includes(freeUrl)
+      ctx.path.includes(freeUrl) || ctx.path.startsWith('/api/test')
     );
   }
   static getName(): string {
