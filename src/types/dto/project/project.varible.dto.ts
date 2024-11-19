@@ -1,9 +1,26 @@
-import { Rule, RuleType } from '@midwayjs/validate';
+import { getSchema, Rule, RuleType } from '@midwayjs/validate';
 import { TableSearchParams } from '../common/common.dto';
 
 /**
  * 新增变量
  */
+class FileValue {
+  /**
+   * 文件名称
+   */
+  @Rule(RuleType.string().required().allow(''))
+    name: string;
+   /**
+   * 文件类型
+   */
+   @Rule(RuleType.string().required().allow(''))
+    fileType: string;
+   /**
+   * 文件路径
+   */
+   @Rule(RuleType.string().required().allow(''))
+    path: string;
+}
 export class AddProjectVariableDto {
   /**
    * 项目id
@@ -18,13 +35,18 @@ export class AddProjectVariableDto {
   /**
    * 变量类型
    */
-  @Rule(RuleType.string().valid('string', 'number', 'boolean', 'array', 'object').required())
-    type: string;
+  @Rule(RuleType.string().valid("string", "number", "boolean", "null", "any", "file").required())
+    type: "string" | "number" | "boolean" | "null" | "any" | "file";
   /**
    * 变量值
    */
   @Rule(RuleType.string().required())
     value: string;
+  /**
+   * 文件变量值
+   */
+    @Rule(getSchema(FileValue))
+    fileValue: FileValue;
 }
 /**
  * 修改项目变量
@@ -48,13 +70,18 @@ export class EditProjectVariableDto {
   /**
    * 变量类型
    */
-  @Rule(RuleType.string().valid('string', 'number', 'boolean', 'array', 'object').required())
-    type: string;
+  @Rule(RuleType.string().valid("string","number","boolean","null","any","file").required())
+    type: "string" | "number" | "boolean" | "null" | "any" | "file";
   /**
    * 变量值
    */
   @Rule(RuleType.string().required())
     value: string;
+  /**
+   * 文件变量值
+   */
+  @Rule(getSchema(FileValue))
+    fileValue: FileValue;
 }
 
 /**
