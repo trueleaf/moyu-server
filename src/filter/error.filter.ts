@@ -6,7 +6,8 @@ import { MultipartInvalidFilenameError } from '@midwayjs/upload';
 
 @Catch(MidwayValidationError)
 export class ValidateErrorFilter {
-  async catch(err: MidwayValidationError): Promise<ResponseWrapper> {
+  async catch(err: MidwayValidationError, ctx: Context): Promise<ResponseWrapper> {
+    console.log(ctx.request.method, ctx.request.url, '耗时', Date.now() - ctx.__logStartTime, ctx.origin)
     return {
       code: 1001,
       msg: `校验参数错误${err.message}`,
@@ -17,7 +18,7 @@ export class ValidateErrorFilter {
 export class AllServerErrorFilter {
   async catch(err: MidwayHttpError & { isCustomError?: boolean }, ctx: Context) {
     ctx.logger.error(err);
-    console.log(err instanceof MultipartInvalidFilenameError)
+    console.log(ctx.request.method, ctx.request.url, '耗时', Date.now() - ctx.__logStartTime, ctx.origin)
     if (err?.isCustomError) {
       return err;
     }

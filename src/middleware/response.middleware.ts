@@ -6,6 +6,7 @@ export class ResponseWrapperMiddleware implements IMiddleware<Context, NextFunct
   resolve() {
     return async (ctx: Context, next: NextFunction) => {
       const startTime = Date.now()
+      ctx.__logStartTime = startTime;
       const result = await next();
       console.log(ctx.request.method, ctx.request.url, '耗时', Date.now() - startTime, ctx.origin)
       if (Buffer.isBuffer(result)) {
