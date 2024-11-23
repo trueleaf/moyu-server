@@ -40,12 +40,12 @@ export class AddProjectVariableDto {
   /**
    * 变量值
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().required().allow(''))
     value: string;
   /**
    * 文件变量值
    */
-    @Rule(getSchema(FileValue))
+  @Rule(getSchema(FileValue))
     fileValue: FileValue;
 }
 /**
@@ -75,7 +75,7 @@ export class EditProjectVariableDto {
   /**
    * 变量值
    */
-  @Rule(RuleType.string().required())
+  @Rule(RuleType.string().allow(''))
     value: string;
   /**
    * 文件变量值

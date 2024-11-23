@@ -20,7 +20,7 @@ export class ProjectVariableService {
    * 新增变量
    */
   async addProjectVariable(params: AddProjectVariableDto) {
-    const { name, type, value, projectId } = params;
+    const { name, type, value, projectId, fileValue } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
     const doc: Partial<ProjectVariable> = {};
     doc.name = name;
@@ -28,9 +28,11 @@ export class ProjectVariableService {
     doc.value = value;
     doc.projectId = projectId;
     doc.creator = this.ctx.tokenInfo.realName;
+    doc.fileValue = fileValue;
     const hasName = await this.projectVariableModel.findOne({
       projectId,
       name,
+      enabled: true
     });
     if (hasName) {
       return throwError(1003, '变量名称重复')
@@ -42,7 +44,7 @@ export class ProjectVariableService {
    * 修改全局变量
    */
   async editProjectVariable(params: EditProjectVariableDto) {
-    const { _id, name, type, value, projectId } = params;
+    const { _id, name, type, value, projectId, fileValue } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
     const updateDoc: Partial<ProjectVariable> = {};
     if (name) {
@@ -54,10 +56,14 @@ export class ProjectVariableService {
     if (value) {
       updateDoc.value = value;
     }
+    if (fileValue) {
+      updateDoc.fileValue = fileValue;
+    }
     const hasName = await this.projectVariableModel.findOne({
       projectId,
       _id: { $ne: _id },
       name,
+      enabled: true
     });
     if (hasName) {
       return throwError(1003, '变量名称重复')
