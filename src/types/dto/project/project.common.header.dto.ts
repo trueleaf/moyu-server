@@ -17,12 +17,16 @@ export class GetProjectCommonHeaderByIdDto {
 }
 
 class HeaderProperty {
+  @Rule(RuleType.string().required())
+    _id: string;
   @Rule(RuleType.string().required().allow(''))
     key: string;
   @Rule(RuleType.string().required().allow(''))
     value: string;
   @Rule(RuleType.string().required().allow(''))
     description: string;
+  @Rule(RuleType.boolean())
+    select?: boolean;
 }
 /**
  * 新增或修改公共请求头
