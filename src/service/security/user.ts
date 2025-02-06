@@ -86,7 +86,7 @@ export class UserService {
     const client = new Dysmsapi20170525(config);
     const sendSmsRequest = new $Dysmsapi20170525.SendSmsRequest({
       phoneNumbers: phone,
-      signName: this.smsConfig.SignName,
+      signName: this.smsConfig.signName,
       templateCode: this.smsConfig.templateCode,
       templateParam: `{code: ${code}}`,
     });
