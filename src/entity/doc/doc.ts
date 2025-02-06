@@ -1,6 +1,7 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
 import { Timestamps } from '../common/common';
 import { RequestMethod } from '../../types/types';
+import { nanoid } from 'nanoid';
 
 class FileInfo {
   /**
@@ -345,6 +346,7 @@ class RequestInfo {
       {
         title: '成功返回',
         statusCode: 200,
+        _id: nanoid(),
         value: {
           dataType: 'application/json',
           strJson: '',
@@ -375,6 +377,8 @@ class ResonseValue {
   public file: FileInfo;
 }
 class ResponseParams {
+  @prop()
+  public _id: string;
   @prop()
   public title: string;
   @prop({ default: 200 })
