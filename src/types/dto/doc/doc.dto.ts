@@ -185,6 +185,8 @@ class ResonseValue {
 }
 //返回参数
 class ResponseParams {
+  @Rule(RuleType.string())
+    _id: string;
   @Rule(RuleType.boolean())
     isMock?: boolean;
   @Rule(RuleType.string())
