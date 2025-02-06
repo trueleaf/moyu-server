@@ -70,7 +70,7 @@ export default {
     accessKeySecret: '',
     endpoint: '',
     RegionId: '',
-    SignName: '',
+    signName: '',
     templateCode: '',
     maxAge: 0,
   },

@@ -9,7 +9,7 @@ export type GlobalConfig = {
     accessKeySecret: string;
     endpoint: string;
     RegionId: string;
-    SignName: string;
+    signName: string;
     templateCode: string;
     maxAge: number;
   };
