@@ -3,6 +3,7 @@ import { Context } from '@midwayjs/koa';
 import { ResponseWrapper } from '../types/response/common/common';
 import { MidwayValidationError } from '@midwayjs/validate';
 import { MultipartInvalidFilenameError } from '@midwayjs/upload';
+import { TokenExpiredError } from 'jsonwebtoken';
 
 @Catch(MidwayValidationError)
 export class ValidateErrorFilter {
@@ -26,6 +27,12 @@ export class AllServerErrorFilter {
       return {
         code: 5000,
         msg: `附件格式错误`,
+      };
+    }
+    if (err instanceof TokenExpiredError) {
+      return {
+        code: 4100,
+        msg: `登录已过期`,
       };
     }
     return {
