@@ -48,6 +48,9 @@ export class UserController {
    */
   @Get('/security/sms')
   async getSMSCode(@Query() params: SMSDto) {
+    if (!this.ctx.session.captcha) {
+      return throwError(4005, '认证验证码错误')
+    }
     const data = await this.userService.getSMSCode(params);
     return data;
   }
@@ -61,6 +64,8 @@ export class UserController {
       width: params.width,
       height: params.height,
     });
+
+    this.ctx.session.captcha = captcha.text;
     return Buffer.from(captcha.data, 'utf-8');
   }
   /**

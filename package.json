@@ -22,6 +22,7 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/koa__cors": "^4.0.0",
     "@types/lodash": "^4.14.195",
+    "dayjs": "^1.11.13",
     "docx": "^7.3.0",
     "file-type": "^14.7.1",
     "fs-extra": "^11.1.1",
