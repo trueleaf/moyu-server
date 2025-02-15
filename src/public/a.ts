@@ -71,7 +71,7 @@ export default {
     accessKeySecret: '',
     endpoint: '',
     RegionId: '',
-    signName: '',
+    SignName: '',
     templateCode: '',
     maxAge: 0,
   },
@@ -113,7 +113,7 @@ export default {
   },
   upload: {
     // whitelist: null
-    whitelist: ['.xlsx', '.jpg']
+    whitelist: ['.xlsx']
   },
   cors: {
     origin(app: koa.Context) {
