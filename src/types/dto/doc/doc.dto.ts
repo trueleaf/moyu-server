@@ -264,7 +264,7 @@ class ItemInfo {
   /**
    * 请求方法
    */
-  @Rule(RuleType.string().valid('GET','POST','PUT','DELETE','OPTIONS','PATCH','HEAD','CONNECTION','TRACE').default('GET'))
+  @Rule(RuleType.string().default('GET'))
   public method: RequestMethod;
   /**
    * 请求地址信息

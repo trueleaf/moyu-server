@@ -45,6 +45,7 @@ const INITIAL_USER = [
 ];
 const INITIAL_SERVER_ROUTES = [
   //=========================================================================//
+
   {
     _id: '64e1d43690009434b395eeef',
     groupName: 'api文档-项目相关',
@@ -635,6 +636,13 @@ const INITIAL_SERVER_ROUTES = [
     path: '/api/project/project_variable',
   },
   {
+    _id: '5f1e44e93e2abf46ec9956e3',
+    groupName: 'api文档-全局变量',
+    method: 'get',
+    name: '获取全局变量列表不分页',
+    path: '/api/project/project_variable_enum',
+  },
+  {
     _id: '5f1e44f33e2abf46ec9956e5',
     groupName: 'api文档-全局变量',
     method: 'put',
@@ -994,6 +1002,7 @@ const INITIAL_ROLE = [
     remark: '拥有完整文档操作权限(无法进入管理后台)',
     roleName: '普通用户',
     serverRoutes: [
+      '5f1e44e93e2abf46ec9956e3',
       '64f499d55495280730b3df8f',
       '603c8d7c1a326e4d089f99b3',
       '6056ca3ec8731d1cd490e95d',
@@ -1108,6 +1117,7 @@ const INITIAL_ROLE = [
     remark: '拥有完整权限',
     roleName: '管理员',
     serverRoutes: [
+      '5f1e44e93e2abf46ec9956e3',
       '64f499d55495280730b3df8f',
       '603c8d7c1a326e4d089f99b3',
       '6056ca3ec8731d1cd490e95d',

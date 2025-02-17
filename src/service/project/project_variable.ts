@@ -35,7 +35,7 @@ export class ProjectVariableService {
       enabled: true
     });
     if (hasName) {
-      return throwError(1003, '变量名称重复')
+      return throwError(1003, '变量名称不允许重复')
     }
     await this.projectVariableModel.create(doc);
     return;
@@ -66,7 +66,7 @@ export class ProjectVariableService {
       enabled: true
     });
     if (hasName) {
-      return throwError(1003, '变量名称重复')
+      return throwError(1003, '变量名称不允许重复')
     }
     await this.projectVariableModel.findByIdAndUpdate({ _id }, updateDoc);
     return;
@@ -125,7 +125,7 @@ export class ProjectVariableService {
   async getProjectVariableEnum(params: GetProjectVariableEnumDto) {
     const { projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
-    const result = await this.projectVariableModel.find({ projectId, enabled: true }, { name: 1, type: 1, value: 1 });
+    const result = await this.projectVariableModel.find({ projectId, enabled: true }, { name: 1, type: 1, value: 1, fileValue: 1});
     return result;
   }
 }

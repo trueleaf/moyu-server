@@ -19,8 +19,8 @@ export class APIController {
   @InjectEntityModel(User)
   userModel: ReturnModelType<typeof User>;
 
-  @All('/test/get')
-  async test() {
+  @All('/test/response')
+  async responseTest() {
     console.log("请求头", this.ctx.headers);
     console.log("query参数", this.ctx.querystring);
     console.log("path参数", this.ctx.path);
@@ -48,5 +48,12 @@ export class APIController {
     //   path: this.ctx.path,
     //   body: this.ctx.request.body
     // };
+  }
+  @All('/test/request_method')
+  async methodTest() {
+    console.log('method test')
+    return {
+      method: this.ctx.method,
+    };
   }
 }

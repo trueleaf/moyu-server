@@ -85,7 +85,8 @@ export default {
   permission: {
     isFree: false,
     whiteList: [
-      '/api/test/get',
+      '/api/test/response',
+      '/api/test/request_method',
       '/mock/image',
       '/mock',
       '/api/security/register',
