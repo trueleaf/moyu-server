@@ -20,6 +20,7 @@ export type ResponseWrapper<T = unknown> = {
     | 4001
     | 4002
     | 4004
+    | 4005
     | 5000
     | 101001
     | 101002
