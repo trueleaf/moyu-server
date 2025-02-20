@@ -87,6 +87,7 @@ export default {
     whiteList: [
       '/api/test/response',
       '/api/test/request_method',
+      '/api/test/request_body',
       '/mock/image',
       '/mock',
       '/api/security/register',

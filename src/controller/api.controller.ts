@@ -56,4 +56,13 @@ export class APIController {
       method: this.ctx.method,
     };
   }
+  @All('/test/request_body')
+  async bodyTest() {
+    console.log('body test', this.ctx.files, this.ctx.fields)
+    return {
+      body: this.ctx.request.body,
+      files: this.ctx.files,
+      fields: this.ctx.fields,
+    };
+  }
 }
