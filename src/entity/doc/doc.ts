@@ -160,6 +160,11 @@ class BaseProperty {
    */
   @prop()
   public select: boolean;
+  /**
+   * 业务参数，附件类型变量模式
+   */
+  @prop()
+  public fileValueType: 'var' | 'file';
   // /**
   //  * 子元素
   //  */

@@ -40,6 +40,11 @@ class BaseProperty {
    */
   @Rule(RuleType.boolean())
     select?: boolean;
+  /**
+   * 业务参数，文件变量类型
+   */
+  @Rule(RuleType.string().valid('var', 'file'))
+  fileValueType?: string;
 }
 class MockImage {
   @Rule(RuleType.valid('png', 'jpg', 'gif', 'svg').required())
