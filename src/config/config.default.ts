@@ -115,7 +115,7 @@ export default {
   },
   upload: {
     // whitelist: null
-    whitelist: ['.xlsx', '.jpg']
+    whitelist: ['.xlsx', '.jpg', '.png']
   },
   cors: {
     origin(app: koa.Context) {
