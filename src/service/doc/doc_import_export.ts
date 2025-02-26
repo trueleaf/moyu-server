@@ -1,11 +1,11 @@
 import { Provide, Inject } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { CommonController } from '../../controller/common/common';
-import { LoginTokenInfo, RequestMethod } from '../../types/types';
-import { Doc } from '../../entity/doc/doc';
-import { ExportAsApiflowDto, ExportAsHTMLDto, ExportAsWordDto, ImportApiflowDto } from '../../types/dto/doc/doc.import.export';
-import { ProjectService } from '../project/project';
+import { CommonController } from '../../controller/common/common.js';
+import { LoginTokenInfo, RequestMethod } from '../../types/types.js';
+import { Doc } from '../../entity/doc/doc.js';
+import { ExportAsApiflowDto, ExportAsHTMLDto, ExportAsWordDto, ImportApiflowDto } from '../../types/dto/doc/doc.import.export.js';
+import { ProjectService } from '../project/project.js';
 import { Context } from '@midwayjs/koa';
 import { readFile } from 'fs-extra'
 import path from 'path'
@@ -22,11 +22,11 @@ import { Document,
   WidthType,
   HeadingLevel,
   AlignmentType } from 'docx'
-import { convertPlainArrayDataToTreeData, dfsForest } from '../../utils/utils';
-import { Project } from '../../entity/project/project';
-import { DocPrefixServer } from './doc_prefix';
+import { convertPlainArrayDataToTreeData, dfsForest } from '../../utils/utils.js';
+import { Project } from '../../entity/project/project.js';
+import { DocPrefixServer } from './doc_prefix.js';
 import { Types } from 'mongoose';
-import { DocPrefix } from '../../entity/doc/doc_prefix';
+import { DocPrefix } from '../../entity/doc/doc_prefix.js';
 
 @Provide()
 export class DocImportAndExportService {

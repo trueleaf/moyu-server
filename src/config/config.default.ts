@@ -1,19 +1,19 @@
 import { MidwayConfig } from '@midwayjs/core';
-import { User } from '../entity/security/user';
-import { Sms } from '../entity/security/sms';
-import { ClientMenu } from '../entity/security/client_menu';
-import { Role } from '../entity/security/role';
-import { ClientRoutes } from '../entity/security/client_routes';
-import { ServerRoutes } from '../entity/security/server_routes';
-import { LoginRecord } from '../entity/security/login_record';
-import { Project } from '../entity/project/project';
-import { ProjectVariable } from '../entity/project/project_variable';
-import { ProjectCode } from '../entity/project/project_code';
-import { Doc } from '../entity/doc/doc';
-import { DocPrefix } from '../entity/doc/doc_prefix';
-import { DocMindParams } from '../entity/doc/doc_mind_params';
-import { ProjectShare } from '../entity/project/project_share';
-import { ProjectRules } from '../entity/project/project_rules';
+import { User } from '../entity/security/user.js';
+import { Sms } from '../entity/security/sms.js';
+import { ClientMenu } from '../entity/security/client_menu.js';
+import { Role } from '../entity/security/role.js';
+import { ClientRoutes } from '../entity/security/client_routes.js';
+import { ServerRoutes } from '../entity/security/server_routes.js';
+import { LoginRecord } from '../entity/security/login_record.js';
+import { Project } from '../entity/project/project.js';
+import { ProjectVariable } from '../entity/project/project_variable.js';
+import { ProjectCode } from '../entity/project/project_code.js';
+import { Doc } from '../entity/doc/doc.js';
+import { DocPrefix } from '../entity/doc/doc_prefix.js';
+import { DocMindParams } from '../entity/doc/doc_mind_params.js';
+import { ProjectShare } from '../entity/project/project_share.js';
+import { ProjectRules } from '../entity/project/project_rules.js';
 import * as koa from '@midwayjs/koa';
 
 export default {
@@ -75,6 +75,18 @@ export default {
     templateCode: '',
     maxAge: 0,
   },
+  ossConfig: {
+    client: {
+      endPoint: '',
+      region: 'oss-cn-hangzhou',
+      accessKeyId: 'access-key',
+      accessKeySecret: 'secret',
+      bucket: 'bucket'
+    }
+  },
+  uploadConfig: {
+    storageService: 'local'
+  },
   apiflow: {
     defaultRegisterPassword: '111111',
   },
@@ -114,7 +126,7 @@ export default {
     max: 100,
   },
   upload: {
-    // whitelist: null
+    fileSize: '20mb',
     whitelist: ['.xlsx', '.jpg', '.png']
   },
   cors: {

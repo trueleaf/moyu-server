@@ -1,6 +1,19 @@
 import { Inject, Controller, Get, Query, Body, Post, Del, Put } from '@midwayjs/core';
-import { AddProjectDto, AddUserToProjectDto, ChangeUserPermissionInProjectDto, DeleteProjectDto, DeleteUserFromProjectDto, EditProjectDto, FilterProjectDto, GetProjectByKeywordDto, GetProjectFullInfoByIdDto, GetProjectInfoByIdDto, GetProjectListDto, GetProjectMembersByIdDto } from '../../types/dto/project/project.dto';
-import { ProjectService } from '../../service/project/project';
+import { 
+  AddProjectDto, 
+  AddUserToProjectDto, 
+  ChangeUserPermissionInProjectDto, 
+  DeleteProjectDto, 
+  DeleteUserFromProjectDto, 
+  EditProjectDto, 
+  FilterProjectDto, 
+  GetProjectByKeywordDto, 
+  GetProjectFullInfoByIdDto, 
+  GetProjectInfoByIdDto, 
+  GetProjectListDto, 
+  GetProjectMembersByIdDto 
+} from '../../types/dto/project/project.dto.js';
+import { ProjectService } from '../../service/project/project.js';
 
 @Controller('/api')
 export class ProjectController {

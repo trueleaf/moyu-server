@@ -1,11 +1,11 @@
 import { Context, Inject, Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
-import { ProjectVariable } from '../../entity/project/project_variable';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { LoginTokenInfo } from '../../types/types';
-import { CommonController } from '../../controller/common/common';
-import { AddProjectVariableDto, DeleteProjectVariableDto, EditProjectVariableDto, GetProjectVariableEnumDto, GetProjectVariableListDto } from '../../types/dto/project/project.varible.dto';
-import { throwError } from '../../utils/utils';
+import { LoginTokenInfo } from '../../types/types.js';
+import { CommonController } from '../../controller/common/common.js';
+import { ProjectVariable } from '../../entity/project/project_variable.js';
+import { AddProjectVariableDto, DeleteProjectVariableDto, EditProjectVariableDto, GetProjectVariableEnumDto, GetProjectVariableListDto } from '../../types/dto/project/project.varible.dto.js';
+import { throwError } from '../../utils/utils.js';
 
 
 @Provide()

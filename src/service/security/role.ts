@@ -1,10 +1,10 @@
 import { Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { throwError } from '../../utils/utils';
-import { Role } from '../../entity/security/role';
-import { AddRoleDto, DeleteRoleDto, EditRoleDto, GetRoleInfoDto, GetRoleListDto } from '../../types/dto/security/role.dto';
-import { TableResponseWrapper } from '../../types/response/common/common';
+import { throwError } from '../../utils/utils.js';
+import { Role } from '../../entity/security/role.js';
+import { AddRoleDto, DeleteRoleDto, EditRoleDto, GetRoleInfoDto, GetRoleListDto } from '../../types/dto/security/role.dto.js';
+import { TableResponseWrapper } from '../../types/response/common/common.js';
 
 
 @Provide()

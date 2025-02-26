@@ -1,11 +1,11 @@
 import { Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { ServerRoutes } from '../../entity/security/server_routes';
-import { throwError } from '../../utils/utils';
-import { AddServerRouteDto, ChangeGroupNameByIdsDto, DeleteServerRouteDto, EditServerRouteDto, GetServerRoutesListDto } from '../../types/dto/security/server.routes.dto';
-import { TableResponseWrapper } from '../../types/response/common/common';
-import { escapeRegExp } from 'lodash';
+import { ServerRoutes } from '../../entity/security/server_routes.js';
+import { throwError } from '../../utils/utils.js';
+import { AddServerRouteDto, ChangeGroupNameByIdsDto, DeleteServerRouteDto, EditServerRouteDto, GetServerRoutesListDto } from '../../types/dto/security/server.routes.dto.js';
+import { TableResponseWrapper } from '../../types/response/common/common.js';
+import lodash from 'lodash';
 
 
 @Provide()
@@ -88,7 +88,7 @@ export class ServerRoutesService {
     let limit = 100;
     query.enabled = true;
     if (path) {
-      query.path = new RegExp(escapeRegExp(path));
+      query.path = new RegExp(lodash.escapeRegExp(path));
     }
     if (pageSize != null && pageNum != null) {
       skipNum = (pageNum - 1) * pageSize;

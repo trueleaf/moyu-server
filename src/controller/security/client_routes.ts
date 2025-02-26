@@ -8,8 +8,15 @@ import {
   Get,
   Query,
 } from '@midwayjs/core';
-import { AddClientRoutesDto, AddMultiClientRoutesDto, ChangeGroupNameByIds, DeleteClientRoutesDto, EditClientRoutesDto, GetClientRoutesListDto } from '../../types/dto/security/client.routes.dto';
-import { ClientRoutesService } from '../../service/security/client_routes';
+import { 
+  AddClientRoutesDto, 
+  AddMultiClientRoutesDto, 
+  ChangeGroupNameByIds, 
+  DeleteClientRoutesDto, 
+  EditClientRoutesDto, 
+  GetClientRoutesListDto 
+} from '../../types/dto/security/client.routes.dto.js';
+import { ClientRoutesService } from '../../service/security/client_routes.js';
 
 @Controller('/api')
 export class ClientRoutesController {

@@ -8,8 +8,8 @@ import {
   Query,
   Get,
 } from '@midwayjs/core';
-import { AddServerRouteDto, ChangeGroupNameByIdsDto, DeleteServerRouteDto, EditServerRouteDto, GetServerRoutesListDto } from '../../types/dto/security/server.routes.dto';
-import { ServerRoutesService } from '../../service/security/server_routes';
+import { AddServerRouteDto, ChangeGroupNameByIdsDto, DeleteServerRouteDto, EditServerRouteDto, GetServerRoutesListDto } from '../../types/dto/security/server.routes.dto.js';
+import { ServerRoutesService } from '../../service/security/server_routes.js';
 
 @Controller('/api')
 export class ServerMenuController {

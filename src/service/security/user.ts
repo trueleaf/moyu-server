@@ -16,31 +16,31 @@ import {
   SMSDto,
   StarProjectDto,
   UnStarProjectDto,
-} from '../../types/dto/security/user.dto';
-import { getRandomNumber, throwError, uniqueByKey } from '../../utils/utils';
+} from '../../types/dto/security/user.dto.js';
+import { getRandomNumber, throwError, uniqueByKey } from '../../utils/utils.js';
 import * as XLSX from 'xlsx'
-import { GlobalConfig, LoginTokenInfo } from '../../types/types';
+import { GlobalConfig, LoginTokenInfo } from '../../types/types.js';
 import Dysmsapi20170525, * as $Dysmsapi20170525 from '@alicloud/dysmsapi20170525';
 import * as $OpenApi from '@alicloud/openapi-client';
 import * as $Util from '@alicloud/tea-util';
-import { Sms } from '../../entity/security/sms';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { User } from '../../entity/security/user';
 import { createHash } from 'crypto';
 import { Context } from '@midwayjs/koa';
-import { LoginRecord } from '../../entity/security/login_record';
 import * as jwt from 'jsonwebtoken';
-import { validatePassword } from '../../rules/rules';
-import { TableResponseWrapper } from '../../types/response/common/common';
-import { escapeRegExp } from 'lodash';
+import lodash from 'lodash';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import * as fileType from 'file-type'
+import { fileTypeFromBuffer } from 'file-type'
 import { UploadFileInfo } from '@midwayjs/upload';
-import { ClientMenu } from '../../entity/security/client_menu';
-import { ClientRoutes } from '../../entity/security/client_routes';
-import { Role } from '../../entity/security/role';
+import { Sms } from '../../entity/security/sms.js';
+import { User } from '../../entity/security/user.js';
+import { LoginRecord } from '../../entity/security/login_record.js';
+import { validatePassword } from '../../rules/rules.js';
+import { TableResponseWrapper } from '../../types/response/common/common.js';
+import { ClientMenu } from '../../entity/security/client_menu.js';
+import { ClientRoutes } from '../../entity/security/client_routes.js';
+import { Role } from '../../entity/security/role.js';
 
 
 @Provide()
@@ -83,7 +83,8 @@ export class UserService {
       accessKeySecret: this.smsConfig.accessKeySecret,
     });
     config.endpoint = 'dysmsapi.aliyuncs.com';
-    const client = new Dysmsapi20170525(config);
+    // @ts-ignore
+    const client = new (Dysmsapi20170525(config));
     const sendSmsRequest = new $Dysmsapi20170525.SendSmsRequest({
       phoneNumbers: phone,
       signName: this.smsConfig.signName,
@@ -350,13 +351,13 @@ export class UserService {
       query.createdAt = { $gt: startTime, $lt: endTime };
     }
     if (loginName) {
-      query.loginName = new RegExp(escapeRegExp(loginName));
+      query.loginName = new RegExp(lodash.escapeRegExp(loginName));
     }
     if (realName) {
-      query.realName = new RegExp(escapeRegExp(realName));
+      query.realName = new RegExp(lodash.escapeRegExp(realName));
     }
     if (phone) {
-      query.phone = new RegExp(escapeRegExp(phone));
+      query.phone = new RegExp(lodash.escapeRegExp(phone));
     }
     const rows = await this.userModel.find(query,
       {
@@ -436,7 +437,7 @@ export class UserService {
     if (!name) {
       return [];
     }
-    const escapeName = new RegExp(escapeRegExp(name));
+    const escapeName = new RegExp(lodash.escapeRegExp(name));
     const userList = await this.userModel.find({ $or: [
       {
         realName: { $regex: escapeName },
@@ -485,7 +486,7 @@ export class UserService {
     const fileName = '用户批量导入模板';
     const filePath = path.join(this.appDir, 'public','用户批量导入模板.xlsx');
     const file = await fs.readFile(filePath);
-    const typeInfo = await fileType.fromBuffer(file);
+    const typeInfo = await fileTypeFromBuffer(file);
     this.ctx.set('content-type', typeInfo.mime);
     this.ctx.set('content-disposition', `attachment;filename=${encodeURIComponent(fileName)}`);
     return file;

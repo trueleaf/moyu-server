@@ -2,9 +2,9 @@ import { Inject, Provide } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { Project } from '../../entity/project/project';
-import { LoginTokenInfo } from '../../types/types';
-import { throwError } from '../../utils/utils';
+import { Project } from '../../entity/project/project.js';
+import { LoginTokenInfo } from '../../types/types.js';
+import { throwError } from '../../utils/utils.js';
 const ReadOnlyUrl = [
   {
     url: '/api/project/project_list',

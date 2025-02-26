@@ -1,5 +1,5 @@
 import { getSchema, Rule, RuleType } from '@midwayjs/validate';
-import { TableSearchParams } from '../common/common.dto';
+import { TableSearchParams } from '../common/common.dto.js';
 
 /**
  * 新增变量

@@ -1,10 +1,10 @@
 import { Context, Inject, Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { LoginTokenInfo } from '../../types/types';
-import { CommonController } from '../../controller/common/common';
-import { ProjectRules } from '../../entity/project/project_rules';
-import { GetProjectRulesByIdDto, UpdateProjectRulesDto } from '../../types/dto/project/project.rules.dto';
+import { LoginTokenInfo } from '../../types/types.js';
+import { CommonController } from '../../controller/common/common.js';
+import { ProjectRules } from '../../entity/project/project_rules.js';
+import { GetProjectRulesByIdDto, UpdateProjectRulesDto } from '../../types/dto/project/project.rules.dto.js';
 
 const BASE_RULES = {
   fileInFolderLimit: 255, //单个文件夹默认限制文件个数

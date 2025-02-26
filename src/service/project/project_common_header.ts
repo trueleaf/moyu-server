@@ -1,9 +1,9 @@
 import { Inject, Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { CommonController } from '../../controller/common/common';
-import { GetProjectCommonHeaderByIdDto, UpsertProjectCommonHeaderDto, GetProjectCommonHeadersDto } from '../../types/dto/project/project.common.header.dto';
-import { Doc } from '../../entity/doc/doc';
+import { CommonController } from '../../controller/common/common.js';
+import { GetProjectCommonHeaderByIdDto, UpsertProjectCommonHeaderDto, GetProjectCommonHeadersDto } from '../../types/dto/project/project.common.header.dto.js';
+import { Doc } from '../../entity/doc/doc.js';
 import { Types } from 'mongoose';
 
 @Provide()

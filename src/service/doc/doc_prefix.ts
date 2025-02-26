@@ -1,12 +1,12 @@
 import { Provide, Inject, Context } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { CommonController } from '../../controller/common/common';
-import { DocPrefix } from '../../entity/doc/doc_prefix';
-import { LoginTokenInfo } from '../../types/types';
-import { AddDocPrefixDto, DeleteDocPrefix, GetDocPrefixList, GetDocPrefixInfo, EditDocPrefix, GetDocPrefixEnum } from '../../types/dto/doc/doc.prefix.dto';
-import { throwError } from '../../utils/utils';
-import { TableResponseWrapper } from '../../types/response/common/common';
+import { CommonController } from '../../controller/common/common.js';
+import { LoginTokenInfo } from '../../types/types.js';
+import { DocPrefix } from '../../entity/doc/doc_prefix.js';
+import { AddDocPrefixDto, DeleteDocPrefix, GetDocPrefixList, GetDocPrefixInfo, EditDocPrefix, GetDocPrefixEnum } from '../../types/dto/doc/doc.prefix.dto.js';
+import { throwError } from '../../utils/utils.js';
+import { TableResponseWrapper } from '../../types/response/common/common.js';
 
 @Provide()
 export class DocPrefixServer {

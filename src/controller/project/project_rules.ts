@@ -1,6 +1,6 @@
 import { Inject, Controller, Body,Get, Put, Query } from '@midwayjs/core';
-import { GetProjectRulesByIdDto, UpdateProjectRulesDto } from '../../types/dto/project/project.rules.dto';
-import { ProjectRulesService } from '../../service/project/project_rules';
+import { GetProjectRulesByIdDto, UpdateProjectRulesDto } from '../../types/dto/project/project.rules.dto.js';
+import { ProjectRulesService } from '../../service/project/project_rules.js';
 
 @Controller('/api/apidoc')
 export class ProjectRulesController {

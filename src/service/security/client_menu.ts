@@ -1,7 +1,7 @@
 import { Provide } from '@midwayjs/core';
-import { AddClientMenuDto, ChangeCLientMenuPositionDto, DeleteClientMenuDto, EditClientMenuDto } from '../../types/dto/security/client.menu.dto';
-import { throwError } from '../../utils/utils';
-import { ClientMenu } from '../../entity/security/client_menu';
+import { AddClientMenuDto, ChangeCLientMenuPositionDto, DeleteClientMenuDto, EditClientMenuDto } from '../../types/dto/security/client.menu.dto.js';
+import { throwError } from '../../utils/utils.js';
+import { ClientMenu } from '../../entity/security/client_menu.js';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Types } from 'mongoose';

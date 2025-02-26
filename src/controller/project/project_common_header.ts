@@ -1,6 +1,6 @@
 import { Inject, Controller, Body, Get, Put, Query } from '@midwayjs/core';
-import { GetProjectCommonHeaderByIdDto, UpsertProjectCommonHeaderDto, GetProjectCommonHeadersDto } from '../../types/dto/project/project.common.header.dto';
-import { ProjectCommonHeaderService } from '../../service/project/project_common_header';
+import { GetProjectCommonHeaderByIdDto, UpsertProjectCommonHeaderDto, GetProjectCommonHeadersDto } from '../../types/dto/project/project.common.header.dto.js';
+import { ProjectCommonHeaderService } from '../../service/project/project_common_header.js';
 
 @Controller('/api')
 export class ProjectCommonHeaderController {

@@ -1,5 +1,5 @@
 import { Rule, RuleType, getSchema } from '@midwayjs/validate';
-import { DocInfo } from './doc.dto';
+import { DocInfo } from './doc.dto.js';
 
 /**
  * 导出为html

@@ -1,5 +1,5 @@
 import { Rule, RuleType } from '@midwayjs/validate';
-import { TableSearchParams } from '../common/common.dto';
+import { TableSearchParams } from '../common/common.dto.js';
 
 /**
  * 新增服务端路由

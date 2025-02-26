@@ -4,8 +4,8 @@ import {
   Post,
   Inject,
 } from '@midwayjs/core';
-import { ExportAsApiflowDto, ExportAsHTMLDto, ExportAsWordDto, ImportApiflowDto } from '../../types/dto/doc/doc.import.export';
-import { DocImportAndExportService } from '../../service/doc/doc_import_export';
+import { ExportAsApiflowDto, ExportAsHTMLDto, ExportAsWordDto, ImportApiflowDto } from '../../types/dto/doc/doc.import.export.js';
+import { DocImportAndExportService } from '../../service/doc/doc_import_export.js';
 
 @Controller('/api')
 export class DocImportAndExport {

@@ -1,6 +1,6 @@
 import { Inject, Controller, Body, Post, Del, Get, Put, Query } from '@midwayjs/core';
-import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, UpdateDoc, GenerateDocCopyDto, PasteDocsDto, CreateDocDto, GetDocDetailDto, DeleteDocDto, GetMockDataDto, GetDocsAsTreeDto } from '../../types/dto/doc/doc.dto';
-import { DocService } from '../../service/doc/doc';
+import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, UpdateDoc, GenerateDocCopyDto, PasteDocsDto, CreateDocDto, GetDocDetailDto, DeleteDocDto, GetMockDataDto, GetDocsAsTreeDto } from '../../types/dto/doc/doc.dto.js';
+import { DocService } from '../../service/doc/doc.js';
 
 @Controller('/api')
 export class DocController {

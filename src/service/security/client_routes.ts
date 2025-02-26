@@ -1,10 +1,10 @@
 import { Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { throwError } from '../../utils/utils';
-import { TableResponseWrapper } from '../../types/response/common/common';
-import { ClientRoutes } from '../../entity/security/client_routes';
-import { AddClientRoutesDto, AddMultiClientRoutesDto, ChangeGroupNameByIds, DeleteClientRoutesDto, EditClientRoutesDto, GetClientRoutesListDto } from '../../types/dto/security/client.routes.dto';
+import { throwError } from '../../utils/utils.js';
+import { TableResponseWrapper } from '../../types/response/common/common.js';
+import { ClientRoutes } from '../../entity/security/client_routes.js';
+import { AddClientRoutesDto, AddMultiClientRoutesDto, ChangeGroupNameByIds, DeleteClientRoutesDto, EditClientRoutesDto, GetClientRoutesListDto } from '../../types/dto/security/client.routes.dto.js';
 
 
 @Provide()

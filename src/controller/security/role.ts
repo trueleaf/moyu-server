@@ -8,8 +8,8 @@ import {
   Get,
   Query,
 } from '@midwayjs/core';
-import { AddRoleDto, DeleteRoleDto, EditRoleDto, GetRoleInfoDto, GetRoleListDto } from '../../types/dto/security/role.dto';
-import { RoleService } from '../../service/security/role';
+import { AddRoleDto, DeleteRoleDto, EditRoleDto, GetRoleInfoDto, GetRoleListDto } from '../../types/dto/security/role.dto.js';
+import { RoleService } from '../../service/security/role.js';
 
 @Controller('/api')
 export class RoleController {

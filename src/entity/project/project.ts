@@ -1,5 +1,5 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
-import { Timestamps } from '../common/common';
+import { Timestamps } from '../common/common.js';
 /*
 |--------------------------------------------------------------------------
 | 创建者信息

@@ -1,4 +1,4 @@
-import { ResponseWrapper } from '../common/common';
+import { ResponseWrapper } from '../common/common.js';
 
 /**
  * 验证码返回参数

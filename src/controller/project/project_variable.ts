@@ -1,6 +1,12 @@
 import { Inject, Controller, Body, Post, Put, Del, Get, Query } from '@midwayjs/core';
-import { AddProjectVariableDto, DeleteProjectVariableDto, EditProjectVariableDto, GetProjectVariableEnumDto, GetProjectVariableListDto } from '../../types/dto/project/project.varible.dto';
-import { ProjectVariableService } from '../../service/project/project_variable';
+import { 
+  AddProjectVariableDto, 
+  DeleteProjectVariableDto, 
+  EditProjectVariableDto, 
+  GetProjectVariableEnumDto, 
+  GetProjectVariableListDto 
+} from '../../types/dto/project/project.varible.dto.js';
+import { ProjectVariableService } from '../../service/project/project_variable.js';
 
 @Controller('/api')
 export class ProjectVariableController {

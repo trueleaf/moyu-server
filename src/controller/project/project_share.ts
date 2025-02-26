@@ -1,6 +1,15 @@
 import { Inject, Controller, Body, Post, Put, Get, Del, Query } from '@midwayjs/core';
-import { GenerateSharedProjectLinkDto, EditSharedProjectLinkDto, GetSharedProjectLinkListDto, DeleteSharedProjectLinkDto, GetSharedLinkInfoDto, CheckOnlineProjectPasswordDto, GetSharedProjectBannerDto, GetSharedProjectInfoDto, GetSharedDocDetailDto } from '../../types/dto/project/project.share.dto';
-import { ProjectShareService } from '../../service/project/project_share';
+import { 
+  GenerateSharedProjectLinkDto, 
+  EditSharedProjectLinkDto, 
+  GetSharedProjectLinkListDto, 
+  DeleteSharedProjectLinkDto, 
+  GetSharedLinkInfoDto, 
+  CheckOnlineProjectPasswordDto, 
+  GetSharedProjectBannerDto, 
+  GetSharedProjectInfoDto, 
+  GetSharedDocDetailDto } from '../../types/dto/project/project.share.dto.js';
+import { ProjectShareService } from '../../service/project/project_share.js';
 
 @Controller('/api')
 export class ProjectShareController {

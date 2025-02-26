@@ -7,8 +7,8 @@ import {
   Get,
   Query,
 } from '@midwayjs/core';
-import { AddDocMindParamsDto, DeleteDocMindParams, GetDocMindParamsList } from '../../types/dto/doc/doc.mind.params';
-import { DocMindParamsServer } from '../../service/doc/doc_mind_params';
+import { AddDocMindParamsDto, DeleteDocMindParams, GetDocMindParamsList } from '../../types/dto/doc/doc.mind.params.js';
+import { DocMindParamsServer } from '../../service/doc/doc_mind_params.js';
 
 @Controller('/api')
 export class DocMindParamsController {

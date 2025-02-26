@@ -1,11 +1,11 @@
 import { Provide, Inject, Context } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { CommonController } from '../../controller/common/common';
-import { LoginTokenInfo } from '../../types/types';
-import { TableResponseWrapper } from '../../types/response/common/common';
-import { DocMindParams } from '../../entity/doc/doc_mind_params';
-import { AddDocMindParamsDto, DeleteDocMindParams, GetDocMindParamsList } from '../../types/dto/doc/doc.mind.params';
+import { CommonController } from '../../controller/common/common.js';
+import { LoginTokenInfo } from '../../types/types.js';
+import { TableResponseWrapper } from '../../types/response/common/common.js';
+import { DocMindParams } from '../../entity/doc/doc_mind_params.js';
+import { AddDocMindParamsDto, DeleteDocMindParams, GetDocMindParamsList } from '../../types/dto/doc/doc.mind.params.js';
 
 @Provide()
 export class DocMindParamsServer {

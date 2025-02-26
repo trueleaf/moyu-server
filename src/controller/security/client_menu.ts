@@ -7,8 +7,8 @@ import {
   Del,
   Get,
 } from '@midwayjs/core';
-import { AddClientMenuDto, ChangeCLientMenuPositionDto, DeleteClientMenuDto, EditClientMenuDto } from '../../types/dto/security/client.menu.dto';
-import { ClientMenuService } from '../../service/security/client_menu';
+import { AddClientMenuDto, ChangeCLientMenuPositionDto, DeleteClientMenuDto, EditClientMenuDto } from '../../types/dto/security/client.menu.dto.js';
+import { ClientMenuService } from '../../service/security/client_menu.js';
 
 @Controller('/api')
 export class ClientMenuController {

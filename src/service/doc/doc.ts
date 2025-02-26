@@ -1,12 +1,12 @@
 import { Context, Inject, Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { Doc } from '../../entity/doc/doc';
-import { CommonController } from '../../controller/common/common';
-import { LoginTokenInfo, RequestMethod } from '../../types/types';
-import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, CreateDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc, GetDocsAsTreeDto } from '../../types/dto/doc/doc.dto';
-import { throwError } from '../../utils/utils';
-import { Project } from '../../entity/project/project';
+import { Doc } from '../../entity/doc/doc.js';
+import { CommonController } from '../../controller/common/common.js';
+import { LoginTokenInfo, RequestMethod } from '../../types/types.js';
+import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, CreateDocDto, DeleteDocDto, GenerateDocCopyDto, GetDocDetailDto, GetMockDataDto, PasteDocsDto, UpdateDoc, GetDocsAsTreeDto } from '../../types/dto/doc/doc.dto.js';
+import { throwError } from '../../utils/utils.js';
+import { Project } from '../../entity/project/project.js';
 import { Types } from 'mongoose';
 
 @Provide()

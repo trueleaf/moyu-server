@@ -1,9 +1,9 @@
 import { Catch, MidwayHttpError } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
-import { ResponseWrapper } from '../types/response/common/common';
+import { ResponseWrapper } from '../types/response/common/common.js';
 import { MidwayValidationError } from '@midwayjs/validate';
 import { MultipartInvalidFilenameError } from '@midwayjs/upload';
-import { TokenExpiredError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 @Catch(MidwayValidationError)
 export class ValidateErrorFilter {
@@ -29,7 +29,7 @@ export class AllServerErrorFilter {
         msg: `附件格式错误`,
       };
     }
-    if (err instanceof TokenExpiredError) {
+    if (err instanceof jwt.JsonWebTokenError) {
       return {
         code: 4100,
         msg: `登录已过期`,

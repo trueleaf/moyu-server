@@ -4,22 +4,24 @@ import * as validate from '@midwayjs/validate';
 import * as info from '@midwayjs/info';
 import * as typegoose from '@midwayjs/typegoose';
 import * as upload from '@midwayjs/upload';
-import { join } from 'path';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { InjectEntityModel } from '@midwayjs/typegoose';
 import {
     AllServerErrorFilter,
     ValidateErrorFilter,
-  } from './filter/error.filter';
-import { ResponseWrapperMiddleware } from './middleware/response.middleware';
-import { PermissionMiddleware } from './middleware/permission.middleware';
-import { InjectEntityModel } from '@midwayjs/typegoose';
-import { User } from './entity/security/user';
-import { ReturnModelType } from '@typegoose/typegoose';
-import { initClientMenus, initClientRoutes, initRoles, initServerRoutes, initUser } from './entity/init_entity';
-import { ServerRoutes } from './entity/security/server_routes';
-import { ClientRoutes } from './entity/security/client_routes';
-import { Role } from './entity/security/role';
-import { ClientMenu } from './entity/security/client_menu';
+  } from './filter/error.filter.js';
+import { ResponseWrapperMiddleware } from './middleware/response.middleware.js';
+import { PermissionMiddleware } from './middleware/permission.middleware.js';
+import { User } from './entity/security/user.js';
+import { initClientMenus, initClientRoutes, initRoles, initServerRoutes, initUser } from './entity/init_entity.js';
+import { ServerRoutes } from './entity/security/server_routes.js';
+import { ClientRoutes } from './entity/security/client_routes.js';
+import { Attachment } from './entity/attachment/attachment.js';
+import { Role } from './entity/security/role.js';
+import { ClientMenu } from './entity/security/client_menu.js';
 import * as crossDomain from '@midwayjs/cross-domain';
+import DefaultConfig from './config/config.default.js';
+import UnittestConfig from './config/config.unittest.js';
 @Configuration({
   imports: [
     koa,
@@ -32,7 +34,10 @@ import * as crossDomain from '@midwayjs/cross-domain';
       enabledEnvironment: ['local'],
     },
   ],
-  importConfigs: [join(__dirname, './config/')],
+  importConfigs: [{
+    default: DefaultConfig,
+    unittest: UnittestConfig,
+  },],
 })
 export class ContainerLifeCycle {
   @App()
@@ -47,6 +52,8 @@ export class ContainerLifeCycle {
     roleModel: ReturnModelType<typeof Role>;
   @InjectEntityModel(ClientMenu)
     clientMenuModel: ReturnModelType<typeof ClientMenu>;
+  @InjectEntityModel(Attachment)
+    attachmentModel: ReturnModelType<typeof Attachment>;
 
   async onReady() {
     this.app.useMiddleware([ResponseWrapperMiddleware, PermissionMiddleware]);

@@ -1,5 +1,5 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
-import { Timestamps } from '../common/common';
+import { Timestamps } from '../common/common.js';
 @modelOptions({
   schemaOptions: { timestamps: true, collection: 'security_client_routes' },
 })

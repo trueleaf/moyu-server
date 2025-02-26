@@ -1,18 +1,18 @@
 import { Context, Inject, Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
-import { ProjectShare } from '../../entity/project/project_share';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { CommonController } from '../../controller/common/common';
-import { LoginTokenInfo } from '../../types/types';
-import { GenerateSharedProjectLinkDto, GetSharedProjectLinkListDto, DeleteSharedProjectLinkDto, GetSharedLinkInfoDto, CheckOnlineProjectPasswordDto, GetSharedProjectBannerDto, GetSharedProjectInfoDto, GetSharedDocDetailDto, EditSharedProjectLinkDto } from '../../types/dto/project/project.share.dto';
-import { Project } from '../../entity/project/project';
+import { CommonController } from '../../controller/common/common.js';
+import { LoginTokenInfo } from '../../types/types.js';
+import { ProjectShare } from '../../entity/project/project_share.js';
+import { GenerateSharedProjectLinkDto, GetSharedProjectLinkListDto, DeleteSharedProjectLinkDto, GetSharedLinkInfoDto, CheckOnlineProjectPasswordDto, GetSharedProjectBannerDto, GetSharedProjectInfoDto, GetSharedDocDetailDto, EditSharedProjectLinkDto } from '../../types/dto/project/project.share.dto.js';
+import { Project } from '../../entity/project/project.js';
 import { nanoid } from 'nanoid'
-import { throwError } from '../../utils/utils';
-import { DocService } from '../doc/doc';
-import { ProjectService } from '../project/project';
-import { Doc } from '../../entity/doc/doc';
-import { DocPrefix } from '../../entity/doc/doc_prefix';
-import { ProjectVariable } from '../../entity/project/project_variable';
+import { throwError } from '../../utils/utils.js';
+import { DocService } from '../doc/doc.js';
+import { ProjectService } from '../project/project.js';
+import { Doc } from '../../entity/doc/doc.js';
+import { DocPrefix } from '../../entity/doc/doc_prefix.js';
+import { ProjectVariable } from '../../entity/project/project_variable.js';
 
 @Provide()
 export class ProjectShareService {

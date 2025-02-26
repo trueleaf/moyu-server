@@ -1,5 +1,5 @@
 import { Rule, RuleType, getSchema } from '@midwayjs/validate';
-import { RequestMethod, ContentType } from '../../types';
+import { RequestMethod } from '../../types.js';
 
 /*
 |--------------------------------------------------------------------------
@@ -178,6 +178,36 @@ class FileInfo {
   @Rule(RuleType.string().allow(''))
     raw: string;
 }
+class BinaryValue {
+  /**
+   * 文件路径
+   */
+  @Rule(RuleType.string().allow(''))
+  path: string;
+  /**
+   * 文件唯一id，文件将会统一存放服务端，使用这个id来索引文件
+   */
+  @Rule(RuleType.string().allow(''))
+    id: string;
+  /**
+   * 如果附件小于配置的大小，直接转换为uint8数组返回
+   */
+  @Rule(RuleType.string().allow(''))
+    raw: string;
+}
+// 定义一个名为 BinaryInfo 的类，用于存储二进制文件的信息
+class BinaryInfo {
+  /**
+   * 类型
+   */
+  @Rule(RuleType.string().valid('var', 'file'))
+  mode: 'var' | 'file';
+  @Rule(RuleType.string().allow(''))
+  varValue: string;
+  @Rule(getSchema(BinaryValue))
+  binaryValue: BinaryValue;
+
+}
 class ResonseValue {
   @Rule(RuleType.string().allow(''))
     dataType: string;
@@ -260,10 +290,10 @@ class RequestBody {
   @Rule(getSchema(RawBody).required())
   public raw: RawBody;
   /**
-   * file数据
+   * binary数据
    */
-  @Rule(getSchema(FileInfo))
-  public file: FileInfo;
+  @Rule(getSchema(BinaryInfo))
+  public binary: BinaryInfo;
 }
 class ItemInfo {
   /**
@@ -304,8 +334,8 @@ class ItemInfo {
   /**
    * contentType
    */
-  @Rule(RuleType.string().valid('application/json','application/x-www-form-urlencoded','multipart/form-data','text/plain','application/xml','text/html',''))
-  public contentType: ContentType;
+  @Rule(RuleType.string().allow(''))
+  public contentType: string;
 }
 export class DocInfo {
   /**

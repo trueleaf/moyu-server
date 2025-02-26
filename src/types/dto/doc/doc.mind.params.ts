@@ -1,5 +1,5 @@
 import { Rule, RuleType, getSchema } from '@midwayjs/validate';
-import { TableSearchParams } from '../common/common.dto';
+import { TableSearchParams } from '../common/common.dto.js';
 
 class BaseProperty {
   /**

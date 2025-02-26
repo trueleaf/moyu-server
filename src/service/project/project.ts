@@ -2,19 +2,19 @@ import { Context, Inject, Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { FilterQuery } from 'mongoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { AddProjectDto, AddUserToProjectDto, ChangeUserPermissionInProjectDto, DeleteProjectDto, DeleteUserFromProjectDto, EditProjectDto, FilterProjectDto, GetProjectByKeywordDto, GetProjectFullInfoByIdDto, GetProjectInfoByIdDto, GetProjectListDto, GetProjectMembersByIdDto } from '../../types/dto/project/project.dto';
-import { Project } from '../../entity/project/project';
-import { Doc } from '../../entity/doc/doc';
-import { User } from '../../entity/security/user';
-import { LoginTokenInfo } from '../../types/types';
-import { throwError } from '../../utils/utils';
-import { CommonController } from '../../controller/common/common';
-import { escapeRegExp } from 'lodash';
-import { DocMindParams } from '../../entity/doc/doc_mind_params';
-import { DocMindParamsServer } from '../doc/doc_mind_params';
-import { DocPrefixServer } from '../doc/doc_prefix';
-import { ProjectVariableService } from './project_variable';
-import { ProjectRulesService } from './project_rules';
+import { AddProjectDto, AddUserToProjectDto, ChangeUserPermissionInProjectDto, DeleteProjectDto, DeleteUserFromProjectDto, EditProjectDto, FilterProjectDto, GetProjectByKeywordDto, GetProjectFullInfoByIdDto, GetProjectInfoByIdDto, GetProjectListDto, GetProjectMembersByIdDto } from '../../types/dto/project/project.dto.js';
+import { Project } from '../../entity/project/project.js';
+import { Doc } from '../../entity/doc/doc.js';
+import { LoginTokenInfo } from '../../types/types.js';
+import { User } from '../../entity/security/user.js';
+import { throwError } from '../../utils/utils.js';
+import { CommonController } from '../../controller/common/common.js';
+import lodash from 'lodash';
+import { DocMindParams } from '../../entity/doc/doc_mind_params.js';
+import { DocMindParamsServer } from '../doc/doc_mind_params.js';
+import { DocPrefixServer } from '../doc/doc_prefix.js';
+import { ProjectVariableService } from './project_variable.js';
+import { ProjectRulesService } from './project_rules.js';
 
 @Provide()
 export class ProjectService {
@@ -316,7 +316,7 @@ export class ProjectService {
       query.createdAt = { $gt: startTime, $lt: endTime };
     }
     if (projectName != null) {
-      query.projectName = new RegExp(escapeRegExp(projectName));
+      query.projectName = new RegExp(lodash.escapeRegExp(projectName));
     }
     query.$or = [
       {
@@ -421,7 +421,7 @@ export class ProjectService {
     const userInfo = await this.userModel.findOne({ _id: userId }, { couldVisitProjects: 1 });
     const docs = await this.docModel.find({
       projectId: { $in: userInfo.couldVisitProjects },
-      'item.url.path': new RegExp(escapeRegExp(url))
+      'item.url.path': new RegExp(lodash.escapeRegExp(url))
     }, {
       'info.name': 1,
       'item.url.path': 1,
@@ -449,7 +449,7 @@ export class ProjectService {
     } = { enabled: true, $or: [] }
     const limit = 100;
     // if (projectName != null) {
-    //   query.projectName = new RegExp(escapeRegExp(projectName));
+    //   query.projectName = new RegExp(lodash.escapeRegExp(projectName));
     // }
     query.$or = [
       {
@@ -461,7 +461,7 @@ export class ProjectService {
 
     const docs = await this.docModel.find({
       projectId: { $in: projectIds },
-      'item.url.path': new RegExp(escapeRegExp(keyword))
+      'item.url.path': new RegExp(lodash.escapeRegExp(keyword))
     }, {
       projectId: 1,
     }).lean();

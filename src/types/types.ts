@@ -1,4 +1,4 @@
-import { User } from '../entity/security/user';
+import { User } from '../entity/security/user.js';
 
 /**
  * 全局配置
@@ -85,11 +85,18 @@ export type RequestMethod =
   | 'CONNECTION'
   | 'TRACE';
 
-export type ContentType =
-  | 'application/json'
-  | 'application/x-www-form-urlencoded'
-  | 'multipart/form-data'
-  | 'text/plain'
-  | 'application/xml'
-  | 'text/html'
-  | '';
+
+export enum StorageService {
+  LOCAL = 'local',
+  OSS = 'oss',
+}
+export type OssConfig = {
+  accessKeyId: string;
+  accessKeySecret: string;
+  endpoint: string;
+  bucket: string;
+  region: string;
+}
+export type UploadConfig = {
+  storageService: 'oss' | 'local'  
+}

@@ -29,11 +29,11 @@ import {
   StarProjectDto,
   SvgCaptchaDto,
   UnStarProjectDto,
-} from '../../types/dto/security/user.dto';
-import { UserService } from '../../service/security/user';
+} from '../../types/dto/security/user.dto.js';
+import { UserService } from '../../service/security/user.js';
 import * as svgCaptcha from 'svg-captcha';
 import { UploadFileInfo } from '@midwayjs/upload';
-import { throwError } from '../../utils/utils';
+import { throwError } from '../../utils/utils.js';
 
 @Controller('/api')
 export class UserController {

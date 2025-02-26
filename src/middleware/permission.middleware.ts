@@ -1,13 +1,13 @@
 import { Middleware, IMiddleware, Config, ALL } from '@midwayjs/core';
 import { NextFunction, Context } from '@midwayjs/koa';
-import { GlobalConfig, LoginTokenInfo } from '../types/types';
+import { GlobalConfig, LoginTokenInfo } from '../types/types.js';
 import * as jwt from 'jsonwebtoken';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { User } from '../entity/security/user';
-import { throwError } from '../utils/utils';
-import { ServerRoutes } from '../entity/security/server_routes';
-import { Role } from '../entity/security/role';
+import { User } from '../entity/security/user.js';
+import { throwError } from '../utils/utils.js';
+import { ServerRoutes } from '../entity/security/server_routes.js';
+import { Role } from '../entity/security/role.js';
 
 @Middleware()
 export class PermissionMiddleware implements IMiddleware<Context, NextFunction> {

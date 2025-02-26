@@ -1,6 +1,6 @@
 import { Inject, Controller, Body, Post, Del, Get, Put, Query } from '@midwayjs/core';
-import { AddProjectCodeDto, EditProjectCodeDto, DeleteProjectCodeDto, GetProjectCodeListDto, GetProjectCodeEnumDto } from '../../types/dto/project/project.code.dto';
-import { ProjectCodeService } from '../../service/project/project_code';
+import { AddProjectCodeDto, EditProjectCodeDto, DeleteProjectCodeDto, GetProjectCodeListDto, GetProjectCodeEnumDto } from '../../types/dto/project/project.code.dto.js';
+import { ProjectCodeService } from '../../service/project/project_code.js';
 
 @Controller('/api/apidoc')
 export class ProjectCodeController {

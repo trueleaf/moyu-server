@@ -1,4 +1,4 @@
-import { ResponseWrapper } from '../types/response/common/common';
+import { ResponseWrapper } from '../types/response/common/common.js';
 
 /**
  * 返回随机参数

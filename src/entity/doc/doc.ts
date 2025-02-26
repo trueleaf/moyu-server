@@ -1,6 +1,6 @@
 import { modelOptions, prop } from '@typegoose/typegoose';
-import { Timestamps } from '../common/common';
-import { RequestMethod } from '../../types/types';
+import { Timestamps } from '../common/common.js';
+import { RequestMethod } from '../../types/types.js';
 import { nanoid } from 'nanoid';
 
 class FileInfo {
@@ -264,6 +264,22 @@ class RawBody {
   @prop()
   public dataType: string;
 }
+class BinaryValue {
+  @prop()
+  public id: string;
+  @prop()
+  public path: string;
+  @prop()
+  public raw: string;
+}
+class BinaryBody {
+  @prop()
+  public mode: 'var' | 'file';
+  @prop()
+  public varValue: string;
+  @prop({_id: false})
+  public binaryValue: BinaryValue
+}
 class RequestBody {
   /**
    * 请求模式
@@ -291,10 +307,18 @@ class RequestBody {
   @prop({ default: { data: '', dataType: 'text/plain' }, _id: false })
   public raw: RawBody;
   /**
-   * file数据
+   * binary数据
    */
-  @prop({_id: false})
-  public file: FileInfo;
+  @prop({_id: false, default: {
+    mode: 'file',
+    varValue: '',
+    binaryValue: {
+      path: "",
+      id: "",
+      raw: ""
+    }
+  }})
+  public binary: BinaryBody;
 }
 class RequestInfo {
   /**
@@ -333,14 +357,7 @@ class RequestInfo {
    * contentType
    */
   @prop({ default: '' })
-  public contentType:
-    | 'application/json'
-    | 'application/x-www-form-urlencoded'
-    | 'multipart/form-data'
-    | 'text/plain'
-    | 'application/xml'
-    | 'text/html'
-    | '';
+  public contentType: string;
   /**
    * 返回参数
    */

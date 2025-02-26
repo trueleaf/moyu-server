@@ -1,9 +1,9 @@
 import { ReturnModelType } from '@typegoose/typegoose';
-import { User } from './security/user';
-import { ServerRoutes } from './security/server_routes';
-import { ClientRoutes } from './security/client_routes';
-import { Role } from './security/role';
-import { ClientMenu } from './security/client_menu';
+import { User } from './security/user.js';
+import { ServerRoutes } from './security/server_routes.js';
+import { ClientRoutes } from './security/client_routes.js';
+import { Role } from './security/role.js';
+import { ClientMenu } from './security/client_menu.js';
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +46,13 @@ const INITIAL_USER = [
 const INITIAL_SERVER_ROUTES = [
   //=========================================================================//
 
+  {
+    _id: '67bd4893d9884f97a42867ff',
+    groupName: 'api文档-附加相关',
+    method: 'post',
+    name: '上传附件',
+    path: '/api/attachment/upload',
+  },
   {
     _id: '64e1d43690009434b395eeef',
     groupName: 'api文档-项目相关',
@@ -1002,6 +1009,7 @@ const INITIAL_ROLE = [
     remark: '拥有完整文档操作权限(无法进入管理后台)',
     roleName: '普通用户',
     serverRoutes: [
+      '67bd4893d9884f97a42867ff',
       '5f1e44e93e2abf46ec9956e3',
       '64f499d55495280730b3df8f',
       '603c8d7c1a326e4d089f99b3',
@@ -1117,6 +1125,7 @@ const INITIAL_ROLE = [
     remark: '拥有完整权限',
     roleName: '管理员',
     serverRoutes: [
+      '67bd4893d9884f97a42867ff',
       '5f1e44e93e2abf46ec9956e3',
       '64f499d55495280730b3df8f',
       '603c8d7c1a326e4d089f99b3',

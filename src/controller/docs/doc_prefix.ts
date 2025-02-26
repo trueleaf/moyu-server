@@ -8,8 +8,8 @@ import {
   Put,
   Query,
 } from '@midwayjs/core';
-import { AddDocPrefixDto, DeleteDocPrefix, GetDocPrefixList, GetDocPrefixInfo, EditDocPrefix } from '../../types/dto/doc/doc.prefix.dto';
-import { DocPrefixServer } from '../../service/doc/doc_prefix';
+import { AddDocPrefixDto, DeleteDocPrefix, GetDocPrefixList, GetDocPrefixInfo, EditDocPrefix } from '../../types/dto/doc/doc.prefix.dto.js';
+import { DocPrefixServer } from '../../service/doc/doc_prefix.js';
 
 @Controller('/api')
 export class DocPrefixController {

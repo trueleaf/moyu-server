@@ -1,5 +1,5 @@
 import { Rule, RuleType } from '@midwayjs/validate';
-import { TableSearchParams } from '../common/common.dto';
+import { TableSearchParams } from '../common/common.dto.js';
 
 //生成在线链接
 export class GenerateSharedProjectLinkDto {
