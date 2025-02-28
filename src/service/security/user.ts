@@ -205,7 +205,7 @@ export class UserService {
       phone: userInfo.phone,
       token: '',
     };
-    const token = jwt.sign(loginInfo, this.jwtConfig.secretOrPrivateKey, {
+    const token = jwt.default.sign(loginInfo, this.jwtConfig.secretOrPrivateKey, {
       expiresIn: this.jwtConfig.expiresIn,
     });
     loginInfo.token = token;
@@ -240,7 +240,7 @@ export class UserService {
       phone: userInfo.phone,
       token: '',
     };
-    const token = jwt.sign(loginInfo, this.jwtConfig.secretOrPrivateKey, {
+    const token = jwt.default.sign(loginInfo, this.jwtConfig.secretOrPrivateKey, {
       expiresIn: this.jwtConfig.expiresIn,
     });
     loginInfo.token = token;

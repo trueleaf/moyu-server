@@ -24,7 +24,7 @@ export class PermissionMiddleware implements IMiddleware<Context, NextFunction> 
       if (!ctx.headers.authorization) {
         return throwError(5000, '缺少Authorization认证头');
       }
-      const tokenInfo = jwt.verify(
+      const tokenInfo = jwt.default.verify(
         ctx.headers.authorization,
         this.config.jwtConfig.secretOrPrivateKey
       ) as LoginTokenInfo;

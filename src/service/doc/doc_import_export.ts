@@ -7,21 +7,10 @@ import { Doc } from '../../entity/doc/doc.js';
 import { ExportAsApiflowDto, ExportAsHTMLDto, ExportAsWordDto, ImportApiflowDto } from '../../types/dto/doc/doc.import.export.js';
 import { ProjectService } from '../project/project.js';
 import { Context } from '@midwayjs/koa';
-import { readFile } from 'fs-extra'
+import fsExtra from 'fs-extra'
 import path from 'path'
-import { Document,
-  TextRun,
-  ShadingType,
-  TabStopType,
-  Packer,
-  Table,
-  Paragraph,
-  TableRow,
-  TableCell,
-  VerticalAlign,
-  WidthType,
-  HeadingLevel,
-  AlignmentType } from 'docx'
+import docx from 'docx'
+import type { Paragraph as ParagraphType, Table as TableType } from 'docx';
 import { convertPlainArrayDataToTreeData, dfsForest } from '../../utils/utils.js';
 import { Project } from '../../entity/project/project.js';
 import { DocPrefixServer } from './doc_prefix.js';
@@ -70,7 +59,7 @@ export class DocImportAndExportService {
       projectInfo,
       docs
     };
-    let file = await readFile(path.resolve(this.appDir, 'public/share-doc/index.html'), 'utf-8');
+    let file = await fsExtra.readFile(path.resolve(this.appDir, 'public/share-doc/index.html'), 'utf-8');
     file = file.replace(/window.SHARE_DATA = null/, `window.SHARE_DATA = ${JSON.stringify(result)}`);
     file = file.replace(/<title>[^<]*<\/title>/, `<title>${projectInfo.projectName}</title>`);
     this.ctx.set('content-type', 'application/force-download');
@@ -82,6 +71,19 @@ export class DocImportAndExportService {
    */
   async exportAsWord(params: ExportAsWordDto) {
     const { projectId, selectedNodes = [] } = params;
+    const { Document,
+      TextRun,
+      ShadingType,
+      TabStopType,
+      Packer,
+      Table,
+      Paragraph,
+      TableRow,
+      TableCell,
+      VerticalAlign,
+      WidthType,
+      HeadingLevel,
+      AlignmentType } = docx;
     await this.commonControl.checkDocOperationPermissions(projectId);
     const projectInfo = await this.projectService.getProjectFullInfoById({ _id: projectId })
     let docs: Partial<Doc>[] = [];
@@ -108,7 +110,7 @@ export class DocImportAndExportService {
     //=========================================================================//
     const document: {
       sections: {
-        children: (Paragraph | Table)[]
+        children: (ParagraphType | TableType)[]
       }[]
     } = {
       sections: [{
@@ -250,7 +252,7 @@ export class DocImportAndExportService {
           ]
         });
         //=====================================json类型bodyParams====================================//
-        const jsonParamsOfDoc: (Paragraph)[] = [];
+        const jsonParamsOfDoc: (ParagraphType)[] = [];
         jsonParamsOfDoc.push(new Paragraph({
           shading: {
             type: ShadingType.SOLID,
