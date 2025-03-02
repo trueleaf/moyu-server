@@ -98,5 +98,8 @@ export type OssConfig = {
   region: string;
 }
 export type UploadConfig = {
-  storageService: 'oss' | 'local'  
+  storageService: 'oss' | 'local',
+  dir: string;
+  shareRange: ('project' | 'group' | 'user')[],// 项目分享范围
+  fileSize: number,// 针对单个项目上传文件大小限制
 }
