@@ -75,8 +75,8 @@ export class Project extends Timestamps {
   @prop({type: () => [Member]})
   public members: Member[];
   /**
-   * 使能
+   * 是否启用
    */
   @prop({ default: true })
-  public enabled: boolean;
+  public isEnabled: boolean;
 }

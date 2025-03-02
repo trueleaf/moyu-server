@@ -46,13 +46,13 @@ export class DocImportAndExportService {
     if (selectedNodes.length > 0) { //选择导出
       docs = await this.docModel.find({
         projectId,
-        enabled: true,
+        isEnabled: true,
         _id: { $in: selectedNodes }
       }).lean();
     } else { //直接导出
       docs = await this.docModel.find({
         projectId,
-        enabled: true,
+        isEnabled: true,
       }).lean();
     }
     const result = {
@@ -90,21 +90,21 @@ export class DocImportAndExportService {
     if (selectedNodes.length > 0) { //选择导出
       docs = await this.docModel.find({
         projectId,
-        enabled: true,
+        isEnabled: true,
         _id: { $in: selectedNodes }
       }, {
         preRequest: 0,
         afterRequest: 0,
-        enabled: 0,
+        isEnabled: 0,
       }).lean();
     } else { //直接导出
       docs = await this.docModel.find({
         projectId,
-        enabled: true,
+        isEnabled: true,
       }, {
         preRequest: 0,
         afterRequest: 0,
-        enabled: 0,
+        isEnabled: 0,
       }).lean();
     }
     //=========================================================================//
@@ -569,13 +569,13 @@ export class DocImportAndExportService {
     if (selectedNodes.length > 0) { //选择导出
       docs = await this.docModel.find({
         projectId,
-        enabled: true,
+        isEnabled: true,
         _id: { $in: selectedNodes }
       }).lean();
     } else { //直接导出
       docs = await this.docModel.find({
         projectId,
-        enabled: true,
+        isEnabled: true,
       }).lean();
     }
     const result = {
@@ -616,12 +616,12 @@ export class DocImportAndExportService {
       return host;
     })
     if (cover) {
-      await this.docModel.updateMany({ projectId }, { $set: { enabled: false } })
-      await this.docPrefixModel.updateMany({ projectId }, { $set: { enabled: false } });
+      await this.docModel.updateMany({ projectId }, { $set: { isEnabled: false } })
+      await this.docPrefixModel.updateMany({ projectId }, { $set: { isEnabled: false } });
     }
     await this.docPrefixModel.create(convertHosts);
     await this.docModel.create(convertDocs)
-    const docLen = await this.docModel.find({ projectId, isFolder: false, enabled: true }).countDocuments();
+    const docLen = await this.docModel.find({ projectId, isFolder: false, isEnabled: true }).countDocuments();
     await this.projectModel.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }});
     return;
   }

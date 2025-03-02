@@ -464,8 +464,8 @@ export class Doc extends Timestamps {
   @prop({ type: () => MockInfo, _id: false })
   public mockInfo: MockInfo
   /**
-   * 使能
+   * 是否启用
    */
   @prop({ default: true })
-  public enabled: boolean;
+  public isEnabled: boolean;
 }

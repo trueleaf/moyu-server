@@ -85,8 +85,8 @@ export class User extends Timestamps {
   @prop({ type: () => [String], default: [] })
   public couldVisitProjects?: string[];
   /**
-   * 使能
+   * 是否启用
    */
   @prop({ default: true })
-  public enable?: boolean;
+  public isEnabled?: boolean;
 }

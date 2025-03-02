@@ -49,5 +49,5 @@ export class Attachment extends Timestamps {
   uploader: UserInfo; // 上传者（关联用户）
 
   @prop({ default: true })
-  enabled: boolean;
+  isEnabled: boolean;
 }

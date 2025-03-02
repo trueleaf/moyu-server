@@ -21,7 +21,7 @@ export class ClientRoutesService {
     doc.path = path;
     doc.groupName = groupName;
 
-    const hasPath = await this.clientRoutesModel.findOne({ path, enabled: true });
+    const hasPath = await this.clientRoutesModel.findOne({ path, isEnabled: true });
     if (hasPath) {
       return throwError(1003, '路由已存在')
     }
@@ -37,7 +37,7 @@ export class ClientRoutesService {
       const doc = {
         name: routes[i].name,
         path: routes[i].path,
-        enabled: true
+        isEnabled: true
       };
       await this.clientRoutesModel.updateOne({ path: routes[i].path }, doc, { upsert: true });
     }
@@ -58,7 +58,7 @@ export class ClientRoutesService {
     if (groupName) {
       updateDoc.groupName = groupName;
     }
-    const hasPath = await this.clientRoutesModel.findOne({ _id: { $ne: _id }, path, enabled: true });
+    const hasPath = await this.clientRoutesModel.findOne({ _id: { $ne: _id }, path, isEnabled: true });
     if (hasPath) {
       return throwError(1003, '路由已存在')
     }
@@ -78,7 +78,7 @@ export class ClientRoutesService {
    */
   async deleteClientRoutes(params: DeleteClientRoutesDto) {
     const { ids } = params;
-    const result = await this.clientRoutesModel.updateMany({ _id: { $in: ids }}, { $set: { enabled: false }});
+    const result = await this.clientRoutesModel.updateMany({ _id: { $in: ids }}, { $set: { isEnabled: false }});
     return result;
   }
   /**
@@ -87,7 +87,7 @@ export class ClientRoutesService {
   async getClientRoutesList(params: GetClientRoutesListDto) {
     const { pageNum, pageSize, startTime, endTime } = params;
     const query = {} as {
-      enabled: boolean;
+      isEnabled: boolean;
       createdAt?: {
         $gt?: number,
         $lt?: number,
@@ -95,7 +95,7 @@ export class ClientRoutesService {
     };
     let skipNum = 0;
     let limit = 100;
-    query.enabled = true;
+    query.isEnabled = true;
     if (pageSize != null && pageNum != null) {
       skipNum = (pageNum - 1) * pageSize;
       limit = pageSize;
@@ -105,7 +105,7 @@ export class ClientRoutesService {
     } else if (startTime != null && endTime != null) {
       query.createdAt = { $gt: startTime, $lt: endTime };
     }
-    const rows = await this.clientRoutesModel.find(query, { enabled: 0 }).skip(skipNum).limit(limit);
+    const rows = await this.clientRoutesModel.find(query, { isEnabled: 0 }).skip(skipNum).limit(limit);
     const total = await this.clientRoutesModel.find(query).countDocuments();
     const result: TableResponseWrapper = {
       rows: [],
@@ -120,10 +120,10 @@ export class ClientRoutesService {
    */
   async getAllClientRoutesList() {
     const query: {
-      enabled?: boolean;
+      isEnabled?: boolean;
     } = {};
     const limit = 1000;
-    query.enabled = true;
+    query.isEnabled = true;
     const result = await this.clientRoutesModel.find(query, { _id: 1, path: 1, name: 1, groupName: 1, method: 1 }).limit(limit);
     return result;
   }

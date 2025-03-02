@@ -51,7 +51,7 @@ export class DocMindParamsServer {
       projectId,
       'mindParams._id': { $in: ids }
     }, {
-      $set: { 'mindParams.$[elem].enabled': false }
+      $set: { 'mindParams.$[elem].isEnabled': false }
     }, {
       arrayFilters: [{ 'elem._id': { $in: ids } }]
     });
@@ -66,7 +66,7 @@ export class DocMindParamsServer {
     if (!result) {
       return [];
     }
-    return result.mindParams.filter(v => v.enabled);
+    return result.mindParams.filter(v => v.isEnabled);
   }
   /**
    * 列表形式获取前缀
@@ -74,9 +74,9 @@ export class DocMindParamsServer {
   async getDocMindParamsList(params: GetDocMindParamsList) {
     const { pageNum, pageSize, startTime, endTime, projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId)
-    const query = { enabled: true, projectId } as {
+    const query = { isEnabled: true, projectId } as {
       projectId: string;
-      enabled: boolean;
+      isEnabled: boolean;
       createdAt?: {
         $gt?: number,
         $lt?: number,

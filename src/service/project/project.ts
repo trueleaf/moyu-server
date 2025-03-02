@@ -234,7 +234,7 @@ export class ProjectService {
     }
     const result = await this.projectModel.updateMany(
       { _id: { $in: ids }},
-      { $set: { enabled: false }}
+      { $set: { isEnabled: false }}
     );
     //同时删除每个用户可访问项目
     const members: string[] = []
@@ -294,9 +294,9 @@ export class ProjectService {
    */
   async getProjectList(params: GetProjectListDto) {
     const { pageNum, pageSize, startTime, endTime, projectName } = params;
-    const query = { enabled: true } as {
+    const query = { isEnabled: true } as {
       projectName?: RegExp;
-      enabled: boolean;
+      isEnabled: boolean;
       createdAt?: {
         $gt?: number,
         $lt?: number,
@@ -326,7 +326,7 @@ export class ProjectService {
     const tokenInfo = this.ctx.tokenInfo;
     const visitAndStar = await this.userModel.findOne({ _id: tokenInfo.id }, { recentVisitProjects: 1, starProjects: 1 }).lean();
     const result: {
-      list: Omit<Project, 'enabled' | 'createdAt'>[];
+      list: Omit<Project, 'isEnabled' | 'createdAt'>[];
       recentVisitProjects: string[];
       starProjects: string[];
     } = {
@@ -334,7 +334,7 @@ export class ProjectService {
       recentVisitProjects: [],
       starProjects: [],
     };
-    result.list = await this.projectModel.find(query, { enabled: 0, createdAt: 0 }).skip(skipNum).limit(limit).sort({ updatedAt: -1 });
+    result.list = await this.projectModel.find(query, { isEnabled: 0, createdAt: 0 }).skip(skipNum).limit(limit).sort({ updatedAt: -1 });
     result.recentVisitProjects = visitAndStar.recentVisitProjects || [];
     result.starProjects = visitAndStar.starProjects || [];
     return result;
@@ -346,8 +346,8 @@ export class ProjectService {
     const { _id } = params;
     await this.commonControl.checkDocOperationPermissions(_id);
     const result = await this.projectModel.findById(
-      { _id, enabled: true },
-      { createdAt: 0, updatedAt: 0, apidocs: 0, enabled: 0 }
+      { _id, isEnabled: true },
+      { createdAt: 0, updatedAt: 0, apidocs: 0, isEnabled: 0 }
     );
     return result;
   }
@@ -364,7 +364,7 @@ export class ProjectService {
     const projectInfo = await this.projectModel.findById(
       {
         _id,
-        enabled: true
+        isEnabled: true
       },
       {
         projectName: 1,
@@ -387,7 +387,7 @@ export class ProjectService {
     const { _id } = params;
     await this.commonControl.checkDocOperationPermissions(_id);
     const result = await this.projectModel.findById(
-      { _id, enabled: true },
+      { _id, isEnabled: true },
       { members: 1 }
     );
     return result.members;
@@ -397,9 +397,9 @@ export class ProjectService {
    */
   async getProjectEnum() {
     const query = {
-      enabled: true
+      isEnabled: true
     } as {
-      enabled: boolean;
+      isEnabled: boolean;
       $or: Record<string, string>[]
     };
     //是否为创建者或者为成员
@@ -444,9 +444,9 @@ export class ProjectService {
   async getProjectListByKeyword(params: GetProjectByKeywordDto) {
     const { keyword } = params;
     const query: {
-      enabled: boolean;
+      isEnabled: boolean;
       $or: Record<string, string>[]
-    } = { enabled: true, $or: [] }
+    } = { isEnabled: true, $or: [] }
     const limit = 100;
     // if (projectName != null) {
     //   query.projectName = new RegExp(lodash.escapeRegExp(projectName));
@@ -456,7 +456,7 @@ export class ProjectService {
         'members.userId': this.ctx.tokenInfo.id
       }
     ];
-    const allProjects = await this.projectModel.find(query, { enabled: 0, createdAt: 0 }).limit(limit).sort({ updatedAt: -1 }).lean();
+    const allProjects = await this.projectModel.find(query, { isEnabled: 0, createdAt: 0 }).limit(limit).sort({ updatedAt: -1 }).lean();
     const projectIds = allProjects.map(v => v._id);
 
     const docs = await this.docModel.find({
@@ -472,7 +472,7 @@ export class ProjectService {
     const tokenInfo = this.ctx.tokenInfo;
     const visitAndStar = await this.userModel.findOne({ _id: tokenInfo.id }, { recentVisitProjects: 1, starProjects: 1 }).lean();
     const result: {
-      list: Omit<Project, 'enabled' | 'createdAt'>[];
+      list: Omit<Project, 'isEnabled' | 'createdAt'>[];
       recentVisitProjects: string[];
       starProjects: string[];
     } = {

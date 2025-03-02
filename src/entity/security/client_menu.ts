@@ -30,8 +30,8 @@ export class ClientMenu extends Timestamps {
   @prop({ default: Date.now() })
   public sort: number;
   /**
-   * 使能
+   * 是否启用
    */
   @prop({ default: true })
-  public enabled: boolean;
+  public isEnabled: boolean;
 }

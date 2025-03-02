@@ -196,7 +196,7 @@ export class ChangeUserStateDto {
    * 是否启用
    */
   @Rule(RuleType.boolean().required())
-    enable: boolean;
+    isEnabled: boolean;
 }
 /**
  * 根据id获取用户信息

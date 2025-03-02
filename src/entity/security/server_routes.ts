@@ -25,8 +25,8 @@ export class ServerRoutes extends Timestamps {
   @prop()
   public groupName: string;
   /**
-   * 使能
+   * 是否启用
    */
   @prop({ default: true })
-  public enabled: boolean;
+  public isEnabled: boolean;
 }

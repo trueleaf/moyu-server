@@ -48,10 +48,10 @@ class BaseProperty {
   @Rule(RuleType.string().valid('paths', 'queryParams', 'requestBody', 'responseParams').required())
     paramsPosition: 'paths' | 'queryParams' | 'requestBody' | 'responseParams';
   /**
-   * 使能
+   * 是否启用
    */
   @Rule(RuleType.boolean())
-    enabled: boolean;
+    isEnabled: boolean;
 }
 /**
  * 新增文档联想参数

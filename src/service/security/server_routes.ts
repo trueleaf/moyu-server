@@ -23,7 +23,7 @@ export class ServerRoutesService {
     doc.method = method;
     doc.groupName = groupName;
 
-    const hasPath = await this.serverRoutesModel.findOne({ path, method, enabled: true });
+    const hasPath = await this.serverRoutesModel.findOne({ path, method, isEnabled: true });
     if (hasPath) {
       return throwError(1003, '路由已存在')
     }
@@ -48,7 +48,7 @@ export class ServerRoutesService {
     if (groupName) {
       updateDoc.groupName = groupName;
     }
-    const hasPath = await this.serverRoutesModel.findOne({ _id: { $ne: _id }, path, method, enabled: true });
+    const hasPath = await this.serverRoutesModel.findOne({ _id: { $ne: _id }, path, method, isEnabled: true });
     if (hasPath) {
       return throwError(1003, '路由已存在')
     }
@@ -68,7 +68,7 @@ export class ServerRoutesService {
    */
   async deleteServerRoute(params: DeleteServerRouteDto) {
     const { ids } = params;
-    const result = await this.serverRoutesModel.updateMany({ _id: { $in: ids }}, { $set: { enabled: false }});
+    const result = await this.serverRoutesModel.updateMany({ _id: { $in: ids }}, { $set: { isEnabled: false }});
     return result;
   }
   /**
@@ -77,7 +77,7 @@ export class ServerRoutesService {
   async getServerRoutesList(params: GetServerRoutesListDto) {
     const { pageNum, pageSize, startTime, endTime, path } = params;
     const query = {} as {
-      enabled: boolean;
+      isEnabled: boolean;
       path?: RegExp;
       createdAt?: {
         $gt?: number,
@@ -86,7 +86,7 @@ export class ServerRoutesService {
     };
     let skipNum = 0;
     let limit = 100;
-    query.enabled = true;
+    query.isEnabled = true;
     if (path) {
       query.path = new RegExp(lodash.escapeRegExp(path));
     }
@@ -99,7 +99,7 @@ export class ServerRoutesService {
     } else if (startTime != null && endTime != null) {
       query.createdAt = { $gt: startTime, $lt: endTime };
     }
-    const rows = await this.serverRoutesModel.find(query, { enabled: 0 }).skip(skipNum).limit(limit);
+    const rows = await this.serverRoutesModel.find(query, { isEnabled: 0 }).skip(skipNum).limit(limit);
     const total = await this.serverRoutesModel.find(query).countDocuments();
     const result: TableResponseWrapper = {
       rows: [],
@@ -114,10 +114,10 @@ export class ServerRoutesService {
    */
   async getAllServerRoutesList() {
     const query: {
-      enabled?: boolean;
+      isEnabled?: boolean;
     } = {};
     const limit = 1000;
-    query.enabled = true;
+    query.isEnabled = true;
     const result = await this.serverRoutesModel.find(query, { _id: 1, path: 1, name: 1, groupName: 1, method: 1 }).limit(limit);
     return result;
   }

@@ -62,7 +62,7 @@ export class ProjectCodeService {
     await this.commonControl.checkDocOperationPermissions(projectId);
     const result = await this.projectCodeModel.updateMany(
       { _id: { $in: ids }},
-      { $set: { enabled: false }}
+      { $set: { isEnabled: false }}
     );
     return result;
   }
@@ -73,11 +73,11 @@ export class ProjectCodeService {
     const { pageNum, pageSize, startTime, endTime, projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
     const query = {
-      enabled: true,
+      isEnabled: true,
       projectId,
     } as {
       projectId: string;
-      enabled: boolean;
+      isEnabled: boolean;
       createdAt?: {
         $gt?: number,
         $lt?: number,
@@ -94,7 +94,7 @@ export class ProjectCodeService {
     } else if (startTime != null && endTime != null) {
       query.createdAt = { $gt: startTime, $lt: endTime };
     }
-    const rows = await this.projectCodeModel.find(query, { projectId: 0, createdAt: 0, updatedAt: 0, __v: 0, enabled: 0 }).skip(skipNum).limit(limit);
+    const rows = await this.projectCodeModel.find(query, { projectId: 0, createdAt: 0, updatedAt: 0, __v: 0, isEnabled: 0 }).skip(skipNum).limit(limit);
     const total = await this.projectCodeModel.find(query).countDocuments();
     const result = {
       rows,
@@ -108,7 +108,7 @@ export class ProjectCodeService {
   async getProjectCodeEnum(params: GetProjectCodeEnumDto) {
     const { projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
-    const result = await this.projectCodeModel.find({ projectId, enabled: true }, {
+    const result = await this.projectCodeModel.find({ projectId, isEnabled: true }, {
       codeName: 1,
       remark: 1,
       code: 1,

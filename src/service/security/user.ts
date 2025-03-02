@@ -171,7 +171,7 @@ export class UserService {
     if (!userInfo) {
       return throwError(2004, '用户不存在')
     }
-    if (!userInfo.enable) {
+    if (!userInfo.isEnabled) {
       return throwError(2008, '用户被禁止登录，管理员可以启用当前用户');
     }
     //判断密码
@@ -273,7 +273,7 @@ export class UserService {
    */
   async disableUser(params: DisableUserDto) {
     const { ids } = params;
-    await this.userModel.updateMany({ _id: { $in: ids }}, { $set: { enable: false }});
+    await this.userModel.updateMany({ _id: { $in: ids }}, { $set: { isEnabled: false }});
   }
 
   /**
@@ -384,9 +384,9 @@ export class UserService {
    * 禁用启用用户
    */
   async changeUserState(params: ChangeUserStateDto) {
-    const { _id, enable } = params;
+    const { _id, isEnabled } = params;
     //admin用户无法被禁用
-    await this.userModel.findOneAndUpdate({ _id, loginName: { $ne: 'admin' } }, { $set: { enable }});
+    await this.userModel.findOneAndUpdate({ _id, loginName: { $ne: 'admin' } }, { $set: { isEnabled }});
     return;
   }
   /**
@@ -396,7 +396,7 @@ export class UserService {
     const { _id } = params;
     const result = await this.userModel.findById({ _id }, {
       accessProjects: 0,
-      enable: 0,
+      isEnabled: 0,
       password: 0,
       salt: 0,
       clientRoutes: 0,
@@ -414,7 +414,7 @@ export class UserService {
     const result = await this.userModel.findById(
       { _id: id },
       {
-        enable: 0,
+        isEnabled: 0,
         roleIds: 0,
         roleNames: 0,
         loginTimes: 0,
@@ -613,8 +613,8 @@ export class UserService {
   async getUserBaseInfo() {
     const { tokenInfo } = this.ctx;
     const roleIds = tokenInfo.roleIds;
-    const allClientRoutes = await this.clientRoutesModel.find({enabled: true}, { name: 1, path: 1 }); //系统所有前端路由
-    const allClientMenu = await this.clientMenuModel.find({enabled: true}, { name: 1, path: 1, sort: 1 }); //系统所有前端菜单
+    const allClientRoutes = await this.clientRoutesModel.find({isEnabled: true}, { name: 1, path: 1 }); //系统所有前端路由
+    const allClientMenu = await this.clientMenuModel.find({isEnabled: true}, { name: 1, path: 1, sort: 1 }); //系统所有前端菜单
     // const globalConfig = await this.ctx.model.Global.Config.findOne({});
     let clientRoutesResult: Partial<ClientRoutes & { id: string }>[] = [];
     let clientMenuResult: Partial<ClientMenu & { id: string }>[] = [];

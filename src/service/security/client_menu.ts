@@ -68,7 +68,7 @@ export class ClientMenuService {
    */
   async getClientMenuAsTreeData() {
     const allMenus = await this.clientMenuModel
-      .find({ enabled: true }, { type: 1, name: 1, path: 1, pid: 1, sort: 1 })
+      .find({ isEnabled: true }, { type: 1, name: 1, path: 1, pid: 1, sort: 1 })
       .sort({ sort: -1 })
       .lean() as (ClientMenu & { children: ClientMenu[], _id: Types.ObjectId })[];
     const result: ClientMenu[] = [];

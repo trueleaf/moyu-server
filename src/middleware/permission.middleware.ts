@@ -41,7 +41,7 @@ export class PermissionMiddleware implements IMiddleware<Context, NextFunction> 
       for (let i = 0; i < roleIds.length; i++) {
         const roleInfo = await this.roleModel.findOne({
           _id: roleIds[i],
-          enabled: true
+          isEnabled: true
         });
         if (roleInfo) {
           roleInfo.serverRoutes.forEach(routeId => {

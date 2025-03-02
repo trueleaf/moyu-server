@@ -40,8 +40,8 @@ export class ProjectShare {
   @prop({ type: () => [String] })
   public selectedDocs: string[];
   /**
-   * 使能
+   * 是否启用
    */
   @prop({ default: true })
-  public enabled: boolean;
+  public isEnabled: boolean;
 }

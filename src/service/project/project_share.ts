@@ -87,8 +87,8 @@ export class ProjectShareService {
   async getSharedProjectLinkList(params: GetSharedProjectLinkListDto) {
     const { projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
-    const rows = await this.projectShareModel.find({ projectId, enabled: true }, { enabled: 0, createdAt: 0, updatedAt: 0 });
-    const total = await this.projectShareModel.find({ projectId, enabled: true }).countDocuments();
+    const rows = await this.projectShareModel.find({ projectId, isEnabled: true }, { isEnabled: 0, createdAt: 0, updatedAt: 0 });
+    const total = await this.projectShareModel.find({ projectId, isEnabled: true }).countDocuments();
     return {
       rows,
       total
@@ -100,7 +100,7 @@ export class ProjectShareService {
   async deleteSharedProjectLink(params: DeleteSharedProjectLinkDto) {
     const { projectId, _id } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
-    await this.projectShareModel.updateOne({ projectId, _id }, { $set: { enabled: false } });
+    await this.projectShareModel.updateOne({ projectId, _id }, { $set: { isEnabled: false } });
     return;
   }
   /**
@@ -108,7 +108,7 @@ export class ProjectShareService {
    */
   async getSharedLinkInfo(params: GetSharedLinkInfoDto) {
     const { shareId } = params;
-    const result = await this.projectShareModel.findOne({ shareId, enabled: true }, { projectName: 1, shareName: 1, expire: 1, password: 1 }).lean();
+    const result = await this.projectShareModel.findOne({ shareId, isEnabled: true }, { projectName: 1, shareName: 1, expire: 1, password: 1 }).lean();
     if (!result) {
       throwError(101003, '文档不存在')
     }
@@ -192,12 +192,12 @@ export class ProjectShareService {
     if (!valid) {
       throwError(101005, '无效的的id和密码')
     }
-    const hosts = await this.docPrefixModel.find({ projectId: sharedProjectInfo.projectId, enabled: true }, { name: 1, url: 1 });
-    const variables = await this.projectVariableModel.find({ projectId: sharedProjectInfo.projectId, enabled: true }, { name: 1, type: 1, value: 1 });
+    const hosts = await this.docPrefixModel.find({ projectId: sharedProjectInfo.projectId, isEnabled: true }, { name: 1, url: 1 });
+    const variables = await this.projectVariableModel.find({ projectId: sharedProjectInfo.projectId, isEnabled: true }, { name: 1, type: 1, value: 1 });
     const projectInfo = await this.projectModel.findById(
       {
         _id: sharedProjectInfo.projectId,
-        enabled: true
+        isEnabled: true
       },
       {
         projectName: 1,
@@ -228,7 +228,7 @@ export class ProjectShareService {
     if (!valid) {
       throwError(101005, '无效的的id和密码')
     }
-    const result = await this.docModel.findOne({ _id: params._id }, { pid: 0, isFolder: 0, sort: 0, enabled: 0 });
+    const result = await this.docModel.findOne({ _id: params._id }, { pid: 0, isFolder: 0, sort: 0, isEnabled: 0 });
     if (!result) {
       throwError(4001, '暂无文档信息')
     }

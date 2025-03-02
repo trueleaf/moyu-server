@@ -49,7 +49,7 @@ export class ProjectCommonHeaderService {
     const result = [];
     const docsInfo = await this.docModel.find({
       projectId,
-      enabled: true,
+      isEnabled: true,
     }, {
       pid: 1,
       info: 1,

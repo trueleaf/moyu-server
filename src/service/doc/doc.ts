@@ -48,7 +48,7 @@ export class DocService {
       }
     }
     const result = await this.docModel.create(doc);
-    const docLen = await this.docModel.find({ projectId, isFolder: false, enabled: true }).countDocuments();
+    const docLen = await this.docModel.find({ projectId, isFolder: false, isEnabled: true }).countDocuments();
     //=====================================添加历史记录====================================//
     if (type !== 'folder') {
       await this.projectModel.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }});
@@ -215,7 +215,7 @@ export class DocService {
   async getDocDetail(params: GetDocDetailDto) {
     const { _id, projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);
-    const result = await this.docModel.findOne({ _id }, { pid: 0, sort: 0, enabled: 0 }).lean();
+    const result = await this.docModel.findOne({ _id }, { pid: 0, sort: 0, isEnabled: 0 }).lean();
     if (!result) {
       throwError(4001, '暂无文档信息')
     }
@@ -238,11 +238,11 @@ export class DocService {
       _id: { $in: ids }
     }, {
       $set: {
-        enabled: false,
+        isEnabled: false,
         'info.deletePerson': tokenInfo.realName || tokenInfo.loginName
       }
     }); //文档祖先包含删除元素，那么该文档也需要被删除
-    const docLen = await this.docModel.find({ projectId, isFolder: false, enabled: true }).countDocuments();
+    const docLen = await this.docModel.find({ projectId, isFolder: false, isEnabled: true }).countDocuments();
     await this.projectModel.findByIdAndUpdate({ _id: projectId }, { $set: { docNum: docLen }});
     return result;
   }
@@ -251,7 +251,7 @@ export class DocService {
    */
   async getMockData(params: GetMockDataDto) {
     // const { _id } = params;
-    // const doc = await this.docModel.findOne({ _id, enabled: true }).lean();
+    // const doc = await this.docModel.findOne({ _id, isEnabled: true }).lean();
     // const result = this.convertPlainParamsToTreeData(doc.item.responseParams);
     return params;
   }
@@ -266,7 +266,7 @@ export class DocService {
     const result: Partial<Doc>[] = [];
     const docsInfo = await this.docModel.find({
       projectId: projectId,
-      enabled: true
+      isEnabled: true
     }, {
       pid: 1,
       info: 1,
@@ -338,7 +338,7 @@ export class DocService {
     const docsInfo = await this.docModel.find({
       projectId: projectId,
       isFolder: true,
-      enabled: true,
+      isEnabled: true,
     }).sort({
       isFolder: -1,
       sort: 1

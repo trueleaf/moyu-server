@@ -43,8 +43,8 @@ export class ProjectRules {
   @prop({ type: () => [ApidocRequestMethodRule] })
   public requestMethods: ApidocRequestMethodRule[];
   /**
-   * 使能
+   * 是否启用
    */
   @prop({ default: true })
-  public enabled: boolean;
+  public isEnabled: boolean;
 }

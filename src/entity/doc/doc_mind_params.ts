@@ -32,10 +32,10 @@ class BaseProperty {
   @prop()
   public paramsPosition: 'paths' | 'queryParams' | 'requestBody' | 'responseParams';
   /**
-   * 使能
+   * 是否启用
    */
   @prop({ default: true })
-  public enabled: boolean;
+  public isEnabled: boolean;
 }
 @modelOptions({
   schemaOptions: { timestamps: true, collection: 'docs_params_mind' },
@@ -52,8 +52,8 @@ export class DocMindParams {
   @prop({ type: () => [BaseProperty], _id: false })
   public mindParams: BaseProperty[];
   /**
-   * 使能
+   * 是否启用
    */
   @prop({ default: true })
-  public enabled: boolean;
+  public isEnabled: boolean;
 }

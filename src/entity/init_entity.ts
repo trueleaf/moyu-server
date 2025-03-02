@@ -15,7 +15,7 @@ const INITIAL_USER = [
   {
     clientRoutes: [] as User['clientRoutes'],
     clinetMenus: [] as User['clinetMenus'],
-    enable: true,
+    isEnabled: true,
     loginName: 'admin',
     password: '98b2f89fe0f8ac91bbdab35f9a170b82',
     realName: '管理员',
@@ -32,7 +32,7 @@ const INITIAL_USER = [
   {
     clientRoutes: [],
     clinetMenus: [],
-    enable: true,
+    isEnabled: true,
     loginName: 'apiflow',
     lastLogin: new Date(),
     password: '84d748e1ac5c09a425d463d18ac08b86',

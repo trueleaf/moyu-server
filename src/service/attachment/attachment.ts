@@ -47,7 +47,7 @@ export class AttachmentService {
         storageService: 'local',
         projectId: params.projectId,
         uploader: params.uploader,
-        enabled: true
+        isEnabled: true
       });
     }
     // const { file, fileName, projectId, uploader } = params;

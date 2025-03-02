@@ -22,7 +22,7 @@ export class RoleService {
     doc.clientBanner = clientBanner;
     doc.serverRoutes = serverRoutes;
     doc.remark = remark;
-    const hasRole = await this.roleModel.findOne({ roleName, enabled: true});
+    const hasRole = await this.roleModel.findOne({ roleName, isEnabled: true});
     if (hasRole) {
       throwError(1003, '角色名称已经存在')
     }
@@ -48,7 +48,7 @@ export class RoleService {
    */
   async deleteRole(params: DeleteRoleDto) {
     const { ids } = params;
-    const result = await this.roleModel.updateMany({ _id: { $in: ids }}, { $set: { enabled: false }});
+    const result = await this.roleModel.updateMany({ _id: { $in: ids }}, { $set: { isEnabled: false }});
     return result;
   }
   /**
@@ -56,8 +56,8 @@ export class RoleService {
    */
   async getRoleList(params: GetRoleListDto) {
     const { pageNum, pageSize, startTime, endTime } = params;
-    const query = { enabled: true } as {
-      enabled: boolean;
+    const query = { isEnabled: true } as {
+      isEnabled: boolean;
       createdAt?: {
         $gt?: number,
         $lt?: number,
@@ -89,7 +89,7 @@ export class RoleService {
    */
   async getRoleEnum() {
     const limit = 100;
-    const result = await this.roleModel.find({ enabled: true }, { roleName: 1 }).limit(limit);
+    const result = await this.roleModel.find({ isEnabled: true }, { roleName: 1 }).limit(limit);
     return result;
   }
   /**
@@ -99,9 +99,9 @@ export class RoleService {
     const { _id } = params;
     const query = {
       _id,
-      enabled: true
+      isEnabled: true
     };
-    const result = await this.roleModel.findOne(query, { createdAt: 0, updatedAt: 0, enabled: 0 });
+    const result = await this.roleModel.findOne(query, { createdAt: 0, updatedAt: 0, isEnabled: 0 });
     return result;
   }
 }

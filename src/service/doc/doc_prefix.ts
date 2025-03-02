@@ -26,7 +26,7 @@ export class DocPrefixServer {
     updateDOc.name = name;
     updateDOc.url = url;
     updateDOc.projectId = projectId;
-    const hasService = await this.docPrefixModel.findOne({ projectId, url, enabled: true });
+    const hasService = await this.docPrefixModel.findOne({ projectId, url, isEnabled: true });
     if (hasService) {
       throwError(1003, '当前接口前缀url已存在')
     }
@@ -41,7 +41,7 @@ export class DocPrefixServer {
     await this.commonControl.checkDocOperationPermissions(projectId)
     const result = await this.docPrefixModel.updateMany(
       { _id: { $in: ids }},
-      { $set: { enabled: false }}
+      { $set: { isEnabled: false }}
     );
     return result;
   }
@@ -51,9 +51,9 @@ export class DocPrefixServer {
   async getDocPrefixList(params: GetDocPrefixList) {
     const { pageNum, pageSize, startTime, endTime, projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId)
-    const query = { enabled: true, projectId } as {
+    const query = { isEnabled: true, projectId } as {
       projectId: string;
-      enabled: boolean;
+      isEnabled: boolean;
       createdAt?: {
         $gt?: number,
         $lt?: number,
@@ -87,7 +87,7 @@ export class DocPrefixServer {
     const { projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId)
     const limit = 100;
-    const result = await this.docPrefixModel.find({ projectId, enabled: true }, { name: 1, url: 1 }).limit(limit);
+    const result = await this.docPrefixModel.find({ projectId, isEnabled: true }, { name: 1, url: 1 }).limit(limit);
     return result;
   }
   /**
@@ -96,7 +96,7 @@ export class DocPrefixServer {
   async getDocPrefixInfo(params: GetDocPrefixInfo) {
     const { id, projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId)
-    const result = await this.docPrefixModel.findOne({ id, projectId, enabled: true });
+    const result = await this.docPrefixModel.findOne({ id, projectId, isEnabled: true });
     return result;
   }
   /**
