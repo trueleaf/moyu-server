@@ -85,6 +85,11 @@ export class User extends Timestamps {
   @prop({ type: () => [String], default: [] })
   public couldVisitProjects?: string[];
   /**
+   * 是否允许被邀请到项目或组
+   */
+  @prop({ default: false })
+  public isAllowInvite: boolean;
+  /**
    * 是否启用
    */
   @prop({ default: true })

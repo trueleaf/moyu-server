@@ -46,9 +46,59 @@ const INITIAL_USER = [
 ];
 const INITIAL_SERVER_ROUTES = [
   //=========================================================================//
-
+  //组相关
+  {
+    _id: '67bd4893d9884f97a42861ff',
+    groupName: 'api文档-团队(组)相关',
+    method: 'post',
+    name: '创建组',
+    path: '/api/group/create',
+  },
+  {
+    _id: '67bd4893d9884f97a42862ff',
+    groupName: 'api文档-团队(组)相关',
+    method: 'put',
+    name: '更新组',
+    path: '/api/group/update',
+  },
+  {
+    _id: '67bd4893d9884f97a42863ff',
+    groupName: 'api文档-团队(组)相关',
+    method: 'get',
+    name: '获取组详情',
+    path: '/api/group/detail',
+  },
+  {
+    _id: '67bd4893d9884f97a42864ff',
+    groupName: 'api文档-团队(组)相关',
+    method: 'get',
+    name: '列表形式返回组信息',
+    path: '/api/group/list',
+  },
+  {
+    _id: '67bd4893d9884f97a42865ff',
+    groupName: 'api文档-团队(组)相关',
+    method: 'post',
+    name: '添加组成员',
+    path: '/api/group/member/add',
+  },
+  {
+    _id: '67bd4893d9884f97a42866ff',
+    groupName: 'api文档-团队(组)相关',
+    method: 'delete',
+    name: '删除组成员',
+    path: '/api/group/member/remove',
+  },
   {
     _id: '67bd4893d9884f97a42867ff',
+    groupName: 'api文档-团队(组)相关',
+    method: 'put',
+    name: '更新组成员权限',
+    path: '/api/group/member/permission',
+  },
+  //附件
+  {
+    _id: '67bd4893d9884f97a4286ff',
     groupName: 'api文档-附加相关',
     method: 'post',
     name: '上传附件',
@@ -1010,6 +1060,13 @@ const INITIAL_ROLE = [
     remark: '拥有完整文档操作权限(无法进入管理后台)',
     roleName: '普通用户',
     serverRoutes: [
+      '67bd4893d9884f97a42861ff',
+      '67bd4893d9884f97a42862ff',
+      '67bd4893d9884f97a42863ff',
+      '67bd4893d9884f97a42864ff',
+      '67bd4893d9884f97a42865ff',
+      '67bd4893d9884f97a42866ff',
+      '67bd4893d9884f97a42867ff',
       '67bd4893d9884f97a42867ff',
       '5f1e44e93e2abf46ec9956e3',
       '64f499d55495280730b3df8f',
@@ -1126,6 +1183,13 @@ const INITIAL_ROLE = [
     remark: '拥有完整权限',
     roleName: '管理员',
     serverRoutes: [
+      '67bd4893d9884f97a42861ff',
+      '67bd4893d9884f97a42862ff',
+      '67bd4893d9884f97a42863ff',
+      '67bd4893d9884f97a42864ff',
+      '67bd4893d9884f97a42865ff',
+      '67bd4893d9884f97a42866ff',
+      '67bd4893d9884f97a42867ff',
       '67bd4893d9884f97a42867ff',
       '5f1e44e93e2abf46ec9956e3',
       '64f499d55495280730b3df8f',

@@ -230,7 +230,7 @@ export class UserService {
     }
     const userInfo = await this.userModel.findOne({ phone });
     if (!userInfo) {
-      return throwError(2004, '当前用户不存在');
+      return throwError(2004, '用户不存在');
     }
     const loginInfo: LoginTokenInfo = {
       id: userInfo.id,
