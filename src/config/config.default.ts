@@ -15,6 +15,8 @@ import { DocMindParams } from '../entity/doc/doc_mind_params.js';
 import { ProjectShare } from '../entity/project/project_share.js';
 import { ProjectRules } from '../entity/project/project_rules.js';
 import * as koa from '@midwayjs/koa';
+import { Attachment } from '../entity/attachment/attachment.js';
+import { Group } from '../entity/security/group.js';
 
 export default {
   keys: 'apiflow',
@@ -59,6 +61,8 @@ export default {
           DocPrefix,
           DocMindParams,
           ProjectRules,
+          Attachment,
+          Group,
         ],
       },
     },
@@ -85,7 +89,10 @@ export default {
     }
   },
   uploadConfig: {
-    storageService: 'local'
+    storageService: 'local',
+    dir: '/data/apiflow_upload',// 实际存储目录
+    fileSize: 1024 * 1024 * 5,
+    shareRange: ['project'], //用户自行部署时候，项目内上传附件，只要用户拥有项目访问权限，均可共享
   },
   apiflow: {
     defaultRegisterPassword: '111111',
@@ -127,7 +134,8 @@ export default {
   },
   upload: {
     fileSize: '20mb',
-    whitelist: ['.xlsx', '.jpg', '.png']
+    whitelist: ['.xlsx', '.jpg', '.png'],
+
   },
   cors: {
     origin(app: koa.Context) {

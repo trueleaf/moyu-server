@@ -30,17 +30,18 @@ export class AttachmentService {
       userId: string;
       userName: string;
     };
+    targetPath: string
   }) {
     if (this.uploadConfig.storageService === 'local') {
       const fileBuffer = await fs.readFile(params.file.data)
       const stats = await fs.stat(params.file.data);
       const hash = await this.calculateHash(fileBuffer);
       const mimeType = await fileTypeFromBuffer(fileBuffer);
-      console.log(params, mimeType)
+      // console.log(params, mimeType)
       await this.attachmentModel.create({
-        filename: params.fileName,
-        // url: ossRes.url,
-        mimeType: mimeType,
+        fileName: params.fileName,
+        url: params.targetPath,
+        mimeType: mimeType.mime,
         size: stats.size,
         hash: hash,
         storageService: 'local',

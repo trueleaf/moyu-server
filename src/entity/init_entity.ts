@@ -4,6 +4,7 @@ import { ServerRoutes } from './security/server_routes.js';
 import { ClientRoutes } from './security/client_routes.js';
 import { Role } from './security/role.js';
 import { ClientMenu } from './security/client_menu.js';
+import { Attachment } from './attachment/attachment.js';
 
 /*
 |--------------------------------------------------------------------------
@@ -1352,6 +1353,18 @@ export async function initClientMenus(clientMenuModel: ReturnModelType<typeof Cl
   if (!clientMenuInfo) {
     console.log('初始化前端菜单');
     await clientMenuModel.insertMany(INITIAL_CLIENT_MENUS);
+  }
+  return;
+}
+
+/**
+ * 初始化附件信息
+ */
+export async function initAttachment(attachmentModel: ReturnModelType<typeof Attachment>) {
+  const attachmentInfo = await attachmentModel.findOne();
+  if (!attachmentInfo) {
+    console.log('初始化附件信息');
+    // await attachmentModel.insertMany([]);
   }
   return;
 }

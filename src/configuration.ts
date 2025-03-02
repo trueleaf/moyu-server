@@ -63,5 +63,6 @@ export class ContainerLifeCycle {
     await initClientRoutes(this.clientRoutesModel)
     await initRoles(this.roleModel)
     await initClientMenus(this.clientMenuModel)
+    // await initAttachment(this.attachmentModel)
   }
 }
