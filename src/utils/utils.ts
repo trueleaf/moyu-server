@@ -102,3 +102,20 @@ export async function sleep(delay: number): Promise<void> {
     }
   })
 }
+export function formatBytes(byteNum: number): string {
+  let result = '';
+  if (byteNum >= 0 && byteNum < 1024) {
+    //b
+    result = `${byteNum}B`;
+  } else if (byteNum >= 1024 && byteNum < 1024 * 1024) {
+    //KB
+    result = `${(byteNum / 1024).toFixed(2)}KB`;
+  } else if (byteNum >= 1024 * 1024 && byteNum < 1024 * 1024 * 1024) {
+    //MB
+    result = `${(byteNum / 1024 / 1024).toFixed(2)}MB`;
+  } else if (byteNum >= 1024 * 1024 * 1024 && byteNum < 1024 * 1024 * 1024 * 1024) {
+    //GB
+    result = `${(byteNum / 1024 / 1024 / 1024).toFixed(2)}GB`;
+  }
+  return result;
+}
