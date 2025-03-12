@@ -46,6 +46,21 @@ const INITIAL_USER = [
 ];
 const INITIAL_SERVER_ROUTES = [
   //=========================================================================//
+  //全局公共请求头
+  {
+    _id: '67bd4893d9884f97a42862ff',
+    groupName: 'api文档-全局公共请求头',
+    method: 'get',
+    name: '获取全局公共请求头',
+    path: '/api/project/global_common_headers',
+  },
+  {
+    _id: '67bd4893d9884f97a42863ff',
+    groupName: 'api文档-全局公共请求头',
+    method: 'put',
+    name: '替换全局公共请求头',
+    path: '/api/project/replace_global_common_headers',
+  },
   //组相关
   {
     _id: '67bd4893d9884f97a42861ff',
