@@ -2,22 +2,24 @@ import { Inject, Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { CommonController } from '../../controller/common/common.js';
-import { GetProjectCommonHeaderByIdDto, UpsertProjectCommonHeaderDto, GetProjectCommonHeadersDto } from '../../types/dto/project/project.common.header.dto.js';
+import { GetProjectCommonHeaderByIdDto, UpsertProjectCommonHeaderDto, GetProjectCommonHeadersDto, UpsertGlobalProjectCommonHeaderDto, GetGlobalProjectCommonHeadersDto } from '../../types/dto/project/project.common.header.dto.js';
 import { Doc } from '../../entity/doc/doc.js';
 import { Types } from 'mongoose';
+import { GlobalCommonHeader } from '../../entity/project/project_common_headers.js';
 
 @Provide()
 export class ProjectCommonHeaderService {
   @InjectEntityModel(Doc)
     docModel: ReturnModelType<typeof Doc>;
+  @InjectEntityModel(GlobalCommonHeader)
+    globalCommonHeaderModel: ReturnModelType<typeof GlobalCommonHeader>;
   @Inject()
     commonControl: CommonController
   /**
    * 根据id获取某个请求头
    */
   async getProjectCommonHeaderById(params: GetProjectCommonHeaderByIdDto) {
-    const { id, projectId } = params;
-    await this.commonControl.checkDocOperationPermissions(projectId);
+    const { id } = params;
     const result = await this.docModel.findOne({ _id: id }, { commonHeaders: 1 }).lean();
     return {
       _id: result._id,
@@ -31,8 +33,7 @@ export class ProjectCommonHeaderService {
    * 修改公共请求头
    */
   async upsertProjectCommonHeader(params: UpsertProjectCommonHeaderDto) {
-    const { commonHeaders, projectId, id  } = params;
-    await this.commonControl.checkDocOperationPermissions(projectId);
+    const { commonHeaders, id  } = params;
     await this.docModel.findByIdAndUpdate({ _id: id }, {
       $set: {
         commonHeaders
@@ -45,7 +46,6 @@ export class ProjectCommonHeaderService {
    */
   async getProjectCommonHeaders(params: GetProjectCommonHeadersDto) {
     const { projectId } = params;
-    await this.commonControl.checkDocOperationPermissions(projectId);
     const result = [];
     const docsInfo = await this.docModel.find({
       projectId,
@@ -97,5 +97,27 @@ export class ProjectCommonHeaderService {
       }
     }
     return result;
+  }
+  /**
+   * 获取全局公共请求头
+   */
+  async getGlobalProjectCommonHeaders(params: GetGlobalProjectCommonHeadersDto) {
+    const { projectId } = params;
+    const result = await this.globalCommonHeaderModel.findOne({ projectId }, { __v: 0 }).lean();
+    return result.commonHeaders;
+  }
+  /**
+   * 修改全局公共请求头
+   */
+  async upsertGlobalProjectCommonHeaders(params: UpsertGlobalProjectCommonHeaderDto) {
+    const { projectId, commonHeaders } = params;
+    await this.globalCommonHeaderModel.updateOne({ projectId }, {
+      $set: {
+        commonHeaders
+      }
+    }, {
+      upsert: true
+    });
+    return;
   }
 }

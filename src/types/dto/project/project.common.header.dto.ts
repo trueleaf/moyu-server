@@ -8,25 +8,25 @@ export class GetProjectCommonHeaderByIdDto {
    * 项目id
    */
   @Rule(RuleType.string().required())
-    projectId: string;
+  projectId: string;
   /**
    * 文档id
    */
-  @Rule(RuleType.string().required())
-    id: string;
+  @Rule(RuleType.string().required().allow(''))
+  id: string;
 }
 
 class HeaderProperty {
   @Rule(RuleType.string().required())
-    _id: string;
+  _id: string;
   @Rule(RuleType.string().required().allow(''))
-    key: string;
+  key: string;
   @Rule(RuleType.string().required().allow(''))
-    value: string;
+  value: string;
   @Rule(RuleType.string().required().allow(''))
-    description: string;
+  description: string;
   @Rule(RuleType.boolean())
-    select?: boolean;
+  select?: boolean;
 }
 /**
  * 新增或修改公共请求头
@@ -36,17 +36,32 @@ export class UpsertProjectCommonHeaderDto {
    * 项目id
    */
   @Rule(RuleType.string().required())
-    projectId: string;
+  projectId: string;
   /**
    * 文档或目录id
    */
   @Rule(RuleType.string().required())
-    id: string;
+  id: string;
   /**
-   * 文档id
+   * 公共请求头
    */
   @Rule(RuleType.array().items(getSchema(HeaderProperty)))
-    commonHeaders: HeaderProperty[];
+  commonHeaders: HeaderProperty[];
+}
+/**
+ * 新增获取修改全局公共请求头
+ */
+export class UpsertGlobalProjectCommonHeaderDto {
+  /**
+   * 项目id
+   */
+  @Rule(RuleType.string().required())
+  projectId: string;
+  /**
+  * 文档id
+  */
+  @Rule(RuleType.array().items(getSchema(HeaderProperty)).required())
+  commonHeaders: HeaderProperty[];
 }
 /**
  * 获取所有公共请求头
@@ -56,5 +71,12 @@ export class GetProjectCommonHeadersDto {
    * 项目id
    */
   @Rule(RuleType.string().required())
-    projectId: string;
+  projectId: string;
+}
+export class GetGlobalProjectCommonHeadersDto {
+  /**
+   * 项目id
+   */
+  @Rule(RuleType.string().required())
+  projectId: string;
 }

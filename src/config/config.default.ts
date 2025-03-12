@@ -17,6 +17,7 @@ import { ProjectRules } from '../entity/project/project_rules.js';
 import * as koa from '@midwayjs/koa';
 import { Attachment } from '../entity/attachment/attachment.js';
 import { Group } from '../entity/security/group.js';
+import { GlobalCommonHeader } from '../entity/project/project_common_headers.js';
 
 export default {
   keys: 'apiflow',
@@ -63,6 +64,7 @@ export default {
           ProjectRules,
           Attachment,
           Group,
+          GlobalCommonHeader
         ],
       },
     },
