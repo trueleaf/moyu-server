@@ -1,4 +1,4 @@
-import { Inject, Controller, Body, Get, Put, Query, Post } from '@midwayjs/core';
+import { Inject, Controller, Body, Get, Put, Query } from '@midwayjs/core';
 import { GetProjectCommonHeaderByIdDto, UpsertProjectCommonHeaderDto, GetProjectCommonHeadersDto, GetGlobalProjectCommonHeadersDto, UpsertGlobalProjectCommonHeaderDto } from '../../types/dto/project/project.common.header.dto.js';
 import { ProjectCommonHeaderService } from '../../service/project/project_common_header.js';
 import { CommonController } from '../common/common.js';
@@ -8,7 +8,7 @@ export class ProjectCommonHeaderController {
   @Inject()
     projectCommonHeaderService: ProjectCommonHeaderService
   @Inject()
-      commonControl: CommonController
+    commonControl: CommonController
   /**
    * 根据id获取某个请求头
    */
@@ -52,7 +52,7 @@ export class ProjectCommonHeaderController {
   /**
    * 更新全局请求头
    */
-  @Post('/project/replace_global_common_headers')
+  @Put('/project/replace_global_common_headers')
   async upsertGlobalProjectCommonHeaders(@Body() params: UpsertGlobalProjectCommonHeaderDto) {
     const { projectId } = params;
     await this.commonControl.checkDocOperationPermissions(projectId);

@@ -2,29 +2,29 @@ import { prop, modelOptions } from '@typegoose/typegoose';
 
 export class CommonHeaderItem {
   @prop()
-  _id: string;
+    _id: string;
 
   @prop({ maxlength: 50 })
-  key: string;
+    key: string;
 
   @prop({ maxlength: 1024 * 1024 })
-  value: string;
+    value: string;
 
   @prop({ default: 'string' })
-  type?: string;
+    type?: string;
 
   @prop({ maxlength: 1024 })
-  description?: string;
+    description?: string;
 
   @prop({ default: true })
-  select?: boolean;
+    select?: boolean;
 }
 
 @modelOptions({ schemaOptions: { collection: 'project_common_headers' } })
 export class GlobalCommonHeader  {
   @prop({ required: true, unique: true })
-  projectId: string;
+    projectId: string;
 
-  @prop({ type: () => [CommonHeaderItem]})
-  commonHeaders: CommonHeaderItem[];
+  @prop({ type: () => [CommonHeaderItem], default: [] })
+    commonHeaders: CommonHeaderItem[];
 }

@@ -48,14 +48,14 @@ const INITIAL_SERVER_ROUTES = [
   //=========================================================================//
   //全局公共请求头
   {
-    _id: '67bd4893d9884f97a42862ff',
+    _id: '67bd4893d9884f97a42261ff',
     groupName: 'api文档-全局公共请求头',
     method: 'get',
     name: '获取全局公共请求头',
     path: '/api/project/global_common_headers',
   },
   {
-    _id: '67bd4893d9884f97a42863ff',
+    _id: '67bd4893d9884f97a42863fe',
     groupName: 'api文档-全局公共请求头',
     method: 'put',
     name: '替换全局公共请求头',
@@ -113,7 +113,7 @@ const INITIAL_SERVER_ROUTES = [
   },
   //附件
   {
-    _id: '67bd4893d9884f97a4286ff',
+    _id: '64e1d43690009434b395eecf',
     groupName: 'api文档-附加相关',
     method: 'post',
     name: '上传附件',
@@ -1075,6 +1075,8 @@ const INITIAL_ROLE = [
     remark: '拥有完整文档操作权限(无法进入管理后台)',
     roleName: '普通用户',
     serverRoutes: [
+      '67bd4893d9884f97a42863fe',
+      '67bd4893d9884f97a42261ff',
       '67bd4893d9884f97a42861ff',
       '67bd4893d9884f97a42862ff',
       '67bd4893d9884f97a42863ff',
@@ -1089,6 +1091,7 @@ const INITIAL_ROLE = [
       '6056ca3ec8731d1cd490e95d',
       '605844fa5de62017b64ec29b',
       '60a35a7de7af1332c8669d60',
+      '64e1d43690009434b395eecf',
       '64e1d43690009434b395eeef',
       '64e1d47d62cd860d73bdebfc',
       '64e1d530636bd4b5b317cb79',
@@ -1198,6 +1201,8 @@ const INITIAL_ROLE = [
     remark: '拥有完整权限',
     roleName: '管理员',
     serverRoutes: [
+      '67bd4893d9884f97a42863fe',
+      '67bd4893d9884f97a42261ff',
       '67bd4893d9884f97a42861ff',
       '67bd4893d9884f97a42862ff',
       '67bd4893d9884f97a42863ff',
@@ -1212,6 +1217,7 @@ const INITIAL_ROLE = [
       '6056ca3ec8731d1cd490e95d',
       '605844fa5de62017b64ec29b',
       '60a35a7de7af1332c8669d60',
+      '64e1d43690009434b395eecf',
       '64e1d43690009434b395eeef',
       '64e1d47d62cd860d73bdebfc',
       '64e1d530636bd4b5b317cb79',

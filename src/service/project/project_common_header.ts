@@ -104,6 +104,9 @@ export class ProjectCommonHeaderService {
   async getGlobalProjectCommonHeaders(params: GetGlobalProjectCommonHeadersDto) {
     const { projectId } = params;
     const result = await this.globalCommonHeaderModel.findOne({ projectId }, { __v: 0 }).lean();
+    if (!result) {
+      return [];
+    }
     return result.commonHeaders;
   }
   /**
