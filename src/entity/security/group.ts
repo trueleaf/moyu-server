@@ -15,7 +15,14 @@ class Member {
   @prop({ required: true })
   userName: string;
 
-  @prop()
+  //管理员无法过期
+  @prop({
+    default: () => {
+      const date = new Date();
+      date.setFullYear(date.getFullYear() + 10);
+      return date;
+    }
+  })
   expireAt?: Date; 
   /**
    * 权限

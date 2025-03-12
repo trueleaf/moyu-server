@@ -27,16 +27,10 @@ export class UpdateGroupDTO {
 // 分页查询 DTO
 export class PaginationDTO {
   @Rule(RuleType.number().min(1).default(1).error(new Error('页码需大于0')))
-  page?: number;
+  pageNum?: number;
 
   @Rule(RuleType.number().min(1).max(100).default(10).error(new Error('每页数量1-100')))
   pageSize?: number;
-
-  @Rule(RuleType.string().max(50).optional().error(new Error('组名称不超过50字符')))
-  groupName?: string;
-
-  @Rule(RuleType.string().optional().error(new Error('创建者ID需为字符串')))
-  creatorId?: string;
 }
 
 // 添加成员 DTO
@@ -54,7 +48,7 @@ export class AddMemberDTO {
     RuleType.string()
       .valid('readOnly', 'readAndWrite', 'admin')
       .required()
-      .error(new Error('权限类型不合法'))
+      .error(new Error('权限类型不合法，只允许readOnly、readAndWrite、admin'))
   )
   permission: 'readOnly' | 'readAndWrite' | 'admin';
 
