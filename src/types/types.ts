@@ -103,3 +103,8 @@ export type UploadConfig = {
   shareRange: ('project' | 'group' | 'user')[],// 项目分享范围
   fileSize: number,// 针对单个项目上传文件大小限制
 }
+
+export type ReqLimit = {
+  max: number;
+  ttl: number;
+}

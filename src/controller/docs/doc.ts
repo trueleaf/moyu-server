@@ -1,6 +1,7 @@
 import { Inject, Controller, Body, Post, Del, Get, Put, Query } from '@midwayjs/core';
 import { AddEmptyDocDto, ChangeDocBaseInfoDto, ChangeDocPositionDto, UpdateDoc, GenerateDocCopyDto, PasteDocsDto, CreateDocDto, GetDocDetailDto, DeleteDocDto, GetMockDataDto, GetDocsAsTreeDto } from '../../types/dto/doc/doc.dto.js';
 import { DocService } from '../../service/doc/doc.js';
+import { ReqLimit } from '../../decorator/req_limit.decorator.js';
 
 @Controller('/api')
 export class DocController {
@@ -67,6 +68,7 @@ export class DocController {
    * 获取文档详情
    */
   @Get('/project/doc_detail')
+  @ReqLimit({ max: 10, ttl: 10000 })
   async getDocDetail(@Query() params: GetDocDetailDto) {
     const data = await this.docService.getDocDetail(params);
     return data;
