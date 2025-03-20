@@ -34,6 +34,7 @@ import { UserService } from '../../service/security/user.js';
 import * as svgCaptcha from 'svg-captcha';
 import { UploadFileInfo } from '@midwayjs/upload';
 import { throwError } from '../../utils/utils.js';
+// import { ReqLimit } from '../../decorator/req_limit.decorator.js';
 
 @Controller('/api')
 export class UserController {
@@ -49,7 +50,7 @@ export class UserController {
   @Get('/security/sms')
   async getSMSCode(@Query() params: SMSDto) {
     if (!this.ctx.session.captcha) {
-      return throwError(4005, '认证验证码错误')
+      return throwError(4005, '图形验证码错误')
     }
     const data = await this.userService.getSMSCode(params);
     return data;
