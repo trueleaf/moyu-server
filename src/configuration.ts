@@ -24,6 +24,9 @@ import DefaultConfig from './config/config.default.js';
 import UnittestConfig from './config/config.unittest.js';
 import { REQ_LIMIT_KEY } from './decorator/req_limit.decorator.js';
 import { ReqLimit } from './types/types.js';
+import * as cacheManager from '@midwayjs/cache-manager';
+import { REQ_SIGN_KEY } from './decorator/req_sign.decorator.js';
+import { getHashedContent, getStrHeader, getStrJsonBody, getStrParams, parseUrl, throwError } from './utils/utils.js';
 @Configuration({
   imports: [
     koa,
@@ -35,6 +38,7 @@ import { ReqLimit } from './types/types.js';
       component: info,
       enabledEnvironment: ['local'],
     },
+    cacheManager
   ],
   importConfigs: [{
     default: DefaultConfig,
@@ -60,6 +64,7 @@ export class ContainerLifeCycle {
     decoratorService: MidwayDecoratorService;
   private reqLimitStore = new Map<string, number[]>()
 
+  //接口限流
   async registerReqLimitDecorator() {
     this.decoratorService.registerMethodHandler(REQ_LIMIT_KEY, (options) => {
       return {
@@ -85,6 +90,48 @@ export class ContainerLifeCycle {
       };
     });
   }
+  //接口验签
+  async registerReqSignDecorator() {
+    this.decoratorService.registerMethodHandler(REQ_SIGN_KEY, (options) => {
+      return {
+        around: async (joinPoint: JoinPoint) => {
+          const target = joinPoint.target;
+          const requestSign = target.ctx.headers['x-sign'] as string;
+          if (!requestSign) {
+            return throwError(4002, '接口签名验证不通过');
+          }
+          const method = target.ctx.request.method.toLowerCase();
+          const parsedUrlInfo = parseUrl(target.ctx.url);
+          const url = parsedUrlInfo.url;
+          const strParams = getStrParams(Object.assign({}, parsedUrlInfo.queryParams, target.ctx.query));
+          const body = target.ctx.request.body;
+          const timestamp = target.ctx.headers['x-sign-timestamp'] as string;
+          const nonce = target.ctx.headers['x-sign-nonce'] as string;
+          const strBody = await getStrJsonBody(body);
+          const signHeaders = target.ctx.headers['x-sign-headers'] as string;
+          const arrSignHeaders = signHeaders.split(',');
+          const objectHeader = arrSignHeaders.map((key: string) => {
+            return {
+              [key.toLowerCase()]: target.ctx.headers[key.toLowerCase()] as string
+            }
+          }).reduce((prev, next) => {
+            return {
+              ...prev,
+              ...next
+            }
+          }
+          , {});
+          const { strHeader } = getStrHeader(objectHeader);
+          const signContent = `${method}\n${url}\n${strParams}\n${strBody}\n${strHeader}\n${timestamp}\n${nonce}`;
+          const hashedContent = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(signContent));
+          const strHashedContent = getHashedContent(hashedContent);
+          console.log(1, signContent, strHashedContent)
+          const result = await joinPoint.proceed(...joinPoint.args);
+          return result;
+        },
+      };
+    });
+  }
   async onReady() {
     this.app.useMiddleware([ResponseWrapperMiddleware, PermissionMiddleware]);
     this.app.useFilter([ValidateErrorFilter, AllServerErrorFilter]);
@@ -94,6 +141,7 @@ export class ContainerLifeCycle {
     await initRoles(this.roleModel)
     await initClientMenus(this.clientMenuModel)
     await this.registerReqLimitDecorator();
+    await this.registerReqSignDecorator();
     // await initAttachment(this.attachmentModel)
   }
 }
