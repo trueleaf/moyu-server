@@ -1,4 +1,4 @@
-import { MidwayConfig } from '@midwayjs/core';
+import { MidwayAppInfo, MidwayConfig } from '@midwayjs/core';
 import { User } from '../entity/security/user.js';
 import { Sms } from '../entity/security/sms.js';
 import { ClientMenu } from '../entity/security/client_menu.js';
@@ -19,135 +19,138 @@ import { Attachment } from '../entity/attachment/attachment.js';
 import { Group } from '../entity/security/group.js';
 import { GlobalCommonHeader } from '../entity/project/project_common_headers.js';
 
-export default {
-  keys: 'apiflow',
-  session: {
-    name: 'apiflow',
-    resave: true,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 24 * 3600 * 1000 * 30,
-      httpOnly: true,
-      sameSite: null,
+export default (appInfo: MidwayAppInfo): MidwayConfig => {
+  return {
+    keys: 'apiflow',
+    koa: {
+      port: 7001,
+      http2: false,
     },
-  },
-  koa: {
-    port: 7001,
-    http2: false,
-  },
-  mongoose: {
-    dataSource: {
-      default: {
-        uri: 'mongodb://localhost:27017/apiflow',
-        options: {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
-          user: '',
-          pass: ''
+    cacheManager: {
+      clients: {
+        default: {
+          store: 'memory',
+          options: {
+            max: 10000,
+            ttl: 1000,
+          },
         },
-        // 关联实体
-        entities: [
-          User,
-          Sms,
-          ClientMenu,
-          ClientRoutes,
-          Role,
-          ServerRoutes,
-          LoginRecord,
-          Project,
-          ProjectVariable,
-          ProjectCode,
-          ProjectShare,
-          Doc,
-          DocPrefix,
-          DocMindParams,
-          ProjectRules,
-          Attachment,
-          Group,
-          GlobalCommonHeader
-        ],
       },
     },
-  },
-  validate: {
-    errorStatus: 200,
-  },
-  smsConfig: {
-    accessKeyId: '',
-    accessKeySecret: '',
-    endpoint: '',
-    RegionId: '',
-    signName: '',
-    templateCode: '',
-    maxAge: 0,
-  },
-  ossConfig: {
-    client: {
-      endPoint: '',
-      region: 'oss-cn-hangzhou',
-      accessKeyId: 'access-key',
-      accessKeySecret: 'secret',
-      bucket: 'bucket'
-    }
-  },
-  uploadConfig: {
-    storageService: 'local',
-    dir: '/data/apiflow_upload',// 实际存储目录
-    fileSize: 1024 * 1024 * 5,
-    shareRange: ['project'], //用户自行部署时候，项目内上传附件，只要用户拥有项目访问权限，均可共享
-  },
-  apiflow: {
-    defaultRegisterPassword: '111111',
-  },
-  jwtConfig: {
-    secretOrPrivateKey: 'apiflow', //私钥
-    expiresIn: `${1000 * 60 * 60 * 24 * 7}`, //过期时间
-  },
-  permission: {
-    isFree: false,
-    whiteList: [
-      '/api/test/response',
-      '/api/test/request_method',
-      '/api/test/request_body',
-      '/mock/image',
-      '/mock',
-      '/api/security/register',
-      '/api/project/share',
-      '/api/security/client_routes_multi',
-      '/api/security/login_password',
-      '/api/security/login_phone',
-      '/api/security/sms',
-      '/api/security/login_guest',
-      '/api/security/captcha',
-      '/api/project/doc_mock',
-      '/api/project/share_info',
-      '/api/project/share_check',
-      '/api/project/export/share_banner',
-      '/api/project/export/share_project_info',
-      '/api/project/share_doc_detail',
-    ],
-  },
-  security: {
-    strictPassword: true,
-    defaultUserPassword: '111111'
-  },
-  pagination: {
-    max: 100,
-  },
-  upload: {
-    fileSize: '20mb',
-    whitelist: ['.xlsx', '.jpg', '.png'],
-
-  },
-  cors: {
-    origin(app: koa.Context) {
-      const origin = app.headers.origin;
-      return origin;
+    mongoose: {
+      dataSource: {
+        default: {
+          uri: 'mongodb://localhost:27017/apiflow',
+          options: {
+            // useNewUrlParser: true,
+            // useUnifiedTopology: true,
+            user: '',
+            pass: ''
+          },
+          // 关联实体
+          entities: [
+            User,
+            Sms,
+            ClientMenu,
+            ClientRoutes,
+            Role,
+            ServerRoutes,
+            LoginRecord,
+            Project,
+            ProjectVariable,
+            ProjectCode,
+            ProjectShare,
+            Doc,
+            DocPrefix,
+            DocMindParams,
+            ProjectRules,
+            Attachment,
+            Group,
+            GlobalCommonHeader
+          ],
+        },
+      },
     },
-    credentials: true,
-    allowMethods: 'GET,PUT,POST,DELETE',
-    exposeHeaders: 'content-disposition',
-    allowHeaders: ['Authorization', 'x-csrf-token', 'content-type'],
-    maxAge: 60 * 60 * 24
+    validate: {
+      errorStatus: 200,
+    },
+    smsConfig: {
+      accessKeyId: '',
+      accessKeySecret: '',
+      endpoint: '',
+      RegionId: '',
+      signName: '',
+      templateCode: '',
+      maxAge: 0,
+    },
+    ossConfig: {
+      client: {
+        endPoint: '',
+        region: 'oss-cn-hangzhou',
+        accessKeyId: 'access-key',
+        accessKeySecret: 'secret',
+        bucket: 'bucket'
+      }
+    },
+    uploadConfig: {
+      storageService: 'local',
+      dir: '/data/apiflow_upload',// 实际存储目录
+      fileSize: 1024 * 1024 * 5,
+      shareRange: ['project'], //用户自行部署时候，项目内上传附件，只要用户拥有项目访问权限，均可共享
+    },
+    apiflow: {
+      defaultRegisterPassword: '111111',
+    },
+    jwtConfig: {
+      secretOrPrivateKey: 'apiflow', //私钥
+      expiresIn: `${1000 * 60 * 60 * 24 * 7}`, //过期时间
+    },
+    permission: {
+      isFree: false,
+      whiteList: [
+        '/api/test/response',
+        '/api/test/request_method',
+        '/api/test/request_body',
+        '/mock/image',
+        '/mock',
+        '/api/security/register',
+        '/api/project/share',
+        '/api/security/client_routes_multi',
+        '/api/security/login_password',
+        '/api/security/login_phone',
+        '/api/security/sms',
+        '/api/security/login_guest',
+        '/api/security/captcha',
+        '/api/project/doc_mock',
+        '/api/project/share_info',
+        '/api/project/share_check',
+        '/api/project/export/share_banner',
+        '/api/project/export/share_project_info',
+        '/api/project/share_doc_detail',
+      ],
+    },
+    security: {
+      strictPassword: true,
+      defaultUserPassword: '111111'
+    },
+    pagination: {
+      max: 100,
+    },
+    upload: {
+      fileSize: '20mb',
+      whitelist: ['.xlsx', '.jpg', '.png'],
+
+    },
+    cors: {
+      origin(app: koa.Context) {
+        const origin = app.headers.origin;
+        return origin;
+      },
+      credentials: true,
+      allowMethods: 'GET,PUT,POST,DELETE',
+      exposeHeaders: 'content-disposition',
+      allowHeaders: ['Authorization', 'x-sign', 'x-sign-headers', 'x-sign-timestamp', 'x-sign-nonce', 'content-type'],
+      maxAge: 60 * 60 * 24
+    }
   }
-} as MidwayConfig;
+};

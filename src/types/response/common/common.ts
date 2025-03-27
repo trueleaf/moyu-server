@@ -13,6 +13,7 @@
  * 2009 修改密码时候原密码错误
  * 2010 注测的用户名称不允许包含guest
  * 4001 无权限
+ * 4002 签名错误
  * 
  */
 export type ResponseWrapper<T = unknown> = {

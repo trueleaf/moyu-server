@@ -7,6 +7,8 @@ import { TableSearchParams } from '../common/common.dto.js';
 export class SMSDto {
   @Rule(RuleType.string().required())
     phone: string;
+  @Rule(RuleType.string().required())
+    captcha: string;
 }
 
 /**

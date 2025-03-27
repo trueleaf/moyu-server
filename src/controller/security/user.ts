@@ -9,6 +9,7 @@ import {
   Put,
   Del,
   Files,
+  InjectClient,
 } from '@midwayjs/core';
 import { Context } from '@midwayjs/koa';
 import {
@@ -33,23 +34,30 @@ import {
 import { UserService } from '../../service/security/user.js';
 import * as svgCaptcha from 'svg-captcha';
 import { UploadFileInfo } from '@midwayjs/upload';
-import { throwError } from '../../utils/utils.js';
+import {  throwError } from '../../utils/utils.js';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
+import { nanoid } from 'nanoid';
+import { ReqSign } from '../../decorator/req_sign.decorator.js';
 
 @Controller('/api')
 export class UserController {
   @Inject()
     ctx: Context;
-
   @Inject()
     userService: UserService;
-
+  @InjectClient(CachingFactory, 'default')
+    cache: MidwayCache;
   /**
    * 获取手机验证码
    */
   @Get('/security/sms')
   async getSMSCode(@Query() params: SMSDto) {
+    console.log(this.ctx.session.captcha)
     if (!this.ctx.session.captcha) {
-      return throwError(4005, '认证验证码错误')
+      return throwError(4005, '请输入图形验证码')
+    }
+    if (this.ctx.session.captcha.toLocaleLowerCase() !== params.captcha.toLocaleLowerCase()) {
+      return throwError(4005, '图形验证码错误')
     }
     const data = await this.userService.getSMSCode(params);
     return data;
@@ -57,6 +65,7 @@ export class UserController {
   /**
    * 获取图形验证码
    */
+  @ReqSign()
   @Get('/security/captcha')
   @SetHeader('content-type', 'image/svg+xml')
   async getSVGCaptcha(@Query() params: SvgCaptchaDto) {
@@ -64,8 +73,9 @@ export class UserController {
       width: params.width,
       height: params.height,
     });
-
-    this.ctx.session.captcha = captcha.text;
+    const key = nanoid();
+    this.cache.set(key, captcha.text, 1000 * 60 * 5);
+    this.ctx.set('x-client-key', key);
     return Buffer.from(captcha.data, 'utf-8');
   }
   /**
@@ -79,8 +89,9 @@ export class UserController {
   /**
    * 根据账号密码登录
    */
+  @ReqSign()
   @Post('/security/login_password')
-  async loginByPassword(@Body() params: LoginByPasswordDto) {
+  async loginByPassword(@Body() params: LoginByPasswordDto, @Query() query: Record<string, string>) {
     const data = await this.userService.loginByPassword(params);
     return data;
   }
