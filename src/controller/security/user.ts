@@ -50,13 +50,17 @@ export class UserController {
   /**
    * 获取手机验证码
    */
+  @ReqSign()
   @Get('/security/sms')
   async getSMSCode(@Query() params: SMSDto) {
-    console.log(this.ctx.session.captcha)
-    if (!this.ctx.session.captcha) {
+    const captcha: string = await this.cache.get(params.clientKey);
+    if (!params.clientKey) {
       return throwError(4005, '请输入图形验证码')
     }
-    if (this.ctx.session.captcha.toLocaleLowerCase() !== params.captcha.toLocaleLowerCase()) {
+    if (!captcha) {
+      return throwError(4005, '图形验证码已失效请重新获取')
+    }
+    if (captcha.toLowerCase() !== params.captcha.toLowerCase()) {
       return throwError(4005, '图形验证码错误')
     }
     const data = await this.userService.getSMSCode(params);

@@ -20,9 +20,9 @@ import {
 import { getRandomNumber, throwError, uniqueByKey } from '../../utils/utils.js';
 import * as XLSX from 'xlsx'
 import { GlobalConfig, LoginTokenInfo } from '../../types/types.js';
-import Dysmsapi20170525, * as $Dysmsapi20170525 from '@alicloud/dysmsapi20170525';
+import Dysmsapi20170525 from '@alicloud/dysmsapi20170525';
 import * as $OpenApi from '@alicloud/openapi-client';
-import * as $Util from '@alicloud/tea-util';
+import $Util from '@alicloud/tea-util';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { createHash } from 'crypto';
@@ -82,24 +82,26 @@ export class UserService {
       accessKeyId: this.smsConfig.accessKeyId,
       accessKeySecret: this.smsConfig.accessKeySecret,
     });
-    config.endpoint = 'dysmsapi.aliyuncs.com';
+    config.endpoint = this.smsConfig.endpoint;
     // @ts-ignore
-    const client = new (Dysmsapi20170525(config));
-    const sendSmsRequest = new $Dysmsapi20170525.SendSmsRequest({
+    console.log(this.smsConfig, 22)
+    const client = new Dysmsapi20170525.default(config);
+    const sendSmsRequest = new Dysmsapi20170525.SendSmsRequest({
       phoneNumbers: phone,
       signName: this.smsConfig.signName,
       templateCode: this.smsConfig.templateCode,
       templateParam: `{code: ${code}}`,
     });
+
     await client.sendSmsWithOptions(
       sendSmsRequest,
       new $Util.RuntimeOptions({})
     );
-    await this.smsModel.updateOne(
-      { phone },
-      { $set: { phone, smsCode: code } },
-      { upsert: true }
-    );
+    // await this.smsModel.updateOne(
+    //   { phone },
+    //   { $set: { phone, smsCode: code } },
+    //   { upsert: true }
+    // );
   }
 
   /**
