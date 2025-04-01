@@ -8,7 +8,6 @@ export type GlobalConfig = {
     accessKeyId: string;
     accessKeySecret: string;
     endpoint: string;
-    RegionId: string;
     signName: string;
     templateCode: string;
     maxAge: number;
@@ -60,6 +59,9 @@ export type GlobalConfig = {
      */
     max: number;
   };
+  signConfig: {
+    ttl: number
+  }
 };
 
 /**

@@ -9,6 +9,8 @@ export class SMSDto {
     phone: string;
   @Rule(RuleType.string().required())
     captcha: string;
+  @Rule(RuleType.string().required())
+    clientKey: string;
 }
 
 /**

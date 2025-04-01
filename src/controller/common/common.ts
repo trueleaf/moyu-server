@@ -130,7 +130,7 @@ export class CommonController {
 
   async checkDocOperationPermissions(projectId: string) {
     const userInfo = this.ctx.tokenInfo;
-    const method = this.ctx.request.method.toLocaleLowerCase();
+    const method = this.ctx.request.method.toLowerCase();
     const URL = this.ctx.request.URL;
     const projectInfo = await this.projectModel.findById({ _id: projectId });
     if (!projectInfo) {
