@@ -78,7 +78,6 @@ export default (appInfo: MidwayAppInfo): MidwayConfig => {
       accessKeyId: '',
       accessKeySecret: '',
       endpoint: '',
-      RegionId: '',
       signName: '',
       templateCode: '',
       maxAge: 0,
@@ -148,9 +147,12 @@ export default (appInfo: MidwayAppInfo): MidwayConfig => {
       },
       credentials: true,
       allowMethods: 'GET,PUT,POST,DELETE',
-      exposeHeaders: 'content-disposition',
+      exposeHeaders: ['content-disposition', 'x-client-key'],
       allowHeaders: ['Authorization', 'x-sign', 'x-sign-headers', 'x-sign-timestamp', 'x-sign-nonce', 'content-type'],
       maxAge: 60 * 60 * 24
+    },
+    signConfig: {
+      ttl: 1000 * 60
     }
   }
 };

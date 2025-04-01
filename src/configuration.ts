@@ -1,4 +1,4 @@
-import { Configuration, App, Inject, MidwayDecoratorService, JoinPoint, REQUEST_OBJ_CTX_KEY } from '@midwayjs/core';
+import { Configuration, App, Inject, MidwayDecoratorService, JoinPoint, REQUEST_OBJ_CTX_KEY, Config, IMidwayContainer } from '@midwayjs/core';
 import * as koa from '@midwayjs/koa';
 import * as validate from '@midwayjs/validate';
 import * as info from '@midwayjs/info';
@@ -23,10 +23,15 @@ import * as crossDomain from '@midwayjs/cross-domain';
 import DefaultConfig from './config/config.default.js';
 import UnittestConfig from './config/config.unittest.js';
 import { REQ_LIMIT_KEY } from './decorator/req_limit.decorator.js';
-import { ReqLimit } from './types/types.js';
+import { GlobalConfig, ReqLimit } from './types/types.js';
 import * as cacheManager from '@midwayjs/cache-manager';
 import { REQ_SIGN_KEY } from './decorator/req_sign.decorator.js';
 import { getHashedContent, getStrHeader, getStrJsonBody, getStrParams, parseUrl, throwError } from './utils/utils.js';
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const filePath = resolve(__dirname, 'config/config.local.js');
 @Configuration({
   imports: [
     koa,
@@ -62,7 +67,10 @@ export class ContainerLifeCycle {
     attachmentModel: ReturnModelType<typeof Attachment>;
   @Inject()
     decoratorService: MidwayDecoratorService;
+  @Config('signConfig')
+      config: GlobalConfig['signConfig'];
   private reqLimitStore = new Map<string, number[]>()
+
 
   //接口限流
   async registerReqLimitDecorator() {
@@ -107,8 +115,9 @@ export class ContainerLifeCycle {
           const body = target.ctx.request.body;
           const timestamp = target.ctx.headers['x-sign-timestamp'] as string;
           const nonce = target.ctx.headers['x-sign-nonce'] as string;
-          const strBody = await getStrJsonBody(body);
           const signHeaders = target.ctx.headers['x-sign-headers'] as string;
+          const originSignContent = target.ctx.headers['x-sign'] as string;
+          const strBody = await getStrJsonBody(body);
           const arrSignHeaders = signHeaders.split(',');
           const objectHeader = arrSignHeaders.map((key: string) => {
             return {
@@ -125,7 +134,14 @@ export class ContainerLifeCycle {
           const signContent = `${method}\n${url}\n${strParams}\n${strBody}\n${strHeader}\n${timestamp}\n${nonce}`;
           const hashedContent = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(signContent));
           const strHashedContent = getHashedContent(hashedContent);
-          console.log(1, signContent, strHashedContent)
+          // console.log(signContent, strHashedContent, body, strBody)
+          if (strHashedContent !== originSignContent) {
+            return throwError(4002, '接口签名验证不通过');
+          }
+          if (Date.now() - Number(timestamp) > this.config.ttl) {
+            return throwError(4002, '接口调用已过期');
+          }
+          // console.log(1, signContent, strHashedContent)
           const result = await joinPoint.proceed(...joinPoint.args);
           return result;
         },
@@ -143,5 +159,17 @@ export class ContainerLifeCycle {
     await this.registerReqLimitDecorator();
     await this.registerReqSignDecorator();
     // await initAttachment(this.attachmentModel)
+  }
+  async onConfigLoad(container: IMidwayContainer) {
+    const remoteConfig = {};
+    try {
+      const moduleUrl = new URL(`file:///${filePath.replace(/\\/g, '/')}`).href
+      const config = await import(moduleUrl);
+      Object.assign(remoteConfig, config.default)
+      console.log('config.local.js加载成功');
+    } catch (error) {
+      console.log('config.local.js不存在，使用默认配置');
+    }
+    return remoteConfig;
   }
 }
