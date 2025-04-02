@@ -14,6 +14,8 @@
  * 2010 注测的用户名称不允许包含guest
  * 4001 无权限
  * 4002 签名错误
+ * 4005 图形验证码错误
+ * 4006 短信验证码调用过于频繁，封禁n小时
  * 
  */
 export type ResponseWrapper<T = unknown> = {
@@ -35,6 +37,7 @@ export type ResponseWrapper<T = unknown> = {
     | 4002
     | 4004
     | 4005
+    | 4006
     | 5000
     | 101001
     | 101002

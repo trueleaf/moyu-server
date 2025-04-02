@@ -84,7 +84,6 @@ export class UserService {
     });
     config.endpoint = this.smsConfig.endpoint;
     // @ts-ignore
-    console.log(this.smsConfig, 22)
     const client = new Dysmsapi20170525.default(config);
     const sendSmsRequest = new Dysmsapi20170525.SendSmsRequest({
       phoneNumbers: phone,
@@ -97,11 +96,11 @@ export class UserService {
       sendSmsRequest,
       new $Util.RuntimeOptions({})
     );
-    // await this.smsModel.updateOne(
-    //   { phone },
-    //   { $set: { phone, smsCode: code } },
-    //   { upsert: true }
-    // );
+    await this.smsModel.updateOne(
+      { phone },
+      { $set: { phone, smsCode: code } },
+      { upsert: true }
+    );
   }
 
   /**
