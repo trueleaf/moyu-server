@@ -1,4 +1,4 @@
-import { Configuration, App, Inject, MidwayDecoratorService, JoinPoint, REQUEST_OBJ_CTX_KEY, Config, IMidwayContainer } from '@midwayjs/core';
+import { Configuration, App, Inject, MidwayDecoratorService, JoinPoint, REQUEST_OBJ_CTX_KEY, Config, IMidwayContainer, InjectClient } from '@midwayjs/core';
 import * as koa from '@midwayjs/koa';
 import * as validate from '@midwayjs/validate';
 import * as info from '@midwayjs/info';
@@ -29,6 +29,8 @@ import { REQ_SIGN_KEY } from './decorator/req_sign.decorator.js';
 import { getHashedContent, getStrHeader, getStrJsonBody, getStrParams, parseUrl, throwError } from './utils/utils.js';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
+import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
+import { Context } from 'koa';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const filePath = resolve(__dirname, 'config/config.local.js');
@@ -67,9 +69,10 @@ export class ContainerLifeCycle {
     attachmentModel: ReturnModelType<typeof Attachment>;
   @Inject()
     decoratorService: MidwayDecoratorService;
+  @InjectClient(CachingFactory, 'default')
+    cache: MidwayCache;
   @Config('signConfig')
       config: GlobalConfig['signConfig'];
-  private reqLimitStore = new Map<string, number[]>()
 
 
   //接口限流
@@ -77,21 +80,16 @@ export class ContainerLifeCycle {
     this.decoratorService.registerMethodHandler(REQ_LIMIT_KEY, (options) => {
       return {
         around: async (joinPoint: JoinPoint) => {
-          const { ttl, max } = options.metadata as ReqLimit;
+          const { ttl, max, limitBy = 'user' } = options.metadata as ReqLimit;
           const instance = joinPoint.target;
-          const ctx = instance[REQUEST_OBJ_CTX_KEY];
-          const userId = ctx.tokenInfo.id; // 使用用户id作为限流标识
-          const now = Date.now();
-          const windowStart = now - ttl;
-          let timestamps = this.reqLimitStore.get(userId) || [];
-          timestamps = timestamps.filter((ts) => ts >= windowStart);
-          if (timestamps.length >= max) {
-            ctx.status = 429;
-            ctx.body = '请求频率过高，请稍后再试';
-            return;
+          const ctx = instance[REQUEST_OBJ_CTX_KEY] as Context;
+          console.log('ip', ctx.ip)
+          const limitKey = `reqLimit:${limitBy === 'user' ? ctx.tokenInfo.id : ctx.ip}`;
+          const reqCount: number = await this.cache.get(limitKey) || 0;
+          if (reqCount >= max) {
+            return throwError(4029, '接口调用过于频繁')
           }
-          timestamps.push(now);
-          this.reqLimitStore.set(userId, timestamps);
+          await this.cache.set(limitKey, reqCount + 1, ttl);
           const result = await joinPoint.proceed(...joinPoint.args);
           return result;
         },
