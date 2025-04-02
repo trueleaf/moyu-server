@@ -25,6 +25,7 @@ import {
   LoginByPasswordDto,
   LoginByPhoneDto,
   RegisterByPhoneDto,
+  ResetPasswordByAdminDto,
   ResetPasswordDto,
   SMSDto,
   StarProjectDto,
@@ -163,10 +164,20 @@ export class UserController {
     return data;
   }
   /**
+   * 重置密码
+   */
+  @ReqSign()
+  @ReqLimit({ ttl: 1000 * 60 * 60, max: 5, limitBy: 'ip' })
+  @Post('/security/user_reset_password')
+  async resetPassword(params: ResetPasswordDto) {
+    const data = await this.userService.resetPassword(params);
+    return data;
+  }
+  /**
    * 管理员重置密码
    */
   @Put('/security/reset_password')
-  async resetPasswordByAdmin(@Body() params: ResetPasswordDto) {
+  async resetPasswordByAdmin(@Body() params: ResetPasswordByAdminDto) {
     const data = await this.userService.resetPasswordByAdmin(params);
     return data;
   }
