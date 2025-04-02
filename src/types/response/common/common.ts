@@ -16,6 +16,7 @@
  * 4002 签名错误
  * 4005 图形验证码错误
  * 4006 短信验证码调用过于频繁，封禁n小时
+ * 4029 接口调用频繁
  * 
  */
 export type ResponseWrapper<T = unknown> = {
@@ -38,6 +39,7 @@ export type ResponseWrapper<T = unknown> = {
     | 4004
     | 4005
     | 4006
+    | 4029
     | 5000
     | 101001
     | 101002

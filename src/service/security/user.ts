@@ -169,8 +169,9 @@ export class UserService {
   async loginByPassword(params: LoginByPasswordDto) {
     const { loginName, password } = params;
     const userInfo = await this.userModel.findOne({ loginName });
+    const env = this.ctx.app.getEnv();
     if (!userInfo) {
-      return throwError(2004, '用户不存在')
+      return throwError(2004, env === 'local' ? '用户不存在' : "用户名或密码错误")
     }
     if (!userInfo.isEnabled) {
       return throwError(2008, '用户被禁止登录，管理员可以启用当前用户');
@@ -218,6 +219,7 @@ export class UserService {
   async loginByPhone(params: LoginByPhoneDto) {
     const { phone, smsCode } = params;
     const smsInfo = await this.smsModel.findOne({ phone });
+    const env = this.ctx.app.getEnv();
     const updateTimestamps = new Date(smsInfo.updatedAt).getTime();
     const isExpire = Date.now() - updateTimestamps > this.smsConfig.maxAge;
     if (!smsInfo) {
@@ -231,7 +233,10 @@ export class UserService {
     }
     const userInfo = await this.userModel.findOne({ phone });
     if (!userInfo) {
-      return throwError(2004, '用户不存在');
+      return throwError(2004, env === 'local' ? '用户不存在' : "用户名或密码错误");
+    }
+    if (!userInfo.isEnabled) {
+      return throwError(2008, '用户被禁止登录，管理员可以启用当前用户');
     }
     const loginInfo: LoginTokenInfo = {
       id: userInfo.id,
