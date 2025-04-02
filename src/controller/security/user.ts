@@ -38,6 +38,7 @@ import {  throwError } from '../../utils/utils.js';
 import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 import { nanoid } from 'nanoid';
 import { ReqSign } from '../../decorator/req_sign.decorator.js';
+import { ReqLimit } from '../../decorator/req_limit.decorator.js';
 
 @Controller('/api')
 export class UserController {
@@ -66,9 +67,18 @@ export class UserController {
     const blockedKey = `sms:blocked:${params.phone}`;
     const countKey = `sms:count:${params.phone}`;
     const sendKey = `sms:send:${params.phone}`
+    const dayLimitKey = `sms:dailySend:${params.phone}`
     const isBlock = await this.cache.get(blockedKey);
     const phoneCallCount: number = await this.cache.get(countKey) || 0;
     const isSend = await this.cache.get(sendKey);
+    const dailySendCount: number = await this.cache.get(dayLimitKey);
+
+    if (dailySendCount > 3) {
+      this.cache.set(dayLimitKey, dailySendCount + 1, 1000 * 60 * 60 * 12);
+      return throwError(4006, '短信验证码调用过于频繁')
+    }
+
+
     if (isBlock && phoneCallCount > 10) {
       this.cache.set(blockedKey, true, 48 * 60 * 60 * 1000); // 封禁48小时
     }
@@ -93,6 +103,7 @@ export class UserController {
    * 获取图形验证码
    */
   @ReqSign()
+  @ReqLimit({ ttl: 1000 * 60, max: 10, limitBy: 'ip' })
   @Get('/security/captcha')
   @SetHeader('content-type', 'image/svg+xml')
   async getSVGCaptcha(@Query() params: SvgCaptchaDto) {
@@ -109,6 +120,7 @@ export class UserController {
    * 手机号用户注册
    */
   @ReqSign()
+  @ReqLimit({ ttl: 1000 * 60 * 60, max: 30, limitBy: 'ip' })
   @Post('/security/register')
   async registerByPhone(@Body() params: RegisterByPhoneDto) {
     const data = await this.userService.registerByPhone(params);
@@ -118,6 +130,7 @@ export class UserController {
    * 根据账号密码登录
    */
   @ReqSign()
+  @ReqLimit({ ttl: 1000 * 60 * 60, max: 5, limitBy: 'ip' })
   @Post('/security/login_password')
   async loginByPassword(@Body() params: LoginByPasswordDto, @Query() query: Record<string, string>) {
     const data = await this.userService.loginByPassword(params);
@@ -126,6 +139,8 @@ export class UserController {
   /**
    * 根据手机号码登录
    */
+  @ReqSign()
+  @ReqLimit({ ttl: 1000 * 60 * 60, max: 5, limitBy: 'ip' })
   @Post('/security/login_phone')
   async loginByPhone(@Body() params: LoginByPhoneDto) {
     const data = await this.userService.loginByPhone(params);
