@@ -63,6 +63,29 @@ export class UserController {
     if (captcha.toLowerCase() !== params.captcha.toLowerCase()) {
       return throwError(4005, '图形验证码错误')
     }
+    const blockedKey = `sms:blocked:${params.phone}`;
+    const countKey = `sms:count:${params.phone}`;
+    const sendKey = `sms:send:${params.phone}`
+    const isBlock = await this.cache.get(blockedKey);
+    const phoneCallCount: number = await this.cache.get(countKey) || 0;
+    const isSend = await this.cache.get(sendKey);
+    if (isBlock && phoneCallCount > 10) {
+      this.cache.set(blockedKey, true, 48 * 60 * 60 * 1000); // 封禁48小时
+    }
+    if (isBlock) {
+      this.cache.set(countKey, phoneCallCount + 1, 1000 * 60 * 5);
+      return throwError(4006, '短信验证码调用过于频繁')
+    }
+    if (phoneCallCount > 2) { //五分钟内调用超过2次，封禁12小时
+      this.cache.set(blockedKey, true, 12 * 60 * 60 * 1000); // 12小时
+      this.cache.set(countKey, phoneCallCount + 1, 1000 * 60 * 5);
+      return throwError(4006, '短信验证码调用过于频繁')
+    } 
+    this.cache.set(countKey, phoneCallCount + 1, 1000 * 60 * 5);
+    if (isSend) {
+      return throwError(4006, '短信验证码调用过于频繁')
+    }
+    this.cache.set(sendKey, true, 1000 * 60 * 1);
     const data = await this.userService.getSMSCode(params);
     return data;
   }
@@ -85,6 +108,7 @@ export class UserController {
   /**
    * 手机号用户注册
    */
+  @ReqSign()
   @Post('/security/register')
   async registerByPhone(@Body() params: RegisterByPhoneDto) {
     const data = await this.userService.registerByPhone(params);
