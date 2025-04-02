@@ -12,6 +12,7 @@ import {
   LoginByPasswordDto,
   LoginByPhoneDto,
   RegisterByPhoneDto,
+  ResetPasswordByAdminDto,
   ResetPasswordDto,
   SMSDto,
   StarProjectDto,
@@ -126,16 +127,15 @@ export class UserService {
     }
     const hasUser = await this.userModel.findOne({ loginName });
     const hasPhone = await this.userModel.findOne({ phone });
-    //用户不存在提示验证码错误
     if (hasUser) {
-      return throwError(1003, '验证码不正确');
+      return throwError(1003, '用户已存在');
     }
     if (hasPhone) {
-      return throwError(1003, '验证码不正确');
+      return throwError(1003, '用户已存在');
     }
 
     const userInfo: Partial<User> = {};
-    const hash = createHash('md5');
+    const hash = createHash('sha256');
     const salt = getRandomNumber(10000, 9999999).toString();
     hash.update((password + salt).slice(2));
     const hashPassword = hash.digest('hex');
@@ -177,7 +177,7 @@ export class UserService {
       return throwError(2008, '用户被禁止登录，管理员可以启用当前用户');
     }
     //判断密码
-    const hash = createHash('md5');
+    const hash = createHash('sha256');
     hash.update((password + userInfo.salt).slice(2));
     const hashPassword = hash.digest('hex');
     if (userInfo.password !== hashPassword) {
@@ -262,14 +262,14 @@ export class UserService {
       return throwError(1007, '密码至少8位，并且必须包含数字和字母');
     }
     const userInfo = await this.userModel.findOne({ _id: id });
-    const hash = createHash('md5');
+    const hash = createHash('sha256');
     hash.update((oldPassword + userInfo.salt).slice(2));
     const hashPassword = hash.digest('hex');
     if (userInfo.password !== hashPassword) {
       return throwError(2009, '原密码错误');
     }
 
-    const newHash = createHash('md5');
+    const newHash = createHash('sha256');
     const newHashPassword = newHash.update((newPassword + userInfo.salt).slice(2)).digest('hex');
     await this.userModel.findByIdAndUpdate({ _id: id }, { $set: { password: newHashPassword }});
   }
@@ -281,13 +281,44 @@ export class UserService {
     const { ids } = params;
     await this.userModel.updateMany({ _id: { $in: ids }}, { $set: { isEnabled: false }});
   }
-
+  /**
+   * 重置密码
+   */
+  async resetPassword(params: ResetPasswordDto) {
+    const { phone, password, smsCode } = params;
+    const smsInfo = await this.smsModel.findOne({ phone });
+    if (!smsInfo) {
+      return throwError(2003, '验证码不正确');
+    }
+    const updateTimestamps = new Date(smsInfo.updatedAt).getTime();
+    const isExpire = Date.now() - updateTimestamps > this.smsConfig.maxAge;
+    if (isExpire) {
+      return throwError(2002, '验证码失效');
+    }
+    if (smsInfo.smsCode !== smsCode) {
+      return throwError(2003, '验证码不正确');
+    }
+    //注册手机号与接受验证码手机号不一致
+    if (phone !== smsInfo.phone) {
+      return throwError(2001, '注册手机号与接受验证码手机号不一致');
+    }
+    const hasPhone = await this.userModel.findOne({ phone });
+    if (!hasPhone) {
+      return throwError(1003, '手机号不存在');
+    }
+    const hash = createHash('sha256');
+    const salt = getRandomNumber(10000, 9999999).toString();
+    hash.update((password + salt).slice(2));
+    const hashPassword = hash.digest('hex');
+    await this.userModel.updateOne({ phone }, { $set: { salt, password: hashPassword } });
+    return;
+  }
   /**
    * 管理员重置密码
    */
-  async resetPasswordByAdmin(params: ResetPasswordDto) {
+  async resetPasswordByAdmin(params: ResetPasswordByAdminDto) {
     const { userId, password = this.securityConfig.defaultUserPassword } = params;
-    const hash = createHash('md5');
+    const hash = createHash('sha256');
     const salt = getRandomNumber(10000, 9999999).toString();
     hash.update((password + salt).slice(2));
     const hashPassword = hash.digest('hex');
@@ -319,7 +350,7 @@ export class UserService {
       roleIds: [],
       roleNames: [],
     };
-    const hash = createHash('md5');
+    const hash = createHash('sha256');
     const salt = getRandomNumber(10000, 9999999).toString();
     hash.update((password + salt).slice(2));
     const hashPassword = hash.digest('hex');
@@ -504,7 +535,7 @@ export class UserService {
     const loginName = `guest_${Date.now().toString().slice(-8)}`;
     const password = this.securityConfig.defaultUserPassword;
     const user: Partial<User> = {};
-    const hash = createHash('md5');
+    const hash = createHash('sha256');
     const salt = getRandomNumber(10000, 9999999).toString();
     hash.update((password + salt).slice(2));
     const hashPassword = hash.digest('hex');
@@ -542,7 +573,7 @@ export class UserService {
       const doc: Partial<User> = {};
       const hasUser = await this.userModel.findOne({ $or: [{ loginName }, { phone }] });
       if (!hasUser && loginName && user && realName) {
-        const hash = createHash('md5');
+        const hash = createHash('sha256');
         const salt = getRandomNumber(100000, 999999).toString();
         hash.update((password + salt).slice(2));
         const hashPassword = hash.digest('hex');

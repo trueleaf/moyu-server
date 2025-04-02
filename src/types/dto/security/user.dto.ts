@@ -118,9 +118,29 @@ export class DisableUserDto {
     ids: string[];
 }
 /**
- * 管理员重置密码
+ * 重置密码
  */
 export class ResetPasswordDto {
+  /**
+   * 手机号
+   */
+  @Rule(RuleType.string().required())
+    phone: string;
+  /**
+   * 短信验证码
+   */
+  @Rule(RuleType.string().required())
+  smsCode: string;
+  /**
+   * 重置后的密码
+   */
+  @Rule(RuleType.string().min(6).required())
+    password: string;
+}
+/**
+ * 管理员重置密码
+ */
+export class ResetPasswordByAdminDto {
   /**
    * 用户id
    */
