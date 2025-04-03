@@ -109,5 +109,6 @@ export type UploadConfig = {
 export type ReqLimit = {
   max: number;
   ttl: number;
-  limitBy?: 'user' | 'ip'
+  limitBy?: 'user' | 'ip',
+  errorMsg?: string
 }
