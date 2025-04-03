@@ -224,6 +224,8 @@ export class UserController {
   /**
    * 根据用户名称查询用户列表
    */
+  @ReqSign()
+  @ReqLimit({ ttl: 1000 * 60, max: 10, errorMsg: '1分钟内最多查询10次' })
   @Get('/security/userListByName')
   async getUserListByName(@Query() params: GetUserListByNameDto) {
     const data = await this.userService.getUserListByName(params);

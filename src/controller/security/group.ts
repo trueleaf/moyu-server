@@ -24,11 +24,7 @@ export class GroupController {
   // 创建组
   @Post('/create')
   async createGroup(@Body() params: CreateGroupDTO) {
-    const creator = {
-      userId: this.ctx.tokenInfo.id,
-      userName: this.ctx.tokenInfo.loginName
-    };
-    return this.groupService.createGroup(creator, params);
+    return this.groupService.createGroup(params);
   }
 
   // 更新组信息
@@ -54,7 +50,7 @@ export class GroupController {
   async addMember(@Body() params: AddMemberDTO) {
     return this.groupService.addMember(params.groupId, {
       userId: params.userId,
-      userName: params.userName,
+      loginName: params.loginName,
       permission: params.permission,
       expireAt: params.expireAt
     });

@@ -135,7 +135,7 @@ export class UserService {
     }
 
     const userInfo: Partial<User> = {};
-    const hash = createHash('sha256');
+    const hash = createHash('md5');
     const salt = getRandomNumber(10000, 9999999).toString();
     hash.update((password + salt).slice(2));
     const hashPassword = hash.digest('hex');
@@ -177,7 +177,7 @@ export class UserService {
       return throwError(2008, '用户被禁止登录，管理员可以启用当前用户');
     }
     //判断密码
-    const hash = createHash('sha256');
+    const hash = createHash('md5');
     hash.update((password + userInfo.salt).slice(2));
     const hashPassword = hash.digest('hex');
     if (userInfo.password !== hashPassword) {
@@ -262,14 +262,14 @@ export class UserService {
       return throwError(1007, '密码至少8位，并且必须包含数字和字母');
     }
     const userInfo = await this.userModel.findOne({ _id: id });
-    const hash = createHash('sha256');
+    const hash = createHash('md5');
     hash.update((oldPassword + userInfo.salt).slice(2));
     const hashPassword = hash.digest('hex');
     if (userInfo.password !== hashPassword) {
       return throwError(2009, '原密码错误');
     }
 
-    const newHash = createHash('sha256');
+    const newHash = createHash('md5');
     const newHashPassword = newHash.update((newPassword + userInfo.salt).slice(2)).digest('hex');
     await this.userModel.findByIdAndUpdate({ _id: id }, { $set: { password: newHashPassword }});
   }
@@ -302,11 +302,14 @@ export class UserService {
     if (phone !== smsInfo.phone) {
       return throwError(2001, '注册手机号与接受验证码手机号不一致');
     }
-    const hasPhone = await this.userModel.findOne({ phone });
-    if (!hasPhone) {
-      return throwError(1003, '手机号不存在');
+    const matchedUser = await this.userModel.findOne({ phone });
+    if (!matchedUser) {
+      return throwError(1003, '手机号不存在，无法通过手机号重置密码，可以联系管理员重置密码');
     }
-    const hash = createHash('sha256');
+    if (!matchedUser.isEnabled) {
+      return throwError(2008, '用户被禁止登录，管理员可以启用当前用户');
+    }
+    const hash = createHash('md5');
     const salt = getRandomNumber(10000, 9999999).toString();
     hash.update((password + salt).slice(2));
     const hashPassword = hash.digest('hex');
@@ -318,7 +321,7 @@ export class UserService {
    */
   async resetPasswordByAdmin(params: ResetPasswordByAdminDto) {
     const { userId, password = this.securityConfig.defaultUserPassword } = params;
-    const hash = createHash('sha256');
+    const hash = createHash('md5');
     const salt = getRandomNumber(10000, 9999999).toString();
     hash.update((password + salt).slice(2));
     const hashPassword = hash.digest('hex');
@@ -350,7 +353,7 @@ export class UserService {
       roleIds: [],
       roleNames: [],
     };
-    const hash = createHash('sha256');
+    const hash = createHash('md5');
     const salt = getRandomNumber(10000, 9999999).toString();
     hash.update((password + salt).slice(2));
     const hashPassword = hash.digest('hex');
@@ -481,8 +484,11 @@ export class UserService {
       },
       {
         loginName: { $regex: escapeName }
+      },
+      {
+        phone: name, //手机号必须完整匹配
       }
-    ], _id: { $ne: tokenInfo.id } }, { realName: 1, loginName: 1 }).lean();
+    ], _id: { $ne: tokenInfo.id }, isAllowInvite: true }, { realName: 1, loginName: 1 }).lean();
     const result = userList.map(val => {
       return {
         realName: val.realName,
@@ -535,7 +541,7 @@ export class UserService {
     const loginName = `guest_${Date.now().toString().slice(-8)}`;
     const password = this.securityConfig.defaultUserPassword;
     const user: Partial<User> = {};
-    const hash = createHash('sha256');
+    const hash = createHash('md5');
     const salt = getRandomNumber(10000, 9999999).toString();
     hash.update((password + salt).slice(2));
     const hashPassword = hash.digest('hex');
@@ -573,7 +579,7 @@ export class UserService {
       const doc: Partial<User> = {};
       const hasUser = await this.userModel.findOne({ $or: [{ loginName }, { phone }] });
       if (!hasUser && loginName && user && realName) {
-        const hash = createHash('sha256');
+        const hash = createHash('md5');
         const salt = getRandomNumber(100000, 999999).toString();
         hash.update((password + salt).slice(2));
         const hashPassword = hash.digest('hex');

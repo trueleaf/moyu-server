@@ -4,6 +4,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { throwError } from '../../utils/utils.js';
 import { LoginTokenInfo } from '../../types/types.js';
+import { CreateGroupDTO } from '../../types/dto/security/group.dto.js';
 
 @Provide()
 export class GroupService {
@@ -32,25 +33,27 @@ export class GroupService {
     }
   }
   // 创建组
-  async createGroup(creator: { userId: string; userName: string }, params: {
-    groupName: string;
-    description?: string;
-  }) {
-    if (await this.groupModel.findOne({ groupName: params.groupName })) {
+  async createGroup(params: CreateGroupDTO) {
+    const creator = {
+      userId: this.ctx.tokenInfo.id,
+      userName: this.ctx.tokenInfo.loginName
+    };
+    const { groupName, description, members } = params;
+    if (await this.groupModel.findOne({ groupName })) {
       throwError(1003, '组名称已存在');
     }
     const newGroup = new Group();
-    newGroup.groupName = params.groupName;
-    newGroup.description = params.description;
+    newGroup.groupName = groupName;
+    newGroup.description = description;
     newGroup.creator = {
       userId: creator.userId,
       userName: creator.userName
     };
     newGroup.members = [{
       userId: creator.userId,
-      userName: creator.userName,
+      loginName: creator.userName,
       permission: 'admin' // 创建者默认拥有admin权限
-    }];
+    }, ...members];
     await this.groupModel.create(newGroup);
     return
   }
@@ -96,8 +99,13 @@ export class GroupService {
   }) {
     const pageNum = query.pageNum || 1;
     const pageSize = query.pageSize || 10;
+    const userId = this.ctx.tokenInfo.id;
     //分页查找
-    const rows = await this.groupModel.find({ isEnabled: true }, { groupName: 1, description: 1, creator: 1, members: 1 })
+    const rows = await this.groupModel.find({ isEnabled: true, members: {
+      $elemMatch: {
+        userId
+      }
+    } }, { groupName: 1, description: 1, creator: 1, members: 1 })
       .skip((pageNum - 1) * pageSize)
       .limit(pageSize)
       .sort({ createdAt: -1 });
@@ -111,7 +119,7 @@ export class GroupService {
   // 添加组成员
   async addMember(groupId: string, member: {
     userId: string;
-    userName: string;
+    loginName: string;
     permission: 'readOnly' | 'readAndWrite' | 'admin';
     expireAt?: Date;
   }) {

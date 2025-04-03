@@ -13,7 +13,7 @@ class Member {
   userId: string;
 
   @prop({ required: true })
-  userName: string;
+  loginName: string;
 
   //管理员无法过期
   @prop({

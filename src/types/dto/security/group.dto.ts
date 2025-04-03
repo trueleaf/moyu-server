@@ -1,4 +1,26 @@
-import { Rule, RuleType } from '@midwayjs/validate';
+import { getSchema, Rule, RuleType } from '@midwayjs/validate';
+
+class Member {
+  @Rule(RuleType.string().required().error(new Error('用户ID不能为空')))
+  userId: string;
+
+  @Rule(RuleType.string().required().error(new Error('用户名不能为空')))
+  loginName: string;
+
+  @Rule(RuleType.string().empty(''))
+  realName: string;
+  
+  @Rule(
+    RuleType.string()
+      .valid('readOnly', 'readAndWrite', 'admin')
+      .required()
+      .error(new Error('权限类型不合法，只允许readOnly、readAndWrite、admin'))
+  )
+  permission: 'readOnly' | 'readAndWrite' | 'admin';
+
+  @Rule(RuleType.date().min(new Date()).optional().error(new Error('过期时间需为未来时间')))
+  expireAt?: Date;
+}
 
 // 创建组 DTO
 export class CreateGroupDTO {
@@ -7,6 +29,10 @@ export class CreateGroupDTO {
 
   @Rule(RuleType.string().max(255).error(new Error('描述不超过255字符')))
   description?: string;
+
+  @Rule(RuleType.array().items(getSchema(Member)))
+  members?: Member[];
+
 }
 
 // 更新组 DTO
@@ -42,7 +68,7 @@ export class AddMemberDTO {
   userId: string;
 
   @Rule(RuleType.string().required().error(new Error('用户名不能为空')))
-  userName: string;
+  loginName: string;
 
   @Rule(
     RuleType.string()
