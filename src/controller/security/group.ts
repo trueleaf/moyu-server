@@ -4,7 +4,6 @@ import { Context } from '@midwayjs/koa';
 import {
   CreateGroupDTO,
   UpdateGroupDTO,
-  PaginationDTO,
   AddMemberDTO,
   RemoveMemberDTO,
   UpdatePermissionDTO,
@@ -41,8 +40,8 @@ export class GroupController {
 
   // 分页查询组列表
   @Get('/list')
-  async getGroupList(@Query() query: PaginationDTO) {
-    return this.groupService.getGroupList(query);
+  async getGroupList() {
+    return this.groupService.getGroupList();
   }
 
   // 添加组成员

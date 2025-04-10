@@ -9,7 +9,7 @@ class Member {
 
   @Rule(RuleType.string().empty(''))
   realName: string;
-  
+
   @Rule(
     RuleType.string()
       .valid('readOnly', 'readAndWrite', 'admin')
@@ -51,13 +51,13 @@ export class UpdateGroupDTO {
 }
 
 // 分页查询 DTO
-export class PaginationDTO {
-  @Rule(RuleType.number().min(1).default(1).error(new Error('页码需大于0')))
-  pageNum?: number;
+// export class PaginationDTO {
+//   @Rule(RuleType.number().min(1).default(1).error(new Error('页码需大于0')))
+//   pageNum?: number;
 
-  @Rule(RuleType.number().min(1).max(100).default(10).error(new Error('每页数量1-100')))
-  pageSize?: number;
-}
+//   @Rule(RuleType.number().min(1).max(100).default(10).error(new Error('每页数量1-100')))
+//   pageSize?: number;
+// }
 
 // 添加成员 DTO
 export class AddMemberDTO {

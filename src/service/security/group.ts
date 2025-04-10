@@ -93,27 +93,15 @@ export class GroupService {
   }
 
   // 分页查询组列表
-  async getGroupList(query: {
-    pageNum?: number;
-    pageSize?: number;
-  }) {
-    const pageNum = query.pageNum || 1;
-    const pageSize = query.pageSize || 10;
+  async getGroupList() {
     const userId = this.ctx.tokenInfo.id;
     //分页查找
-    const rows = await this.groupModel.find({ isEnabled: true, members: {
+    const result = await this.groupModel.find({ isEnabled: true, members: {
       $elemMatch: {
         userId
       }
-    } }, { groupName: 1, description: 1, creator: 1, members: 1 })
-      .skip((pageNum - 1) * pageSize)
-      .limit(pageSize)
-      .sort({ createdAt: -1 });
-    const total =  await this.groupModel.countDocuments({ isEnabled: true });
-    return {
-      rows,
-      total
-    };
+    } }, { groupName: 1, description: 1, creator: 1, members: 1 }).sort({ createdAt: -1 });
+    return result;
   }
 
   // 添加组成员
