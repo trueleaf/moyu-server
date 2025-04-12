@@ -27,7 +27,7 @@ export class CreateGroupDTO {
   @Rule(RuleType.string().required().max(50).error(new Error('组名称不能为空且不超过50字符')))
   groupName: string;
 
-  @Rule(RuleType.string().max(255).error(new Error('描述不超过255字符')))
+  @Rule(RuleType.string().max(255).allow('').error(new Error('描述不超过255字符')))
   description?: string;
 
   @Rule(RuleType.array().items(getSchema(Member)))
