@@ -150,19 +150,24 @@ export class GroupService {
 
   // 更新成员权限
   async updateMemberPermission(groupId: string, userId: string, permission: 'readOnly' | 'readAndWrite' | 'admin') {
+    const operatorId = this.ctx.tokenInfo.id;
     const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true });
-    const member = group.members.find(m => m.userId === userId);
-    if (!member) throw new Error('成员不存在');
-    
-    // 检查是否最后一个管理员
-    if (member.permission === 'admin' && permission !== 'admin') {
-      const adminCount = group.members.filter(m => 
-        m.permission === 'admin'
-      ).length;
-      if (adminCount <= 1) throw new Error('组内必须至少保留一个管理员');
+    const targetUser = group.members.find(m => m.userId === userId);
+    const operator = group.members.find(m => m.userId === operatorId);
+    if (!operator || operator.permission !== 'admin') {
+      throwError(1009, '暂无操作权限')
     }
-    
-    member.permission = permission;
+    if (!targetUser) {
+      throwError(1010, '被操作成员不存在')
+    }
+    // 检查是否最后一个管理员
+    const adminCount = group.members.filter(m => 
+      m.permission === 'admin'
+    ).length;
+    if (adminCount <= 1 && permission !== 'admin') {
+      throwError(1008,'组内必须至少保留一个管理员');
+    }
+    targetUser.permission = permission;
     return group.save();
   }
 }
