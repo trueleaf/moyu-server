@@ -164,7 +164,8 @@ export class GroupService {
     const adminCount = group.members.filter(m => 
       m.permission === 'admin'
     ).length;
-    if (adminCount <= 1 && permission !== 'admin') {
+    const targetUserIsOperator = operatorId === userId;
+    if (adminCount <= 1 && targetUserIsOperator && permission !== 'admin') {
       throwError(1008,'组内必须至少保留一个管理员');
     }
     targetUser.permission = permission;
