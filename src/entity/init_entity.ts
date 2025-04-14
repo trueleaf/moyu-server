@@ -674,6 +674,14 @@ const INITIAL_SERVER_ROUTES = [
     path: '/api/security/userListByName',
   },
   {
+    _id: '5ef085889b54825e2c9dc8d1',
+    groupName: '权限相关-用户管理',
+    method: 'get',
+    name: '根据名称|手机号|组名查询列表',
+    path: '/api/security/userOrGroupListByName',
+  },
+  
+  {
     _id: '5ef2fd16e06c4e3120525a53',
     groupName: 'api文档-项目相关',
     method: 'get',
@@ -1182,6 +1190,7 @@ const INITIAL_ROLE = [
       '5f1e45053e2abf46ec9956e6',
       '5f1e85a991093c38a013c312',
       '5f28f5ca7a979a258c4815e0',
+      '5ef085889b54825e2c9dc8d1',
       '5ef085889b54825e2c9dc8d0',
       '5f3cf70419d6a04bc0f58ccc',
       '5f4e001ba7d77849dc3928af',
@@ -1309,6 +1318,7 @@ const INITIAL_ROLE = [
       '5f1e45053e2abf46ec9956e6',
       '5f1e85a991093c38a013c312',
       '5f28f5ca7a979a258c4815e0',
+      '5ef085889b54825e2c9dc8d1',
       '5ef085889b54825e2c9dc8d0',
       '5f3cf70419d6a04bc0f58ccc',
       '5f4e001ba7d77849dc3928af',
