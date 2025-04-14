@@ -1,10 +1,10 @@
 import { Inject, Controller, Get, Query, Body, Post, Del, Put } from '@midwayjs/core';
 import { 
   AddProjectDto, 
-  AddUserToProjectDto, 
-  ChangeUserPermissionInProjectDto, 
+  AddMemberToProjectDto, 
+  ChangeMemberPermissionInProjectDto, 
   DeleteProjectDto, 
-  DeleteUserFromProjectDto, 
+  DeleteMemberFromProjectDto, 
   EditProjectDto, 
   FilterProjectDto, 
   GetProjectByKeywordDto, 
@@ -32,24 +32,24 @@ export class ProjectController {
    * 给项目添加用户
    */
   @Post('/project/add_user')
-  async addUserToProject(@Body() params: AddUserToProjectDto) {
-    const data = await this.projectService.addUserToProject(params);
+  async addMemberToProject(@Body() params: AddMemberToProjectDto) {
+    const data = await this.projectService.addMemberToProject(params);
     return data;
   }
   /**
    * 从项目中删除用户
    */
   @Del('/project/delete_user')
-  async deleteUserFromProject(@Body() params: DeleteUserFromProjectDto) {
-    const data = await this.projectService.deleteUserFromProject(params);
+  async deleteMemberFromProject(@Body() params: DeleteMemberFromProjectDto) {
+    const data = await this.projectService.deleteMemberFromProject(params);
     return data;
   }
   /**
    * 改变用户在项目中的权限
    */
   @Put('/project/change_permission')
-  async changeUserPermissionInProject(@Body() params: ChangeUserPermissionInProjectDto) {
-    const data = await this.projectService.changeUserPermissionInProject(params);
+  async changeMemberPermissionInProject(@Body() params: ChangeMemberPermissionInProjectDto) {
+    const data = await this.projectService.changeMemberPermissionInProject(params);
     return data;
   }
   /**
