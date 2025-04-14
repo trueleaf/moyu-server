@@ -5,6 +5,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { Project } from '../../entity/project/project.js';
 import { LoginTokenInfo } from '../../types/types.js';
 import { throwError } from '../../utils/utils.js';
+import { Group } from '../../entity/security/group.js';
 const ReadOnlyUrl = [
   {
     url: '/api/project/project_list',
@@ -127,9 +128,11 @@ export class CommonController {
 
   @InjectEntityModel(Project)
   private projectModel: ReturnModelType<typeof Project>;
+  @InjectEntityModel(Group)
+  private groupModel: ReturnModelType<typeof Group>;
+
 
   async checkDocOperationPermissions(projectId: string) {
-    const userInfo = this.ctx.tokenInfo;
     const method = this.ctx.request.method.toLowerCase();
     const URL = this.ctx.request.URL;
     const projectInfo = await this.projectModel.findById({ _id: projectId });
@@ -137,22 +140,47 @@ export class CommonController {
       //项目不存在
       return throwError(4002, '暂无当前项目权限');
     }
-    const accessUsers = projectInfo.members; //不是当前项目成员
-    const currentUserPermission = accessUsers.find(
-      user => user.userId === userInfo.id
-    );
+
+    const matchedProject = await this.projectModel.findOne({ _id: projectId }).lean();
+    if (!matchedProject) {
+      return throwError(1011, '项目不存在')
+    }
+    const members = matchedProject.members;
+    const userMembers = members.filter(v => v.type === 'user');
+    const groupIds = members.filter(v => v.type === 'group').map(v => v.id);
+    const matchedGroups = await this.groupModel.find({ _id: { $in: groupIds } }, { members: 1 }).lean();
+    matchedGroups.forEach(group => {
+      group.members.forEach(groupMember => {
+        userMembers.push({
+          name: groupMember.loginName,
+          id: groupMember.userId,
+          type: 'user',
+          permission: groupMember.permission
+        });
+      })
+    })
+    const matchedUsers = userMembers.filter(v => v.id === this.ctx.tokenInfo.id);
+    if (matchedUsers.length === 0) {
+      return throwError(1012, '暂无操作权限')
+    }
+    let permission: 'readOnly' | 'admin' | 'readAndWrite' = 'readOnly';
+    //取最大权限
+    for(let i = 0; i < matchedUsers.length; i++) {
+      if (matchedUsers[i].permission === 'admin') {
+        permission = 'admin';
+        break;
+      } else if (matchedUsers[i].permission === 'readAndWrite') {
+        permission = 'readAndWrite';
+        break;
+      }
+    }
     //如果用户为只读用户，那么限制用户对于文档操作，只有白名单里面接口允许用户操作
     const accessableReadonlyUrl = ReadOnlyUrl.find(
       urlInfo =>
         urlInfo.method === method && URL.pathname.startsWith(urlInfo.url)
     );
-    if (!currentUserPermission) {
-      return throwError(4002, '暂无当前项目权限');
-    } else if (
-      currentUserPermission.permission === 'readOnly' &&
-      !accessableReadonlyUrl
-    ) {
-      return throwError(4002, '只读用户不允许当前操作');
+   if (permission === 'readOnly' && !accessableReadonlyUrl) {
+      return throwError(1012, '只读用户不允许当前操作');
     }
   }
 }
