@@ -23,7 +23,7 @@ class Member {
       return date;
     }
   })
-  expireAt?: Date; 
+  expireAt?: Date;
   /**
    * 权限
    */
@@ -50,12 +50,17 @@ export class Group extends Timestamps {
    * 组成员
    */
   @prop({ type: () => [Member] })
-  members: Member[]; 
+  public members: Member[];
   /**
    * 创建者
    */
   @prop({ required: true })
-  creator: UserInfo; // 创建者
+  public creator: UserInfo; // 创建者
+  /**
+ * 修改者
+ */
+  @prop({ required: true })
+  public updator: UserInfo; // 修改者
   /**
    * 是否启用
    */

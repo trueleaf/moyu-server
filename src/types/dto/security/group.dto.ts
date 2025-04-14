@@ -38,16 +38,17 @@ export class CreateGroupDTO {
 // 更新组 DTO
 export class UpdateGroupDTO {
   @Rule(RuleType.string().required().error(new Error('组ID不能为空')))
-  id: string;
+  _id: string;
 
-  @Rule(RuleType.string().max(50).optional().error(new Error('组名称不超过50字符')))
+  @Rule(RuleType.string().max(50).optional().error(new Error('组名称不能为空并且不超过50字符')))
   groupName?: string;
 
-  @Rule(RuleType.string().max(200).optional().error(new Error('描述不超过200字符')))
+  @Rule(RuleType.string().max(255).allow('').optional().error(new Error('描述不超过200字符')))
   description?: string;
 
   @Rule(RuleType.boolean().optional().error(new Error('启用状态需为布尔值')))
   isEnabled?: boolean;
+  
 }
 
 // 分页查询 DTO

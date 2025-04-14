@@ -4,7 +4,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { throwError } from '../../utils/utils.js';
 import { LoginTokenInfo } from '../../types/types.js';
-import { CreateGroupDTO } from '../../types/dto/security/group.dto.js';
+import { CreateGroupDTO, UpdateGroupDTO } from '../../types/dto/security/group.dto.js';
 
 @Provide()
 export class GroupService {
@@ -49,6 +49,10 @@ export class GroupService {
       userId: creator.userId,
       userName: creator.userName
     };
+    newGroup.updator = {
+      userId: creator.userId,
+      userName: creator.userName
+    };
     newGroup.members = [{
       userId: creator.userId,
       loginName: creator.userName,
@@ -59,27 +63,28 @@ export class GroupService {
   }
 
   // 更新组信息
-  async updateGroup(id: string, params: {
-    groupName?: string;
-    description?: string;
-    isEnabled?: boolean;
-  }) {
+  async updateGroup(params: UpdateGroupDTO) {
+    const { _id, groupName, description, isEnabled } = params;
+    const updator = {
+      userId: this.ctx.tokenInfo.id,
+      userName: this.ctx.tokenInfo.loginName
+    };
     // 获取组信息
-    const group = await this.groupModel.findOne({ _id: id, isEnabled: true });
+    const group = await this.groupModel.findOne({ _id, isEnabled: true });
     if (!group) {
       throwError(1003, '组不存在');
     };
     // 权限校验
     await this.checkGroupAdminPermission(group, this.ctx.tokenInfo.id);
     // 组名校验
-    await this.validateGroupNameUnique(params.groupName, id);
+    await this.validateGroupNameUnique(groupName, _id);
     // 更新字段
     const updateObj: Partial<Group> = {}
-    if (params.groupName) updateObj.groupName = params.groupName;
-    if (params.description !== undefined) updateObj.description = params.description;
-    if (params.isEnabled !== undefined) updateObj.isEnabled = params.isEnabled;
-
-    return await this.groupModel.findByIdAndUpdate({ _id: id }, updateObj);
+    if (groupName) updateObj.groupName = groupName;
+    if (description !== undefined) updateObj.description = description;
+    if (isEnabled !== undefined) updateObj.isEnabled = isEnabled;
+    updateObj.updator = updator;
+    return await this.groupModel.findByIdAndUpdate({ _id }, updateObj);
   }
 
   // 获取组详情
@@ -100,7 +105,7 @@ export class GroupService {
       $elemMatch: {
         userId
       }
-    } }, { groupName: 1, description: 1, creator: 1, members: 1 }).sort({ createdAt: -1 });
+    } }, { groupName: 1, description: 1, creator: 1, updator: 1, members: 1, createdAt: 1, updatedAt: 1 }).sort({ updatedAt: -1 });
     return result;
   }
 
@@ -111,6 +116,10 @@ export class GroupService {
     permission: 'readOnly' | 'readAndWrite' | 'admin';
     expireAt?: Date;
   }) {
+    const updator = {
+      userId: this.ctx.tokenInfo.id,
+      userName: this.ctx.tokenInfo.loginName
+    };
     const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true });
     if (!group) {
       throwError(1003, '组不存在');
@@ -121,6 +130,7 @@ export class GroupService {
       throwError(1003, '用户已存在组内');
     }
     group.members.push(member);
+    group.updator = updator;
     await this.groupModel.create(group);
     return 
   }
@@ -128,6 +138,10 @@ export class GroupService {
   // 移除组成员
   async removeMember(groupId: string, userId: string) {
     const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true });
+    const updator = {
+      userId: this.ctx.tokenInfo.id,
+      userName: this.ctx.tokenInfo.loginName
+    };
     if (!group) {
       throwError(1003, '组不存在');
     };
@@ -145,11 +159,16 @@ export class GroupService {
       throwError(1003, '用户不在组中');
     };
     group.members.splice(index, 1);
+    group.updator = updator;
     return await this.groupModel.create(group);
   }
 
   // 更新成员权限
   async updateMemberPermission(groupId: string, userId: string, permission: 'readOnly' | 'readAndWrite' | 'admin') {
+    const updator = {
+      userId: this.ctx.tokenInfo.id,
+      userName: this.ctx.tokenInfo.loginName
+    };
     const operatorId = this.ctx.tokenInfo.id;
     const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true });
     const targetUser = group.members.find(m => m.userId === userId);
@@ -169,6 +188,7 @@ export class GroupService {
       throwError(1008,'组内必须至少保留一个管理员');
     }
     targetUser.permission = permission;
+    group.updator = updator;
     return group.save();
   }
 }
