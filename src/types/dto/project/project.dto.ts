@@ -16,60 +16,60 @@ export class AddProjectDto {
   @Rule(RuleType.string().empty(''))
     remark: string;
   /**
-   * 用户列表
+   * 成员列表
    */
   @Rule(RuleType.array().items(RuleType.object().keys({
-    userId: RuleType.string(),
-    loginName: RuleType.string(),
-    realName: RuleType.string(),
+    id: RuleType.string(),
+    name: RuleType.string(),
+    type: RuleType.string().valid('user', 'group'),
     permission: RuleType.string().valid('readOnly', 'readAndWrite', 'admin'),
   })))
     members?: {
-      userId: string;
-      loginName: string;
-      realName: string;
+      id: string;
+      name: string;
+      type: "user" | 'group';
       permission: 'readOnly' | 'readAndWrite' | 'admin';
     }[];
 }
 /**
- * 给项目添加用户
+ * 给项目添加成员
  */
-export class AddUserToProjectDto {
+export class AddMemberToProjectDto {
   /**
-   * 用户id
+   * 成员id
    */
   @Rule(RuleType.string().required())
-    userId: string;
+    id: string;
   /**
    * 项目id
    */
   @Rule(RuleType.string().required())
     projectId: string;
   /**
-   * 用户名称
+   * 成员名称
    */
   @Rule(RuleType.string().required())
-    loginName: string;
+    name: string;
   /**
-   * 昵称
+   * 成员类型
    */
-  @Rule(RuleType.string())
-    realName: string;
+  @Rule(RuleType.string().valid('group', 'user'))
+    type: 'group' | 'user';
   /**
    * 用户权限
    */
   @Rule(RuleType.string().valid('readOnly', 'readAndWrite', 'admin'))
-    permission: string;
+    permission?: string;
 }
 /**
  * 从项目中删除用户
  */
-export class DeleteUserFromProjectDto {
+export class DeleteMemberFromProjectDto {
   /**
-   * 用户id
+   * 成员id
    */
   @Rule(RuleType.string().required())
-    userId: string;
+    id: string;
   /**
    * 项目id
    */
@@ -110,12 +110,12 @@ export class EditProjectDto {
 /**
  * 改变用户在项目中的权限
  */
-export class ChangeUserPermissionInProjectDto {
+export class ChangeMemberPermissionInProjectDto {
   /**
    * 用户id
    */
   @Rule(RuleType.string().required())
-    userId: string;
+    id: string;
   /**
    * 项目id
    */

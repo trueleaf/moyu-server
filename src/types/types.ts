@@ -110,5 +110,7 @@ export type ReqLimit = {
   max: number;
   ttl: number;
   limitBy?: 'user' | 'ip',
+  //从requestBody中取某个字段作为额外key，与limitBy共同限制请求频率，例如：limitBy: 'ip', limitExtraKey: 'loginName'，代表一个ip地址一个loginName的请求频率
+  limitExtraKey?: string;
   errorMsg?: string
 }
