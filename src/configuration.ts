@@ -80,11 +80,16 @@ export class ContainerLifeCycle {
     this.decoratorService.registerMethodHandler(REQ_LIMIT_KEY, (options) => {
       return {
         around: async (joinPoint: JoinPoint) => {
-          const { ttl, max, limitBy = 'user', errorMsg } = options.metadata as ReqLimit;
+          const { ttl, max, limitBy = 'user', limitExtraKey, errorMsg } = options.metadata as ReqLimit;
           const instance = joinPoint.target;
           const ctx = instance[REQUEST_OBJ_CTX_KEY] as Context;
-          // console.log('ip', ctx.ip)
-          const limitKey = `reqLimit:${limitBy === 'user' ? ctx.tokenInfo.id : ctx.ip}`;
+          const reqBody = ctx.request.body;
+          let limitKey = '';
+          if (limitBy === 'user') {
+            limitKey = limitExtraKey ? `reqLimit:${reqBody[limitExtraKey]}${ctx.tokenInfo.id}` : `reqLimit:${ctx.tokenInfo.id}`;
+          } else if (limitBy === 'ip') {
+            limitKey = limitExtraKey ? `reqLimit:${reqBody[limitExtraKey]}${ctx.ip}` : `reqLimit:${ctx.ip}`;
+          }
           const reqCount: number = await this.cache.get(limitKey) || 0;
           if (reqCount >= max) {
             return throwError(4029, errorMsg ?? '接口调用过于频繁')
