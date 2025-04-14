@@ -1,8 +1,7 @@
 import { Context, Inject, Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
-import { FilterQuery } from 'mongoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { AddProjectDto, AddUserToProjectDto, ChangeUserPermissionInProjectDto, DeleteProjectDto, DeleteUserFromProjectDto, EditProjectDto, FilterProjectDto, GetProjectByKeywordDto, GetProjectFullInfoByIdDto, GetProjectInfoByIdDto, GetProjectListDto, GetProjectMembersByIdDto } from '../../types/dto/project/project.dto.js';
+import { AddProjectDto, AddMemberToProjectDto, ChangeMemberPermissionInProjectDto, DeleteProjectDto, DeleteMemberFromProjectDto, EditProjectDto, FilterProjectDto, GetProjectByKeywordDto, GetProjectFullInfoByIdDto, GetProjectInfoByIdDto, GetProjectListDto, GetProjectMembersByIdDto } from '../../types/dto/project/project.dto.js';
 import { Project } from '../../entity/project/project.js';
 import { Doc } from '../../entity/doc/doc.js';
 import { LoginTokenInfo } from '../../types/types.js';
@@ -15,6 +14,7 @@ import { DocMindParamsServer } from '../doc/doc_mind_params.js';
 import { DocPrefixServer } from '../doc/doc_prefix.js';
 import { ProjectVariableService } from './project_variable.js';
 import { ProjectRulesService } from './project_rules.js';
+import { Group } from '../../entity/security/group.js';
 
 @Provide()
 export class ProjectService {
@@ -26,6 +26,8 @@ export class ProjectService {
     docModel: ReturnModelType<typeof Doc>;
   @InjectEntityModel(User)
     userModel: ReturnModelType<typeof User>;
+  @InjectEntityModel(Group)
+    groupModel: ReturnModelType<typeof Group>;
   @Inject()
     docMindParamsService: DocMindParamsServer;
   @Inject()
@@ -49,116 +51,96 @@ export class ProjectService {
     projectInfo.members = members;
     //创建者默认为管理员
     projectInfo.members.unshift({
-      loginName: this.ctx.tokenInfo.loginName,
-      realName: this.ctx.tokenInfo.realName,
-      userId: this.ctx.tokenInfo.id,
+      name: this.ctx.tokenInfo.loginName,
+      id: this.ctx.tokenInfo.id,
+      type: 'user',
       permission: 'admin'
     });
     projectInfo.owner = {
       id: this.ctx.tokenInfo.id,
-      name: this.ctx.tokenInfo.realName || this.ctx.tokenInfo.loginName
+      name: this.ctx.tokenInfo.loginName
     };
     const result = await this.projectModel.create(projectInfo);
-    const allUsers = members.map(v => v.userId).concat([this.ctx.tokenInfo.id]);
-    const uniqueUsers = Array.from(new Set(allUsers));
-    await this.projectModel.updateMany({ _id: { $in: uniqueUsers } }, { $push: { couldVisitProjects: result._id.toString() } });
+    const allUsers = members.filter(v => v.type === 'user').map(v => v.id).concat([this.ctx.tokenInfo.id]);
+    const uniqueUserIds = Array.from(new Set(allUsers));
+    await this.userModel.updateMany({ _id: { $in: uniqueUserIds } }, { $push: { couldVisitProjects: result._id.toString() } });
     return result._id;
   }
   /**
-   * 给项目添加用户
+   * 给项目添加成员
    */
-  async addUserToProject(params: AddUserToProjectDto) {
-    const { projectId, loginName, realName, permission, userId } = params;
-    const userInfo = {
-      loginName,
-      realName,
-      userId,
+  async addMemberToProject(params: AddMemberToProjectDto) {
+    const { projectId, name, type, permission, id } = params;
+    const memberInfo = {
+      name,
+      type,
+      id,
       permission,
     };
-    //是否拥有权限
-    const query: FilterQuery<{
-      _id: string;
-      $or: {
-        members: {
-          $elemMatch: {
-            userId: string;
-            permission: 'readOnly' | 'readAndWrite' | 'admin'
-          }
-        }
-      }[]
-    }> = {
-      _id: projectId,
-    };
-    query.$or = [
-      {
-        members: {
-          $elemMatch: {
-            userId: this.ctx.tokenInfo.id,
-            permission: 'admin',
-          }
-        }
-      }
-    ];
-    const hasPermission = await this.projectModel.findOne(query);
-    if (!hasPermission) {
-      return throwError(4002, '角色为管理员才允许修改权限')
+    const matchedProject = await this.projectModel.findOne({ _id: projectId }).lean();
+    if (!matchedProject) {
+      return throwError(1011, '项目不存在')
     }
-    await this.userModel.updateOne({ _id: userId }, { $push: { couldVisitProjects: projectId } });
+    const members = matchedProject.members;
+    const userMembers = members.filter(v => v.type === 'user');
+    const groupIds = members.filter(v => v.type === 'group').map(v => v.id);
+    const matchedGroups = await this.groupModel.find({ _id: { $in: groupIds } }, { members: 1 }).lean();
+    matchedGroups.forEach(group => {
+      group.members.forEach(groupMember => {
+        userMembers.push({
+          name: groupMember.loginName,
+          id: groupMember.userId,
+          type: 'user',
+          permission: groupMember.permission
+        });
+      })
+    })
+    const hasPermission = userMembers.filter(v => v.permission === 'admin' && v.id === this.ctx.tokenInfo.id).length > 0;
+    if (!hasPermission) {
+      return throwError(1012, '角色为管理员才允许修改权限')
+    }
+    await this.userModel.updateOne({ _id: id }, { $push: { couldVisitProjects: projectId } });
     await this.projectModel.findByIdAndUpdate({ _id: projectId }, {
-      $push: { members: userInfo }
+      $push: { members: memberInfo }
     });
   }
   /**
-   * 从项目中删除用户
+   * 从项目中删除成员
    */
-  async deleteUserFromProject(params: DeleteUserFromProjectDto) {
-    const { projectId, userId } = params;
-    const isDeleteSelf = userId === this.ctx.tokenInfo.id;
-    //是否拥有权限
-    const query: FilterQuery<{
-      _id: string;
-      $or: {
-        members: {
-          $elemMatch: {
-            userId: string;
-            permission: 'readOnly' | 'readAndWrite' | 'admin'
-          }
-        }
-      }[]
-    }> = {
-      _id: projectId,
-    };
-    query.$or = [
-      {
-        members: {
-          $elemMatch: {
-            userId: this.ctx.tokenInfo.id,
-            permission: 'admin',
-          }
-        }
-      }
-    ];
-    //是否为admin，只有admin拥有删除权限
-    const hasPermission = await this.projectModel.findOne(query);
-    if (!hasPermission && !isDeleteSelf) {
-      return throwError(4002, '管理员才允许删除用户')
+  async deleteMemberFromProject(params: DeleteMemberFromProjectDto) {
+    const { projectId, id } = params;
+    const isDeleteSelf = this.ctx.tokenInfo.id === id;
+    const matchedProject = await this.projectModel.findOne({ _id: projectId }).lean();
+    if (!matchedProject) {
+      return throwError(1011, '项目不存在')
     }
-    //一个团队至少保留一个管理员
-    const projectInfo = await this.projectModel.findOne({ _id: projectId }, { members: 1 });
-    const members = projectInfo.members;
-    const hasAdmin = members.find((memberInfo) => {
-      if (memberInfo.userId !== userId && memberInfo.permission === 'admin') {
-        return true
-      }
-      return false;
-    });
-    if (!hasAdmin) {
-      return throwError(4002, '一个团队至少保留一个管理员')
+    const members = matchedProject.members;
+    const userMembers = members.filter(v => v.type === 'user');
+    const groupIds = members.filter(v => v.type === 'group').map(v => v.id);
+    const matchedGroups = await this.groupModel.find({ _id: { $in: groupIds } }, { members: 1 }).lean();
+    matchedGroups.forEach(group => {
+      group.members.forEach(groupMember => {
+        userMembers.push({
+          name: groupMember.loginName,
+          id: groupMember.userId,
+          type: 'user',
+          permission: groupMember.permission
+        });
+      })
+    })
+    const hasPermission = userMembers.filter(v => v.permission === 'admin' && v.id === this.ctx.tokenInfo.id).length > 0;
+    const hasAdminUser = (userMembers.filter(v => v.permission === 'admin').length > 1) && isDeleteSelf; //删除自身时候，项目至少保留一个管理员
+
+    if (!hasPermission) {
+      return throwError(1012, '角色为管理员才允许修改权限')
     }
-    await this.userModel.updateOne({ _id: userId }, { $pull: { couldVisitProjects: projectId } });
+    if (!hasAdminUser) {
+      return throwError(1013, '至少保留一个管理员')
+    }
+    await this.userModel.updateOne({ _id: id }, { $pull: { couldVisitProjects: projectId } });
     await this.projectModel.findByIdAndUpdate({ _id: projectId }, {
       $pull: {
-        members: { userId },
+        members: { id },
       }
     });
     return;
@@ -166,52 +148,37 @@ export class ProjectService {
   /**
    * 改变用户在项目中的权限
    */
-  async changeUserPermissionInProject(params: ChangeUserPermissionInProjectDto) {
-    const { projectId, userId, permission } = params;
-    //是否拥有权限
-    const query: FilterQuery<{
-      _id: string;
-      $or: {
-        members: {
-          $elemMatch: {
-            userId: string;
-            permission: 'readOnly' | 'readAndWrite' | 'admin'
-          }
-        }
-      }[]
-    }> = {
-      _id: projectId,
-    };
-    query.$or = [
-      {
-        members: {
-          $elemMatch: {
-            userId: this.ctx.tokenInfo.id,
-            permission: 'admin',
-          }
-        }
-      }
-    ];
-    const hasPermission = await this.projectModel.findOne(query);
+  async changeMemberPermissionInProject(params: ChangeMemberPermissionInProjectDto) {
+    const { projectId, id, permission } = params;
+    const isChangeSelf = this.ctx.tokenInfo.id === id;
+    const matchedProject = await this.projectModel.findOne({ _id: projectId }).lean();
+    if (!matchedProject) {
+      return throwError(1011, '项目不存在')
+    }
+    const members = matchedProject.members;
+    const userMembers = members.filter(v => v.type === 'user');
+    const groupIds = members.filter(v => v.type === 'group').map(v => v.id);
+    const matchedGroups = await this.groupModel.find({ _id: { $in: groupIds } }, { members: 1 }).lean();
+    matchedGroups.forEach(group => {
+      group.members.forEach(groupMember => {
+        userMembers.push({
+          name: groupMember.loginName,
+          id: groupMember.userId,
+          type: 'user',
+          permission: groupMember.permission
+        });
+      })
+    })
+    const hasPermission = userMembers.filter(v => v.permission === 'admin' && v.id === this.ctx.tokenInfo.id).length > 0;
+    const hasAdminUser = (userMembers.filter(v => v.permission === 'admin').length > 1) && isChangeSelf; //改变自身时候，项目至少保留一个管理员
+
     if (!hasPermission) {
-      return throwError(4002, '管理员才允许修改权限')
+      return throwError(1012, '角色为管理员才允许修改权限')
     }
-    //一个团队至少保留一个管理员
-    const projectInfo = await this.projectModel.findOne({ _id: projectId }, { members: 1 });
-    const members = projectInfo.members;
-    const hasAdmin = members.find((memberInfo) => {
-      if (permission === 'admin') {
-        return true;
-      }
-      if (memberInfo.userId !== userId && memberInfo.permission === 'admin') {
-        return true
-      }
-      return false;
-    });
-    if (!hasAdmin) {
-      return throwError(4002, '一个团队至少保留一个管理员')
+    if (!hasAdminUser) {
+      return throwError(1013, '至少保留一个管理员')
     }
-    await this.projectModel.updateOne({ _id: projectId, 'members.userId': userId }, {
+    await this.projectModel.updateOne({ _id: projectId, 'members.userId': id }, {
       $set: { 'members.$.permission': permission }
     });
   }
@@ -220,16 +187,29 @@ export class ProjectService {
    */
   async deleteProject(params: DeleteProjectDto) {
     const { ids } = params;
-    const userInfo = this.ctx.tokenInfo;
     for(let i = 0; i < ids.length; i ++) {
       await this.commonControl.checkDocOperationPermissions(ids[i]);
     }
     const delProjects = await this.projectModel.find({ _id: { $in: ids }}, { members: 1 });
     for (let i = 0; i < delProjects.length; i++) {
       const projectInfo = delProjects[i];
-      const matchedPermissionInfo = projectInfo.members.find(memberInfo => memberInfo.userId === userInfo.id)
-      if (matchedPermissionInfo.permission !== 'admin') {
-        return throwError(4002, '管理员才允许删除项目')
+      const members = projectInfo.members;
+      const userMembers = members.filter(v => v.type === 'user');
+      const groupIds = members.filter(v => v.type === 'group').map(v => v.id);
+      const matchedGroups = await this.groupModel.find({ _id: { $in: groupIds } }, { members: 1 }).lean();
+      matchedGroups.forEach(group => {
+        group.members.forEach(groupMember => {
+          userMembers.push({
+            name: groupMember.loginName,
+            id: groupMember.userId,
+            type: 'user',
+            permission: groupMember.permission
+          });
+        })
+      })
+      const hasPermission = userMembers.filter(v => v.permission === 'admin' && v.id === this.ctx.tokenInfo.id).length > 0;
+      if (!hasPermission) {
+        return throwError(1012, '角色为管理员才允许修改权限')
       }
     }
     const result = await this.projectModel.updateMany(
@@ -240,7 +220,7 @@ export class ProjectService {
     const members: string[] = []
     delProjects.forEach(projectInfo => {
       projectInfo.members.forEach(member => {
-        members.push(member.userId)
+        members.push(member.id)
       })
     })
     await this.userModel.updateMany({ _id: { $in: members } }, { $pull: { couldVisitProjects: { $in: ids } } });
@@ -258,33 +238,27 @@ export class ProjectService {
     if (remark) {
       updateDoc.remark = remark;
     }
-    //是否拥有权限
-    const query: FilterQuery<{
-      _id: string;
-      $or: {
-        members: {
-          $elemMatch: {
-            userId: string;
-            permission: 'readOnly' | 'readAndWrite' | 'admin'
-          }
-        }
-      }[]
-    }> = {
-      _id,
-    };
-    query.$or = [
-      {
-        members: {
-          $elemMatch: {
-            userId: this.ctx.tokenInfo.id,
-            permission: 'admin',
-          }
-        }
-      }
-    ];
-    const hasPermission = await this.projectModel.findOne(query);
+    const matchedProject = await this.projectModel.findOne({ _id }).lean();
+    if (!matchedProject) {
+      return throwError(1011, '项目不存在')
+    }
+    const members = matchedProject.members;
+    const userMembers = members.filter(v => v.type === 'user');
+    const groupIds = members.filter(v => v.type === 'group').map(v => v.id);
+    const matchedGroups = await this.groupModel.find({ _id: { $in: groupIds } }, { members: 1 }).lean();
+    matchedGroups.forEach(group => {
+      group.members.forEach(groupMember => {
+        userMembers.push({
+          name: groupMember.loginName,
+          id: groupMember.userId,
+          type: 'user',
+          permission: groupMember.permission
+        });
+      })
+    })
+    const hasPermission = userMembers.filter(v => v.permission === 'admin' && v.id === this.ctx.tokenInfo.id).length > 0;
     if (!hasPermission) {
-      return throwError(4002, '暂无权限')
+      return throwError(1012, '角色为管理员才允许修改权限')
     }
     await this.projectModel.findByIdAndUpdate({ _id }, updateDoc);
     return;

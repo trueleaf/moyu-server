@@ -24,20 +24,20 @@ class Creator {
 */
 class Member {
   /**
-   * 用户id
+   * 用户id或者组id
    */
   @prop()
-  public userId: string;
+  public id: string;
   /**
-   * 登录名称(冗余字段)
+   * 名称
    */
   @prop()
-  public loginName: string;
+  public name: string;
   /**
-   * 昵称(冗余字段)
+   * 类型
    */
-  @prop()
-  public realName: string;
+  @prop({ enum: ['user', 'group'] })
+  public type: 'user' | 'group';
   /**
    * 权限
    */
