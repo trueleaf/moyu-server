@@ -42,6 +42,7 @@ import { TableResponseWrapper } from '../../types/response/common/common.js';
 import { ClientMenu } from '../../entity/security/client_menu.js';
 import { ClientRoutes } from '../../entity/security/client_routes.js';
 import { Role } from '../../entity/security/role.js';
+import { Group } from '../../entity/security/group.js';
 
 
 @Provide()
@@ -70,6 +71,8 @@ export class UserService {
     clientRoutesModel: ReturnModelType<typeof ClientRoutes>;
   @InjectEntityModel(User)
     userModel: ReturnModelType<typeof User>;
+  @InjectEntityModel(Group)
+    groupModel: ReturnModelType<typeof Group>;
   @InjectEntityModel(LoginRecord)
     loginRecordModel: ReturnModelType<typeof LoginRecord>;
 
@@ -497,6 +500,44 @@ export class UserService {
       };
     });
     return result;
+  }
+  /**
+   * 根据用户名称查询用户列表
+   */
+  async getUserOrGroupListByName(params: GetUserListByNameDto) {
+    const { name } = params;
+    const { tokenInfo } = this.ctx;
+    if (!name) {
+      return [];
+    }
+    const escapeName = new RegExp(lodash.escapeRegExp(name));
+    const userList = await this.userModel.find({ $or: [
+      {
+        realName: { $regex: escapeName },
+      },
+      {
+        loginName: { $regex: escapeName }
+      },
+      {
+        phone: name, //手机号必须完整匹配
+      }
+    ], _id: { $ne: tokenInfo.id }, isAllowInvite: true, isEnabled: true }, { realName: 1, loginName: 1 }).lean();
+    const groupList = await this.groupModel.find({ groupName: { $regex: escapeName }, isEnabled: true }, { groupName: 1, }).lean();
+    const validUserList = userList.map(val => {
+      return {
+        name: val.loginName || val.realName,
+        type: "user",
+        id: val._id,
+      };
+    });
+    const validGroupList = groupList.map(val => {
+      return {
+        name: val.groupName,
+        type: "group",
+        id: val._id,
+      };
+    })
+    return validUserList.concat(validGroupList);
   }
   /**
    * 改变用户权限，手机号，登录名称，昵称

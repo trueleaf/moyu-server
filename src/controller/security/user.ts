@@ -131,9 +131,9 @@ export class UserController {
    * 根据账号密码登录
    */
   @ReqSign()
-  @ReqLimit({ ttl: 1000 * 60 * 60, max: 5, limitBy: 'ip' })
+  @ReqLimit({ ttl: 1000 * 60 * 60, max: 10, limitBy: 'ip', limitExtraKey: 'loginName' })
   @Post('/security/login_password')
-  async loginByPassword(@Body() params: LoginByPasswordDto, @Query() query: Record<string, string>) {
+  async loginByPassword(@Body() params: LoginByPasswordDto) {
     const data = await this.userService.loginByPassword(params);
     return data;
   }
@@ -141,7 +141,7 @@ export class UserController {
    * 根据手机号码登录
    */
   @ReqSign()
-  @ReqLimit({ ttl: 1000 * 60 * 60, max: 5, limitBy: 'ip' })
+  @ReqLimit({ ttl: 1000 * 60 * 60, max: 10, limitBy: 'ip', limitExtraKey: 'phone'})
   @Post('/security/login_phone')
   async loginByPhone(@Body() params: LoginByPhoneDto) {
     const data = await this.userService.loginByPhone(params);
@@ -229,6 +229,16 @@ export class UserController {
   @Get('/security/userListByName')
   async getUserListByName(@Query() params: GetUserListByNameDto) {
     const data = await this.userService.getUserListByName(params);
+    return data;
+  }
+  /**
+   * 根据用户名称|手机号|组名查询
+   */
+  @ReqSign()
+  @ReqLimit({ ttl: 1000 * 60, max: 10, errorMsg: '1分钟内最多查询10次' })
+  @Get('/security/userOrGroupListByName')
+  async getUserOrGroupListByName(@Query() params: GetUserListByNameDto) {
+    const data = await this.userService.getUserOrGroupListByName(params);
     return data;
   }
   /**
