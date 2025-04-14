@@ -12,7 +12,7 @@ import {
 import { GroupService } from '../../service/security/group.js';
 import { LoginTokenInfo } from '../../types/types.js';
 
-@Controller('/api/group')
+@Controller('/api')
 export class GroupController {
   @Inject()
   ctx: Context & { tokenInfo: LoginTokenInfo };
@@ -21,31 +21,31 @@ export class GroupController {
   groupService: GroupService;
 
   // 创建组
-  @Post('/create')
+  @Post('/group/create')
   async createGroup(@Body() params: CreateGroupDTO) {
     return this.groupService.createGroup(params);
   }
 
   // 更新组信息
-  @Put('/update')
+  @Put('/group/update')
   async updateGroup(@Body() params: UpdateGroupDTO) {
-    return this.groupService.updateGroup(params.id, params);
+    return this.groupService.updateGroup(params);
   }
 
   // 获取组详情
-  @Get('/detail')
+  @Get('/group/detail')
   async getGroupDetail(@Query() query: GroupDetailDTO) {
     return this.groupService.getGroupById(query.id);
   }
 
   // 分页查询组列表
-  @Get('/list')
+  @Get('/group/list')
   async getGroupList() {
     return this.groupService.getGroupList();
   }
 
   // 添加组成员
-  @Post('/member/add')
+  @Post('/group/member/add')
   async addMember(@Body() params: AddMemberDTO) {
     return this.groupService.addMember(params.groupId, {
       userId: params.userId,
@@ -56,13 +56,13 @@ export class GroupController {
   }
 
   // 移除组成员
-  @Del('/member/remove')
+  @Del('/group/member/remove')
   async removeMember(@Body() params: RemoveMemberDTO) {
     return this.groupService.removeMember(params.groupId, params.userId);
   }
 
   // 更新成员权限
-  @Put('/member/permission')
+  @Put('/group/member/permission')
   async updateMemberPermission(@Body() params: UpdatePermissionDTO) {
     return this.groupService.updateMemberPermission(
       params.groupId,
