@@ -22,28 +22,42 @@ class Creator {
 | 成员信息
 |--------------------------------------------------------------------------
 */
-class Member {
+class UserItem {
   /**
-   * 用户id或者组id
+   * 用户id
    */
   @prop()
-  public id: string;
+  public userId: string;
   /**
-   * 名称
+   * 用户名称
    */
   @prop()
-  public name: string;
-  /**
-   * 类型
-   */
-  @prop({ enum: ['user', 'group'] })
-  public type: 'user' | 'group';
+  public userName: string;
   /**
    * 权限
    */
   @prop({ enum: ['readOnly', 'readAndWrite', 'admin'] })
   public permission: 'readOnly' | 'readAndWrite' | 'admin';
 }
+class GroupItem {
+  /**
+   * 群组id
+   */
+  @prop()
+  public groupId: string;
+  /**
+   * 群组名称
+   */
+  @prop()
+  public groupName: string;
+  /**
+   * 组成员
+   */
+  @prop({ type: () => [UserItem] })
+  public groupUsers: UserItem[];
+}
+
+
 
 @modelOptions({
   schemaOptions: { timestamps: true, collection: 'projects' },
@@ -72,8 +86,15 @@ export class Project extends Timestamps {
   /**
    * 成员信息
    */
-  @prop({type: () => [Member]})
-  public members: Member[];
+  @prop({type: () => [UserItem]})
+  public users: UserItem[];
+
+  /**
+   * 群组信息
+   */
+  @prop({ type: () => [GroupItem] })
+  public groups: GroupItem[];
+
   /**
    * 是否启用
    */

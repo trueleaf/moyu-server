@@ -6,7 +6,6 @@ import {
   DeleteProjectDto, 
   DeleteMemberFromProjectDto, 
   EditProjectDto, 
-  FilterProjectDto, 
   GetProjectByKeywordDto, 
   GetProjectFullInfoByIdDto, 
   GetProjectInfoByIdDto, 
@@ -14,6 +13,7 @@ import {
   GetProjectMembersByIdDto 
 } from '../../types/dto/project/project.dto.js';
 import { ProjectService } from '../../service/project/project.js';
+import { ReqLimit } from '../../decorator/req_limit.decorator.js';
 
 @Controller('/api')
 export class ProjectController {
@@ -29,7 +29,7 @@ export class ProjectController {
     return data;
   }
   /**
-   * 给项目添加用户
+   * 给项目添加成员，用户或者机构
    */
   @Post('/project/add_user')
   async addMemberToProject(@Body() params: AddMemberToProjectDto) {
@@ -110,16 +110,9 @@ export class ProjectController {
     return data;
   }
   /**
-   * 根据项目信息过滤项目
-   */
-  @Get('/project/project_list_by_url')
-  async filterProject(@Query() params: FilterProjectDto) {
-    const data = await this.projectService.filterProject(params);
-    return data;
-  }
-  /**
    * 根据关键字获取项目列表
    */
+  @ReqLimit({ max: 10, ttl: 1000 * 60 * 5, errorMsg: '每五分钟允许调用10次' })
   @Get('/project/project_list_by_keyword')
   async getProjectListByKeyword(@Query() params: GetProjectByKeywordDto) {
     const data = await this.projectService.getProjectListByKeyword(params);
