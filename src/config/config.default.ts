@@ -99,6 +99,7 @@ export default (appInfo: MidwayAppInfo): MidwayConfig => {
     },
     apiflow: {
       defaultRegisterPassword: '111111',
+      projectMaxMembers: 50
     },
     jwtConfig: {
       secretOrPrivateKey: 'apiflow', //私钥
@@ -153,6 +154,6 @@ export default (appInfo: MidwayAppInfo): MidwayConfig => {
     },
     signConfig: {
       ttl: 1000 * 60
-    }
+    },
   }
 };
