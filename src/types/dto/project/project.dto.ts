@@ -19,16 +19,31 @@ export class AddProjectDto {
    * 成员列表
    */
   @Rule(RuleType.array().items(RuleType.object().keys({
-    id: RuleType.string(),
-    name: RuleType.string(),
-    type: RuleType.string().valid('user', 'group'),
+    userId: RuleType.string(),
+    userName: RuleType.string(),
     permission: RuleType.string().valid('readOnly', 'readAndWrite', 'admin'),
   })))
-    members?: {
-      id: string;
-      name: string;
-      type: "user" | 'group';
+    users: {
+      userId: string;
+      userName: string;
       permission: 'readOnly' | 'readAndWrite' | 'admin';
+    }[];
+  /**
+   * 组列表
+   */
+  @Rule(RuleType.array().items(RuleType.object().keys({
+    groupId: RuleType.string(),
+    groupName: RuleType.string(),
+    groupUsers: RuleType.array().items(RuleType.object().keys({
+      userId: RuleType.string(),
+      userName: RuleType.string(),
+      permission: RuleType.string().valid('readOnly', 'readAndWrite', 'admin'),
+    }))
+  })))
+    groups: {
+      groupId: string;
+      groupName: string;
+      groupUsers: []
     }[];
 }
 /**
@@ -59,7 +74,7 @@ export class AddMemberToProjectDto {
    * 用户权限
    */
   @Rule(RuleType.string().valid('readOnly', 'readAndWrite', 'admin'))
-    permission?: string;
+    permission?: 'readOnly' | 'readAndWrite' | 'admin';
 }
 /**
  * 从项目中删除用户
@@ -70,6 +85,11 @@ export class DeleteMemberFromProjectDto {
    */
   @Rule(RuleType.string().required())
     id: string;
+  /**
+   * 成员类型
+   */
+  @Rule(RuleType.string().valid('group', 'user'))
+    memberType: 'group' | 'user';
   /**
    * 项目id
    */
@@ -173,16 +193,6 @@ export class GetProjectMembersByIdDto {
    */
   @Rule(RuleType.string().required())
     _id: string;
-}
-/**
- * 根据项目信息过滤项目
- */
-export class FilterProjectDto {
-  /**
-   * 项目内接口url
-   */
-  @Rule(RuleType.string())
-    url: string;
 }
 /**
  * 根据项目关键字过滤项目

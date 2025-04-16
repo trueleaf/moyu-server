@@ -18,6 +18,10 @@ export type GlobalConfig = {
      * 用户注册默认密码
      */
     defaultRegisterPassword: string;
+    /**
+     * 项目最大成员数量
+     */
+    projectMaxMembers: number;
   };
   //jwt相关配置
   jwtConfig: {
