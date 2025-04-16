@@ -5,13 +5,16 @@ import { InjectEntityModel } from '@midwayjs/typegoose';
 import { throwError } from '../../utils/utils.js';
 import { LoginTokenInfo } from '../../types/types.js';
 import { CreateGroupDTO, UpdateGroupDTO } from '../../types/dto/security/group.dto.js';
+import { Project } from '../../entity/project/project.js';
 
 @Provide()
 export class GroupService {
   @InjectEntityModel(Group)
-    groupModel: ReturnModelType<typeof Group>;
+  groupModel: ReturnModelType<typeof Group>;
+  @InjectEntityModel(Project)
+  projectModel: ReturnModelType<typeof Project>;
   @Inject()
-    ctx: Context & { tokenInfo: LoginTokenInfo };
+  ctx: Context & { tokenInfo: LoginTokenInfo };
 
   // 校验用户是否存在管理员权限
   private async checkGroupAdminPermission(group: Group, userId: string) {
@@ -101,11 +104,13 @@ export class GroupService {
   async getGroupList() {
     const userId = this.ctx.tokenInfo.id;
     //分页查找
-    const result = await this.groupModel.find({ isEnabled: true, members: {
-      $elemMatch: {
-        userId
+    const result = await this.groupModel.find({
+      isEnabled: true, members: {
+        $elemMatch: {
+          userId
+        }
       }
-    } }, { groupName: 1, description: 1, creator: 1, updator: 1, members: 1, createdAt: 1, updatedAt: 1 }).sort({ updatedAt: -1 });
+    }, { groupName: 1, description: 1, creator: 1, updator: 1, members: 1, createdAt: 1, updatedAt: 1 }).sort({ updatedAt: -1 });
     return result;
   }
 
@@ -120,7 +125,7 @@ export class GroupService {
       userId: this.ctx.tokenInfo.id,
       userName: this.ctx.tokenInfo.loginName
     };
-    const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true });
+    const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true }).lean();
     if (!group) {
       throwError(1003, '组不存在');
     };
@@ -129,15 +134,35 @@ export class GroupService {
     if (group.members.some(m => m.userId === member.userId)) {
       throwError(1003, '用户已存在组内');
     }
-    group.members.push(member);
-    group.updator = updator;
-    await this.groupModel.create(group);
-    return 
+    const members = group.members;
+    members.push(member);
+    const session = await this.projectModel.startSession();
+    session.startTransaction();
+    try {
+      await this.projectModel.updateMany(
+        { 'groups.groupId': groupId },
+        {
+          $set: {
+            "groups.$[elem].groupUsers": members
+          }
+        }, {
+        arrayFilters: [{ "elem.groupId": groupId }]
+      })
+      await this.groupModel.findByIdAndUpdate({ _id: groupId }, { members, updator });
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+      console.error(error);
+      throwError(1015, '添加组成员失败')
+    } finally {
+      session.endSession();
+    }
+    return
   }
 
   // 移除组成员
   async removeMember(groupId: string, userId: string) {
-    const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true });
+    const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true }).lean();
     const updator = {
       userId: this.ctx.tokenInfo.id,
       userName: this.ctx.tokenInfo.loginName
@@ -147,7 +172,7 @@ export class GroupService {
     };
     await this.checkGroupAdminPermission(group, this.ctx.tokenInfo.id);
     // 检查是否最后一个管理员
-    const adminCount = group.members.filter(m => 
+    const adminCount = group.members.filter(m =>
       m.permission === 'admin'
     ).length;
     const target = group.members.find(m => m.userId === userId);
@@ -158,9 +183,31 @@ export class GroupService {
     if (index === -1) {
       throwError(1003, '用户不在组中');
     };
-    group.members.splice(index, 1);
-    group.updator = updator;
-    return await this.groupModel.create(group);
+
+    const members = group.members;
+    members.splice(index, 1);
+    const session = await this.projectModel.startSession();
+    session.startTransaction();
+    try {
+      await this.projectModel.updateMany(
+        { 'groups.groupId': groupId },
+        {
+          $set: {
+            "groups.$[elem].groupUsers": members
+          }
+        }, {
+        arrayFilters: [{ "elem.groupId": groupId }]
+      })
+      await this.groupModel.findByIdAndUpdate({ _id: groupId }, { members, updator });
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+      console.error(error);
+      throwError(1015, '添加组成员失败')
+    } finally {
+      session.endSession();
+    }
+    return;
   }
 
   // 更新成员权限
@@ -170,9 +217,10 @@ export class GroupService {
       userName: this.ctx.tokenInfo.loginName
     };
     const operatorId = this.ctx.tokenInfo.id;
-    const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true });
-    const targetUser = group.members.find(m => m.userId === userId);
-    const operator = group.members.find(m => m.userId === operatorId);
+    const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true }).lean();
+    const members = group.members;
+    const targetUser = members.find(m => m.userId === userId);
+    const operator = members.find(m => m.userId === operatorId);
     if (!operator || operator.permission !== 'admin') {
       throwError(1009, '暂无操作权限')
     }
@@ -180,15 +228,35 @@ export class GroupService {
       throwError(1010, '被操作成员不存在')
     }
     // 检查是否最后一个管理员
-    const adminCount = group.members.filter(m => 
+    const adminCount = group.members.filter(m =>
       m.permission === 'admin'
     ).length;
     const targetUserIsOperator = operatorId === userId;
     if (adminCount <= 1 && targetUserIsOperator && permission !== 'admin') {
-      throwError(1008,'组内必须至少保留一个管理员');
+      throwError(1008, '组内必须至少保留一个管理员');
     }
     targetUser.permission = permission;
-    group.updator = updator;
-    return group.save();
+    const session = await this.projectModel.startSession();
+    session.startTransaction();
+    try {
+      await this.projectModel.updateMany(
+        { 'groups.groupId': groupId },
+        {
+          $set: {
+            "groups.$[elem].groupUsers": members
+          }
+        }, {
+        arrayFilters: [{ "elem.groupId": groupId }]
+      })
+      await this.groupModel.findByIdAndUpdate({ _id: groupId }, { members, updator });
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+      console.error(error);
+      throwError(1015, '添加组成员失败')
+    } finally {
+      session.endSession();
+    }
+    return ;
   }
 }
