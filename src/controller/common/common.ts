@@ -5,7 +5,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { Project } from '../../entity/project/project.js';
 import { LoginTokenInfo } from '../../types/types.js';
 import { throwError } from '../../utils/utils.js';
-import { Group } from '../../entity/security/group.js';
+import lodash from 'lodash';
 const ReadOnlyUrl = [
   {
     url: '/api/project/project_list',
@@ -128,44 +128,37 @@ export class CommonController {
 
   @InjectEntityModel(Project)
   private projectModel: ReturnModelType<typeof Project>;
-  @InjectEntityModel(Group)
-  private groupModel: ReturnModelType<typeof Group>;
 
 
   async checkDocOperationPermissions(projectId: string) {
     const method = this.ctx.request.method.toLowerCase();
     const URL = this.ctx.request.URL;
-    const projectInfo = await this.projectModel.findById({ _id: projectId });
-    if (!projectInfo) {
-      //项目不存在
+    const matchedProject = await this.projectModel.findById({ _id: projectId }).lean();
+    if (!matchedProject) {
       return throwError(4002, '暂无当前项目权限');
     }
-
-    const matchedProject = await this.projectModel.findOne({ _id: projectId }).lean();
-    if (!matchedProject) {
-      return throwError(1011, '项目不存在')
-    }
-    const members = matchedProject.members;
-    const userMembers = members.filter(v => v.type === 'user');
-    const groupIds = members.filter(v => v.type === 'group').map(v => v.id);
-    const matchedGroups = await this.groupModel.find({ _id: { $in: groupIds } }, { members: 1 }).lean();
-    matchedGroups.forEach(group => {
-      group.members.forEach(groupMember => {
-        userMembers.push({
-          name: groupMember.loginName,
-          id: groupMember.userId,
-          type: 'user',
-          permission: groupMember.permission
-        });
+    
+    const users = matchedProject.users;
+    const groups = matchedProject.groups;
+    const groupUsers: {
+      userId: string;
+      userName: string;
+      permission: 'admin' | 'readAndWrite' | 'readOnly';
+    }[] = [];
+    groups.forEach(group => {
+      group.groupUsers.forEach(groupUser => {
+        groupUsers.push(groupUser);
       })
     })
-    const matchedUsers = userMembers.filter(v => v.id === this.ctx.tokenInfo.id);
+    const allUsers = [...users, ...groupUsers];
+    const uniqueUsers = lodash.uniqBy(allUsers, (item) => `${item.userId}-${item.permission}`)
+    const matchedUsers = allUsers.filter(user => user.userId === this.ctx.tokenInfo.id);
     if (matchedUsers.length === 0) {
-      return throwError(1012, '暂无操作权限')
+      throwError(4002, '暂无当前项目权限');
     }
     let permission: 'readOnly' | 'admin' | 'readAndWrite' = 'readOnly';
     //取最大权限
-    for(let i = 0; i < matchedUsers.length; i++) {
+    for (let i = 0; i < matchedUsers.length; i++) {
       if (matchedUsers[i].permission === 'admin') {
         permission = 'admin';
         break;
@@ -175,12 +168,19 @@ export class CommonController {
       }
     }
     //如果用户为只读用户，那么限制用户对于文档操作，只有白名单里面接口允许用户操作
-    const accessableReadonlyUrl = ReadOnlyUrl.find(
-      urlInfo =>
-        urlInfo.method === method && URL.pathname.startsWith(urlInfo.url)
-    );
-   if (permission === 'readOnly' && !accessableReadonlyUrl) {
+    const accessableReadonlyUrl = ReadOnlyUrl.find(urlInfo => {
+      return urlInfo.method === method && URL.pathname.startsWith(urlInfo.url)
+    });
+    if (permission === 'readOnly' && !accessableReadonlyUrl) {
       return throwError(1012, '只读用户不允许当前操作');
+    }
+    if (permission !== 'admin') {
+      return throwError(1012, '管理员才允许执行当前操作');
+    }
+    return {
+      projectInfo: matchedProject,
+      permission,
+      uniqueUsers
     }
   }
 }
