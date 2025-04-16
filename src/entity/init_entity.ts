@@ -198,13 +198,6 @@ const INITIAL_SERVER_ROUTES = [
     path: '/api/project/project_enum',
   },
   {
-    _id: '64a8f5a40558e0ba613f3cb0',
-    groupName: 'api文档-项目相关',
-    method: 'get',
-    name: '根据项目信息过滤项目',
-    path: '/api/project/project_list_by_url',
-  },
-  {
     _id: '64a8f5a40558e0ba613f3cb1',
     groupName: 'api文档-项目相关',
     method: 'get',
