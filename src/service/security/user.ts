@@ -495,7 +495,7 @@ export class UserService {
     const result = userList.map(val => {
       return {
         realName: val.realName,
-        loginName: val.loginName,
+        userName: val.loginName,
         userId: val._id,
       };
     });
