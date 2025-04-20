@@ -1,4 +1,4 @@
-import { Configuration, App, Inject, MidwayDecoratorService, JoinPoint, REQUEST_OBJ_CTX_KEY, Config, IMidwayContainer, InjectClient } from '@midwayjs/core';
+import { Configuration, App, Inject, MidwayDecoratorService, JoinPoint, REQUEST_OBJ_CTX_KEY, Config, IMidwayContainer, InjectClient, MidwayConfig } from '@midwayjs/core';
 import * as koa from '@midwayjs/koa';
 import * as validate from '@midwayjs/validate';
 import * as info from '@midwayjs/info';
@@ -164,7 +164,7 @@ export class ContainerLifeCycle {
     // await initAttachment(this.attachmentModel)
   }
   async onConfigLoad(container: IMidwayContainer) {
-    const remoteConfig = {};
+    const remoteConfig = {} as MidwayConfig;
     try {
       const moduleUrl = new URL(`file:///${filePath.replace(/\\/g, '/')}`).href
       const config = await import(moduleUrl);

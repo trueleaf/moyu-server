@@ -42,10 +42,8 @@ export default (appInfo: MidwayAppInfo): MidwayConfig => {
         default: {
           uri: 'mongodb://localhost:27017/apiflow',
           options: {
-            // useNewUrlParser: true,
-            // useUnifiedTopology: true,
             user: '',
-            pass: ''
+            pass: '',
           },
           // 关联实体
           entities: [
