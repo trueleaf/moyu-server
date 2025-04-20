@@ -130,7 +130,20 @@ export class CommonController {
   private projectModel: ReturnModelType<typeof Project>;
 
 
-  async checkDocOperationPermissions(projectId: string) {
+  //检查权限是否满足
+  isValidPermission(userPermission: 'admin' | 'readAndWrite' | 'readOnly', needPermission: 'admin' | 'readAndWrite' | 'readOnly' = 'admin') {
+    if (userPermission === 'admin') {
+      return true;
+    }
+    if (userPermission === 'readAndWrite' && (needPermission === 'readAndWrite' || needPermission === 'readOnly')) {
+      return true;
+    }
+    if (needPermission === 'readOnly') {
+      return true;
+    }
+    return false;
+  }
+  async checkDocOperationPermissions(projectId: string, needPermission: 'admin' | 'readAndWrite' | 'readOnly' = 'admin') {
     const method = this.ctx.request.method.toLowerCase();
     const URL = this.ctx.request.URL;
     const matchedProject = await this.projectModel.findById({ _id: projectId }).lean();
@@ -174,8 +187,8 @@ export class CommonController {
     if (permission === 'readOnly' && !accessableReadonlyUrl) {
       return throwError(1012, '只读用户不允许当前操作');
     }
-    if (permission !== 'admin') {
-      return throwError(1012, '管理员才允许执行当前操作');
+    if (!this.isValidPermission(permission, needPermission)) {
+      return throwError(1012, '当前权限无法执行当前操作');
     }
     return {
       projectInfo: matchedProject,
