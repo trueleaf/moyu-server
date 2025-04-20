@@ -4,7 +4,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { throwError } from '../../utils/utils.js';
 import { LoginTokenInfo } from '../../types/types.js';
-import { CreateGroupDTO, UpdateGroupDTO } from '../../types/dto/security/group.dto.js';
+import { AddMemberDTO, CreateGroupDTO, UpdateGroupDTO } from '../../types/dto/security/group.dto.js';
 import { Project } from '../../entity/project/project.js';
 
 @Provide()
@@ -58,7 +58,7 @@ export class GroupService {
     };
     newGroup.members = [{
       userId: creator.userId,
-      loginName: creator.userName,
+      userName: creator.userName,
       permission: 'admin' // 创建者默认拥有admin权限
     }, ...members];
     await this.groupModel.create(newGroup);
@@ -115,27 +115,28 @@ export class GroupService {
   }
 
   // 添加组成员
-  async addMember(groupId: string, member: {
-    userId: string;
-    loginName: string;
-    permission: 'readOnly' | 'readAndWrite' | 'admin';
-    expireAt?: Date;
-  }) {
+  async addMember(params: AddMemberDTO) {
     const updator = {
       userId: this.ctx.tokenInfo.id,
       userName: this.ctx.tokenInfo.loginName
     };
-    const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true }).lean();
-    if (!group) {
+    const { groupId, userId, userName, permission, expireAt } = params;
+    const matchedGroup = await this.groupModel.findOne({ _id: groupId, isEnabled: true }).lean();
+    if (!matchedGroup) {
       throwError(1003, '组不存在');
     };
-    await this.checkGroupAdminPermission(group, this.ctx.tokenInfo.id);
+    await this.checkGroupAdminPermission(matchedGroup, this.ctx.tokenInfo.id);
     // 检查是否已存在
-    if (group.members.some(m => m.userId === member.userId)) {
+    if (matchedGroup.members.some(m => m.userId === userId)) {
       throwError(1003, '用户已存在组内');
     }
-    const members = group.members;
-    members.push(member);
+    const members = matchedGroup.members;
+    members.push({
+      userId, 
+      userName, 
+      permission, 
+      expireAt
+    });
     const session = await this.projectModel.startSession();
     session.startTransaction();
     try {

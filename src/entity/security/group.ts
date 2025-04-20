@@ -13,7 +13,7 @@ class Member {
   userId: string;
 
   @prop({ required: true })
-  loginName: string;
+  userName: string;
 
   //管理员无法过期
   @prop({
@@ -49,17 +49,17 @@ export class Group extends Timestamps {
   /**
    * 组成员
    */
-  @prop({ type: () => [Member] })
+  @prop({ type: () => [Member], _id: false })
   public members: Member[];
   /**
    * 创建者
    */
-  @prop({ required: true })
+  @prop({ required: true, _id: false })
   public creator: UserInfo; // 创建者
   /**
  * 修改者
  */
-  @prop({ required: true })
+  @prop({ required: true, _id: false })
   public updator: UserInfo; // 修改者
   /**
    * 是否启用

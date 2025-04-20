@@ -5,7 +5,7 @@ class Member {
   userId: string;
 
   @Rule(RuleType.string().required().error(new Error('用户名不能为空')))
-  loginName: string;
+  userName: string;
 
   @Rule(RuleType.string().empty(''))
   realName: string;
@@ -69,7 +69,7 @@ export class AddMemberDTO {
   userId: string;
 
   @Rule(RuleType.string().required().error(new Error('用户名不能为空')))
-  loginName: string;
+  userName: string;
 
   @Rule(
     RuleType.string()
