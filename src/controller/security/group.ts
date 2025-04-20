@@ -47,12 +47,7 @@ export class GroupController {
   // 添加组成员
   @Post('/group/member/add')
   async addMember(@Body() params: AddMemberDTO) {
-    return this.groupService.addMember(params.groupId, {
-      userId: params.userId,
-      loginName: params.loginName,
-      permission: params.permission,
-      expireAt: params.expireAt
-    });
+    return this.groupService.addMember(params);
   }
 
   // 移除组成员
