@@ -39,7 +39,7 @@ class UserItem {
   @prop({ enum: ['readOnly', 'readAndWrite', 'admin'] })
   public permission: 'readOnly' | 'readAndWrite' | 'admin';
 }
-class GroupItem {
+export class GroupItem {
   /**
    * 群组id
    */
@@ -53,7 +53,7 @@ class GroupItem {
   /**
    * 组成员
    */
-  @prop({ type: () => [UserItem] })
+  @prop({ type: () => [UserItem], _id: false })
   public groupUsers: UserItem[];
 }
 
@@ -81,18 +81,18 @@ export class Project extends Timestamps {
   /**
    * 创建者
    */
-  @prop()
+  @prop({_id: false})
   public owner: Creator;
   /**
    * 成员信息
    */
-  @prop({type: () => [UserItem]})
+  @prop({type: () => [UserItem], _id: false})
   public users: UserItem[];
 
   /**
    * 群组信息
    */
-  @prop({ type: () => [GroupItem] })
+  @prop({ type: () => [GroupItem], _id: false })
   public groups: GroupItem[];
 
   /**

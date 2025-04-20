@@ -2,7 +2,7 @@ import { Config, Context, Inject, Provide } from '@midwayjs/core';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { AddProjectDto, AddMemberToProjectDto, ChangeMemberPermissionInProjectDto, DeleteProjectDto, DeleteMemberFromProjectDto, EditProjectDto, GetProjectByKeywordDto, GetProjectFullInfoByIdDto, GetProjectInfoByIdDto, GetProjectListDto, GetProjectMembersByIdDto } from '../../types/dto/project/project.dto.js';
-import { Project } from '../../entity/project/project.js';
+import { GroupItem, Project } from '../../entity/project/project.js';
 import { Doc } from '../../entity/doc/doc.js';
 import { GlobalConfig, LoginTokenInfo } from '../../types/types.js';
 import { User } from '../../entity/security/user.js';
@@ -18,7 +18,7 @@ import { Group } from '../../entity/security/group.js';
 
 @Provide()
 export class ProjectService {
-  @Config('project')
+  @Config('apiflow')
     config: GlobalConfig['apiflow'];
   @InjectEntityModel(Project)
     projectModel: ReturnModelType<typeof Project>;
@@ -51,7 +51,6 @@ export class ProjectService {
     projectInfo.projectName = projectName;
     projectInfo.remark = remark;
     projectInfo.users = users;
-    projectInfo.groups = groups;
     //创建者默认为管理员
     projectInfo.users.unshift({
       userName: this.ctx.tokenInfo.loginName,
@@ -62,21 +61,39 @@ export class ProjectService {
       id: this.ctx.tokenInfo.id,
       name: this.ctx.tokenInfo.loginName
     };
-    const matchedGroups = await this.groupModel.find({ _id: { $in: groups.map(v => v.groupId) } }).lean();
-    const userSet = new Set(this.ctx.tokenInfo.id);
-    matchedGroups.forEach(group => {
-      group.members.forEach(member => {
-        userSet.add(member.userId);
+    const session = await this.userModel.startSession();
+    try {
+      await session.startTransaction();
+      const matchedGroups = await this.groupModel.find({ _id: { $in: groups.map(v => v.groupId) } }).lean();
+      const userSet = new Set();
+      userSet.add(this.ctx.tokenInfo.id);
+      const fullGroups: GroupItem[] = [];
+      matchedGroups.forEach(group => {
+        fullGroups.push({
+          groupId: group._id.toString(),
+          groupName: group.groupName,
+          groupUsers: group.members
+        })
+        group.members.forEach(member => {
+          userSet.add(member.userId);
+        })
       })
-    })
-    users.forEach(user => {
-      userSet.add(user.userId);
-    })
-
-    const result = await this.projectModel.create(projectInfo);
-    const userIds = Array.from(userSet);
-    await this.userModel.updateMany({ _id: { $in: userIds } }, { $push: { couldVisitProjects: result._id.toString() } });
-    return result._id;
+      users.forEach(user => {
+        userSet.add(user.userId);
+      })
+      projectInfo.groups = fullGroups;
+      const result = await this.projectModel.create([projectInfo], { session });
+      const userIds = Array.from(userSet);
+      await this.userModel.updateMany({ _id: { $in: userIds } }, { $push: { couldVisitProjects: result[0]._id.toString() } }, { session });
+      await session.commitTransaction();
+      return result[0]._id;
+    } catch (error) {
+      await session.abortTransaction();
+      console.error(error);
+      throwError(1015, '新增项目失败')
+    } finally {
+      session.endSession();
+    }
   }
   /**
    * 给项目添加成员
@@ -120,15 +137,16 @@ export class ProjectService {
     const { projectId, id, memberType } = params;
     const { projectInfo, uniqueUsers } = await this.commonControl.checkDocOperationPermissions(projectId);
     const isDeleteSelf = this.ctx.tokenInfo.id === id;
-    const hasAdminUser = (uniqueUsers.filter(v => v.permission === 'admin').length > 1) && isDeleteSelf; //删除自身时候，项目至少保留一个管理员
-    if (!hasAdminUser) {
+    const hasAdminUser = (uniqueUsers.filter(v => v.permission === 'admin').length > 1); //删除自身时候，项目至少保留一个管理员
+    if (!hasAdminUser && isDeleteSelf) {
       return throwError(1013, '至少保留一个管理员')
     }
     if (memberType === 'user') {
       await this.userModel.updateOne({ _id: id }, { $pull: { couldVisitProjects: projectId } });
+      console.log(projectId, id)
       await this.projectModel.findByIdAndUpdate({ _id: projectId }, {
         $pull: {
-          users: { id },
+          users: { userId: id },
         }
       });
     } else if (memberType === 'group') {
@@ -143,7 +161,7 @@ export class ProjectService {
       await this.userModel.updateMany({ _id: { $in: groupUserIds } }, { $pull: { couldVisitProjects: projectId } });
       await this.projectModel.findByIdAndUpdate({ _id: projectId }, {
         $pull: {
-          groups: { id },
+          groups: { groupId: id },
         }
       })
     }
@@ -156,8 +174,8 @@ export class ProjectService {
     const { projectId, id, permission } = params;
     const { uniqueUsers } = await this.commonControl.checkDocOperationPermissions(projectId);
     const isChangeSelf = this.ctx.tokenInfo.id === id;
-    const hasAdminUser = (uniqueUsers.filter(v => v.permission === 'admin').length > 1) && isChangeSelf; //删除自身时候，项目至少保留一个管理员
-    if (!hasAdminUser) {
+    const hasAdminUser = (uniqueUsers.filter(v => v.permission === 'admin').length > 1); //删除自身时候，项目至少保留一个管理员
+    if (!hasAdminUser && isChangeSelf) {
       return throwError(1013, '至少保留一个管理员')
     }
     await this.projectModel.updateOne({ _id: projectId, 'users.userId': id }, {
@@ -309,7 +327,7 @@ export class ProjectService {
    */
   async getProjectMembersById(params: GetProjectMembersByIdDto) {
     const { _id } = params;
-    await this.commonControl.checkDocOperationPermissions(_id);
+    await this.commonControl.checkDocOperationPermissions(_id, 'readOnly');
     const result = await this.projectModel.findById(
       { _id, isEnabled: true },
       { users: 1, 'groups.groupId': 1, "groups.groupName": 1 }
