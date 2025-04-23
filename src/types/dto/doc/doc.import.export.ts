@@ -1,5 +1,5 @@
 import { Rule, RuleType, getSchema } from '@midwayjs/validate';
-import { DocInfo } from './doc.dto.js';
+import { ImportedDocInfo } from './doc.dto.js';
 
 /**
  * 导出为html
@@ -63,8 +63,8 @@ class ApiflowDocInfo {
   /**
    * 文档信息
    */
-  @Rule(RuleType.array().items(getSchema(DocInfo)).required())
-    docs: DocInfo[];
+  @Rule(RuleType.array().items(getSchema(ImportedDocInfo)).required())
+    docs: ImportedDocInfo[];
   /**
    * 接口前缀信息
    */
