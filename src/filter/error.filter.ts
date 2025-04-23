@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 @Catch(MidwayValidationError)
 export class ValidateErrorFilter {
   async catch(err: MidwayValidationError, ctx: Context): Promise<ResponseWrapper> {
-    console.log(ctx.request.method, ctx.request.url, '耗时', Date.now() - ctx.__logStartTime, ctx.origin)
+    ctx.logger.error(ctx.request.method, ctx.request.url, '耗时', Date.now() - ctx.__logStartTime, ctx.origin, err.stack);
     return {
       code: 1001,
       msg: `校验参数错误${err.message}`,
