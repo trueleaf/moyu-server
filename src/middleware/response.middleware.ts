@@ -8,6 +8,7 @@ export class ResponseWrapperMiddleware implements IMiddleware<Context, NextFunct
       const startTime = Date.now()
       ctx.__logStartTime = startTime;
       const result = await next();
+      ctx.logger.info(ctx.request.method, ctx.request.url, '耗时', Date.now() - startTime, ctx.origin);
       console.log(ctx.request.method, ctx.request.url, '耗时', Date.now() - startTime, ctx.origin)
       if (Buffer.isBuffer(result)) {
         return result
