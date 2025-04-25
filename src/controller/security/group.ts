@@ -7,7 +7,8 @@ import {
   AddMemberDTO,
   RemoveMemberDTO,
   UpdatePermissionDTO,
-  GroupDetailDTO
+  GroupDetailDTO,
+  RemoveGroupDTO
 } from '../../types/dto/security/group.dto.js';
 import { GroupService } from '../../service/security/group.js';
 import { LoginTokenInfo } from '../../types/types.js';
@@ -54,6 +55,11 @@ export class GroupController {
   @Del('/group/member/remove')
   async removeMember(@Body() params: RemoveMemberDTO) {
     return this.groupService.removeMember(params.groupId, params.userId);
+  }
+  // 删除组
+  @Del('/group/remove')
+  async removeGroup(@Body() params: RemoveGroupDTO) {
+    return this.groupService.removeGroup(params.ids);
   }
 
   // 更新成员权限

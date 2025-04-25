@@ -100,6 +100,18 @@ export class GroupService {
     return group;
   }
 
+  // 删除组
+  async removeGroup(ids: string[]) {
+    const updator = {
+      userId: this.ctx.tokenInfo.id,
+      userName: this.ctx.tokenInfo.loginName
+    };
+    await this.groupModel.updateMany({ _id: { $in: ids } }, { isEnabled: false, updator });
+    return
+    
+  }
+
+
   // 分页查询组列表
   async getGroupList() {
     const userId = this.ctx.tokenInfo.id;

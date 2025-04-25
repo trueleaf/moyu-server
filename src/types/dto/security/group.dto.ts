@@ -50,6 +50,11 @@ export class UpdateGroupDTO {
   isEnabled?: boolean;
   
 }
+// 删除组 DTO
+export class RemoveGroupDTO {
+  @Rule(RuleType.array().items(RuleType.string()).required())
+    ids: string[];
+}
 
 // 分页查询 DTO
 // export class PaginationDTO {
