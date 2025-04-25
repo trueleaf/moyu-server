@@ -22,9 +22,9 @@ class Member {
   expireAt?: Date;
 }
 
-// 创建组 DTO
+// 创建团队 DTO
 export class CreateGroupDTO {
-  @Rule(RuleType.string().required().max(50).error(new Error('组名称不能为空且不超过50字符')))
+  @Rule(RuleType.string().required().max(50).error(new Error('团队名称不能为空且不超过50字符')))
   groupName: string;
 
   @Rule(RuleType.string().max(255).allow('').error(new Error('描述不超过255字符')))
@@ -35,12 +35,12 @@ export class CreateGroupDTO {
 
 }
 
-// 更新组 DTO
+// 更新团队 DTO
 export class UpdateGroupDTO {
-  @Rule(RuleType.string().required().error(new Error('组ID不能为空')))
+  @Rule(RuleType.string().required().error(new Error('团队ID不能为空')))
   _id: string;
 
-  @Rule(RuleType.string().max(50).optional().error(new Error('组名称不能为空并且不超过50字符')))
+  @Rule(RuleType.string().max(50).optional().error(new Error('团队名称不能为空并且不超过50字符')))
   groupName?: string;
 
   @Rule(RuleType.string().max(255).allow('').optional().error(new Error('描述不超过200字符')))
@@ -49,8 +49,10 @@ export class UpdateGroupDTO {
   @Rule(RuleType.boolean().optional().error(new Error('启用状态需为布尔值')))
   isEnabled?: boolean;
   
+  @Rule(RuleType.boolean())
+  isAllowInvite: boolean
 }
-// 删除组 DTO
+// 删除团队 DTO
 export class RemoveGroupDTO {
   @Rule(RuleType.array().items(RuleType.string()).required())
     ids: string[];
@@ -67,7 +69,7 @@ export class RemoveGroupDTO {
 
 // 添加成员 DTO
 export class AddMemberDTO {
-  @Rule(RuleType.string().required().error(new Error('组ID不能为空')))
+  @Rule(RuleType.string().required().error(new Error('团队ID不能为空')))
   groupId: string;
 
   @Rule(RuleType.string().required().error(new Error('用户ID不能为空')))
@@ -90,7 +92,7 @@ export class AddMemberDTO {
 
 // 移除成员 DTO
 export class RemoveMemberDTO {
-  @Rule(RuleType.string().required().error(new Error('组ID不能为空')))
+  @Rule(RuleType.string().required().error(new Error('团队ID不能为空')))
   groupId: string;
 
   @Rule(RuleType.string().required().error(new Error('用户ID不能为空')))
@@ -99,7 +101,7 @@ export class RemoveMemberDTO {
 
 // 更新权限 DTO
 export class UpdatePermissionDTO {
-  @Rule(RuleType.string().required().error(new Error('组ID不能为空')))
+  @Rule(RuleType.string().required().error(new Error('团队ID不能为空')))
   groupId: string;
 
   @Rule(RuleType.string().required().error(new Error('用户ID不能为空')))
@@ -114,8 +116,8 @@ export class UpdatePermissionDTO {
   permission: 'readOnly' | 'readAndWrite' | 'admin';
 }
 
-// 组详情查询 DTO
+// 团队详情查询 DTO
 export class GroupDetailDTO {
-  @Rule(RuleType.string().required().error(new Error('组ID不能为空')))
+  @Rule(RuleType.string().required().error(new Error('团队ID不能为空')))
   id: string;
 }

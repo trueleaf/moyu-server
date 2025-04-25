@@ -62,6 +62,11 @@ export class Group extends Timestamps {
   @prop({ required: true, _id: false })
   public updator: UserInfo; // 修改者
   /**
+   * 是否允许被邀请到项目
+   */
+  @prop({ default: false })
+  public isAllowInvite: boolean;
+  /**
    * 是否启用
    */
   @prop({ default: true })

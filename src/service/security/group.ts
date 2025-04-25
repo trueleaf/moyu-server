@@ -28,14 +28,14 @@ export class GroupService {
       throwError(4001, '用户无权限');
     }
   }
-  // 校验组名唯一性
+  // 校验团队名唯一性
   private async validateGroupNameUnique(name: string, excludeId?: string) {
     const matchedGroup = await this.groupModel.findOne({ groupName: name, _id: { $ne: excludeId } });
     if (matchedGroup) {
-      throwError(1003, '组名称已存在');
+      throwError(1003, '团队名称已存在');
     }
   }
-  // 创建组
+  // 创建团队
   async createGroup(params: CreateGroupDTO) {
     const creator = {
       userId: this.ctx.tokenInfo.id,
@@ -43,7 +43,7 @@ export class GroupService {
     };
     const { groupName, description, members } = params;
     if (await this.groupModel.findOne({ groupName })) {
-      throwError(1003, '组名称已存在');
+      throwError(1003, '团队名称已存在');
     }
     const newGroup = new Group();
     newGroup.groupName = groupName;
@@ -65,43 +65,49 @@ export class GroupService {
     return
   }
 
-  // 更新组信息
+  // 更新团队信息
   async updateGroup(params: UpdateGroupDTO) {
-    const { _id, groupName, description, isEnabled } = params;
+    const { _id, groupName, description, isEnabled, isAllowInvite } = params;
     const updator = {
       userId: this.ctx.tokenInfo.id,
       userName: this.ctx.tokenInfo.loginName
     };
-    // 获取组信息
+    // 获取团队信息
     const group = await this.groupModel.findOne({ _id, isEnabled: true });
     if (!group) {
-      throwError(1003, '组不存在');
+      throwError(1003, '团队不存在');
     };
     // 权限校验
     await this.checkGroupAdminPermission(group, this.ctx.tokenInfo.id);
-    // 组名校验
+    // 团队名校验
     await this.validateGroupNameUnique(groupName, _id);
     // 更新字段
     const updateObj: Partial<Group> = {}
     if (groupName) updateObj.groupName = groupName;
     if (description !== undefined) updateObj.description = description;
     if (isEnabled !== undefined) updateObj.isEnabled = isEnabled;
+    if (isAllowInvite !== undefined) updateObj.isAllowInvite = isAllowInvite;
     updateObj.updator = updator;
     return await this.groupModel.findByIdAndUpdate({ _id }, updateObj);
   }
 
-  // 获取组详情
+  // 获取团队详情
   async getGroupById(id: string) {
-    const group = await this.groupModel.findOne({ _id: id, isEnabled: true }, { groupName: 1, description: 1, creator: 1, members: 1 });
+    const group = await this.groupModel.findOne({ _id: id, isEnabled: true }, { groupName: 1, description: 1, creator: 1, members: 1, isAllowInvite: 1 });
     if (!group) {
-      throwError(1003, '组不存在');
+      throwError(1003, '团队不存在');
     };
     await this.checkGroupAdminPermission(group, this.ctx.tokenInfo.id);
     return group;
   }
 
-  // 删除组
+  // 删除团队
   async removeGroup(ids: string[]) {
+    for (let i = 0; i < ids.length; i++) {
+      const groupId = ids[i];
+      const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true });
+      await this.checkGroupAdminPermission(group, this.ctx.tokenInfo.id);
+    }
     const updator = {
       userId: this.ctx.tokenInfo.id,
       userName: this.ctx.tokenInfo.loginName
@@ -112,21 +118,21 @@ export class GroupService {
   }
 
 
-  // 分页查询组列表
+  // 查询团队列表
   async getGroupList() {
     const userId = this.ctx.tokenInfo.id;
-    //分页查找
+    //查找
     const result = await this.groupModel.find({
       isEnabled: true, members: {
         $elemMatch: {
           userId
         }
       }
-    }, { groupName: 1, description: 1, creator: 1, updator: 1, members: 1, createdAt: 1, updatedAt: 1 }).sort({ updatedAt: -1 });
+    }, { groupName: 1, description: 1, creator: 1, updator: 1, members: 1, createdAt: 1, updatedAt: 1, isAllowInvite: 1 }).sort({ updatedAt: -1 });
     return result;
   }
 
-  // 添加组成员
+  // 添加团队成员
   async addMember(params: AddMemberDTO) {
     const updator = {
       userId: this.ctx.tokenInfo.id,
@@ -135,12 +141,12 @@ export class GroupService {
     const { groupId, userId, userName, permission, expireAt } = params;
     const matchedGroup = await this.groupModel.findOne({ _id: groupId, isEnabled: true }).lean();
     if (!matchedGroup) {
-      throwError(1003, '组不存在');
+      throwError(1003, '团队不存在');
     };
     await this.checkGroupAdminPermission(matchedGroup, this.ctx.tokenInfo.id);
     // 检查是否已存在
     if (matchedGroup.members.some(m => m.userId === userId)) {
-      throwError(1003, '用户已存在组内');
+      throwError(1003, '用户已存在团队内');
     }
     const members = matchedGroup.members;
     members.push({
@@ -166,14 +172,14 @@ export class GroupService {
     } catch (error) {
       await session.abortTransaction();
       console.error(error);
-      throwError(1015, '添加组成员失败')
+      throwError(1015, '添加团队成员失败')
     } finally {
       session.endSession();
     }
     return
   }
 
-  // 移除组成员
+  // 移除团队成员
   async removeMember(groupId: string, userId: string) {
     const group = await this.groupModel.findOne({ _id: groupId, isEnabled: true }).lean();
     const updator = {
@@ -181,7 +187,7 @@ export class GroupService {
       userName: this.ctx.tokenInfo.loginName
     };
     if (!group) {
-      throwError(1003, '组不存在');
+      throwError(1003, '团队不存在');
     };
     await this.checkGroupAdminPermission(group, this.ctx.tokenInfo.id);
     // 检查是否最后一个管理员
@@ -194,7 +200,7 @@ export class GroupService {
     }
     const index = group.members.findIndex(m => m.userId === userId);
     if (index === -1) {
-      throwError(1003, '用户不在组中');
+      throwError(1003, '用户不在团队中');
     };
 
     const members = group.members;
@@ -216,7 +222,7 @@ export class GroupService {
     } catch (error) {
       await session.abortTransaction();
       console.error(error);
-      throwError(1015, '添加组成员失败')
+      throwError(1015, '添加团队成员失败')
     } finally {
       session.endSession();
     }
@@ -246,7 +252,7 @@ export class GroupService {
     ).length;
     const targetUserIsOperator = operatorId === userId;
     if (adminCount <= 1 && targetUserIsOperator && permission !== 'admin') {
-      throwError(1008, '组内必须至少保留一个管理员');
+      throwError(1008, '团队内必须至少保留一个管理员');
     }
     targetUser.permission = permission;
     const session = await this.projectModel.startSession();
@@ -266,7 +272,7 @@ export class GroupService {
     } catch (error) {
       await session.abortTransaction();
       console.error(error);
-      throwError(1015, '添加组成员失败')
+      throwError(1015, '添加团队成员失败')
     } finally {
       session.endSession();
     }
