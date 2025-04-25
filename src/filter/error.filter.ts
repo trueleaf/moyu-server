@@ -18,8 +18,7 @@ export class ValidateErrorFilter {
 @Catch()
 export class AllServerErrorFilter {
   async catch(err: MidwayHttpError & { isCustomError?: boolean }, ctx: Context) {
-    ctx.logger.error(err);
-    console.log(ctx.request.method, ctx.request.url, '耗时', Date.now() - ctx.__logStartTime, ctx.origin)
+    ctx.logger.error(ctx.request.method, ctx.request.url, '耗时', Date.now() - ctx.__logStartTime, ctx.origin);
     if (err?.isCustomError) {
       return err;
     }
