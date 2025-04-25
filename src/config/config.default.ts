@@ -97,7 +97,8 @@ export default (appInfo: MidwayAppInfo): MidwayConfig => {
     },
     apiflow: {
       defaultRegisterPassword: '111111',
-      projectMaxMembers: 50
+      projectMaxMembers: 50,
+      canManagedGroupNum: process.env.NODE_ENV === 'production' ? 10 : 5, //一个用户最多创建10个项目
     },
     jwtConfig: {
       secretOrPrivateKey: 'apiflow', //私钥

@@ -22,6 +22,10 @@ export type GlobalConfig = {
      * 项目最大成员数量
      */
     projectMaxMembers: number;
+    /**
+     * 允许创建最大团队数
+     */
+    canManagedGroupNum: number;
   };
   //jwt相关配置
   jwtConfig: {

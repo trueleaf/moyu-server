@@ -1,9 +1,9 @@
-import { Context, Inject, Provide } from '@midwayjs/core';
+import { Config, Context, Inject, Provide } from '@midwayjs/core';
 import { Group } from '../../entity/security/group.js';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectEntityModel } from '@midwayjs/typegoose';
 import { throwError } from '../../utils/utils.js';
-import { LoginTokenInfo } from '../../types/types.js';
+import { GlobalConfig, LoginTokenInfo } from '../../types/types.js';
 import { AddMemberDTO, CreateGroupDTO, UpdateGroupDTO } from '../../types/dto/security/group.dto.js';
 import { Project } from '../../entity/project/project.js';
 
@@ -15,6 +15,8 @@ export class GroupService {
   projectModel: ReturnModelType<typeof Project>;
   @Inject()
   ctx: Context & { tokenInfo: LoginTokenInfo };
+  @Config('apiflow')
+    apiflowConfig: GlobalConfig['apiflow'];
 
   // 校验用户是否存在管理员权限
   private async checkGroupAdminPermission(group: Group, userId: string) {
@@ -30,7 +32,7 @@ export class GroupService {
   }
   // 校验团队名唯一性
   private async validateGroupNameUnique(name: string, excludeId?: string) {
-    const matchedGroup = await this.groupModel.findOne({ groupName: name, _id: { $ne: excludeId } });
+    const matchedGroup = await this.groupModel.findOne({ groupName: name, _id: { $ne: excludeId }, isEnabled: true});
     if (matchedGroup) {
       throwError(1003, '团队名称已存在');
     }
@@ -41,8 +43,20 @@ export class GroupService {
       userId: this.ctx.tokenInfo.id,
       userName: this.ctx.tokenInfo.loginName
     };
+    //查询当前用户创建了多少团队
+    const managedGroupNum = await this.groupModel.countDocuments({ $and: [
+      {
+        "members.userId": creator.userId,
+      },
+      {
+        "members.permission": "admin"
+      }
+    ], isEnabled: true });
+    if (managedGroupNum >= this.apiflowConfig.canManagedGroupNum) {
+      throwError(1003, `一个用户最多允许管理${this.apiflowConfig.canManagedGroupNum}个团队`);
+    }
     const { groupName, description, members } = params;
-    if (await this.groupModel.findOne({ groupName })) {
+    if (await this.groupModel.findOne({ groupName, isEnabled: true})) {
       throwError(1003, '团队名称已存在');
     }
     const newGroup = new Group();
@@ -128,7 +142,7 @@ export class GroupService {
           userId
         }
       }
-    }, { groupName: 1, description: 1, creator: 1, updator: 1, members: 1, createdAt: 1, updatedAt: 1, isAllowInvite: 1 }).sort({ updatedAt: -1 });
+    }, { groupName: 1, description: 1, creator: 1, updator: 1, members: 1, createdAt: 1, updatedAt: 1, isAllowInvite: 1 }).sort({ groupName: 1 });
     return result;
   }
 
