@@ -65,4 +65,23 @@ export class APIController {
       fields: this.ctx.fields,
     };
   }
+  @All('/test/query_params/*')
+  async queryTest() {
+    console.log('query test', this.ctx.query)
+    return {
+      query: this.ctx.query,
+      path: this.ctx.path,
+    };
+  }
+  @All('/test/var/*')
+  async variableTest() {
+    console.log('variable test', this.ctx.query)
+    return {
+      query: this.ctx.query,
+      path: this.ctx.path,
+      body: this.ctx.request.body,
+      files: this.ctx.files,
+      fields: this.ctx.fields,
+    };
+  }
 }
