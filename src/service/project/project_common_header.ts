@@ -66,6 +66,7 @@ export class ProjectCommonHeaderService {
         return {
           _id: val._id,
           pid: val.pid,
+          name: val.info.name,
           isFolder: val.isFolder,
           commonHeaders: val.commonHeaders,
           children: [],
@@ -74,6 +75,7 @@ export class ProjectCommonHeaderService {
         return {
           _id: val._id,
           pid: val.pid,
+          name: val.info.name,
           isFolder: val.isFolder,
           commonHeaders: val.commonHeaders,
           children: [],

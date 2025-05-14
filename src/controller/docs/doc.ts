@@ -68,7 +68,7 @@ export class DocController {
    * 获取文档详情
    */
   @Get('/project/doc_detail')
-  @ReqLimit({ max: 10, ttl: 10000 })
+  @ReqLimit({ max: 15, ttl: 10000 })
   async getDocDetail(@Query() params: GetDocDetailDto) {
     const data = await this.docService.getDocDetail(params);
     return data;
