@@ -19,7 +19,67 @@ export class APIController {
   @InjectEntityModel(User)
   userModel: ReturnModelType<typeof User>;
 
-  @All('/test/response')
+
+  @All('/test/request_method')
+  async methodTest() {
+    console.log('method test')
+    return {
+      method: this.ctx.method,
+    };
+  }
+  @All('/test/query_params/*')
+  async queryTest() {
+    console.log('query test', this.ctx.query)
+    return {
+      query: this.ctx.query,
+      path: this.ctx.path,
+    };
+  }
+  @All('/test/request_info/**')
+  async requestInfoTest() {
+    console.log('request_info test')
+    return {
+      query: this.ctx.query,
+      path: this.ctx.path,
+      body: this.ctx.request.body,
+      files: this.ctx.files,
+      fields: this.ctx.fields,
+      headers: this.ctx.headers,
+    };
+  }
+  @All('/test/raw_body')
+  async rawBodyTest() {
+    console.log('rawBody test')
+    const rawBody = await new Promise((resolve, reject) => {
+      let data = '';
+      this.ctx.req.setEncoding('utf8');
+      this.ctx.req.on('data', chunk => {
+        data += chunk
+      });
+      this.ctx.req.on('end', () => resolve(data));
+    });
+    return {
+      rawBody,
+    };
+  }
+  @All('/test/binary')
+  async binaryTest() {
+    console.log('binaryTest')
+    const rawBody = await new Promise((resolve, reject) => {
+      let data = '';
+      this.ctx.req.setEncoding('utf8');
+      this.ctx.req.on('data', chunk => {
+        data += chunk
+      });
+      this.ctx.req.on('end', () => resolve(data));
+    });
+    return {
+      path: this.ctx.path,
+      rawBody,
+      headers: this.ctx.headers,
+    };
+  }
+    @All('/test/response')
   async responseTest() {
     console.log("请求头", this.ctx.headers);
     console.log("query参数", this.ctx.querystring);
@@ -48,40 +108,5 @@ export class APIController {
     //   path: this.ctx.path,
     //   body: this.ctx.request.body
     // };
-  }
-  @All('/test/request_method')
-  async methodTest() {
-    console.log('method test')
-    return {
-      method: this.ctx.method,
-    };
-  }
-  @All('/test/request_body')
-  async bodyTest() {
-    console.log('body test', this.ctx.files, this.ctx.fields)
-    return {
-      body: this.ctx.request.body,
-      files: this.ctx.files,
-      fields: this.ctx.fields,
-    };
-  }
-  @All('/test/query_params/*')
-  async queryTest() {
-    console.log('query test', this.ctx.query)
-    return {
-      query: this.ctx.query,
-      path: this.ctx.path,
-    };
-  }
-  @All('/test/var/*')
-  async variableTest() {
-    console.log('variable test', this.ctx.query)
-    return {
-      query: this.ctx.query,
-      path: this.ctx.path,
-      body: this.ctx.request.body,
-      files: this.ctx.files,
-      fields: this.ctx.fields,
-    };
   }
 }
