@@ -31,6 +31,7 @@ import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { CachingFactory, MidwayCache } from '@midwayjs/cache-manager';
 import { Context } from 'koa';
+import * as staticFile from '@midwayjs/static-file';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const filePath = resolve(__dirname, 'config/config.local.js');
@@ -41,6 +42,7 @@ const filePath = resolve(__dirname, 'config/config.local.js');
     upload,
     validate,
     typegoose,
+    staticFile,
     {
       component: info,
       enabledEnvironment: ['local'],
