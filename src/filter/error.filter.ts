@@ -8,7 +8,8 @@ import jwt from 'jsonwebtoken';
 @Catch(MidwayValidationError)
 export class ValidateErrorFilter {
   async catch(err: MidwayValidationError, ctx: Context): Promise<ResponseWrapper> {
-    ctx.logger.error(ctx.request.method, ctx.request.url, '耗时', Date.now() - ctx.__logStartTime, ctx.origin, err.stack);
+    const logStartTime = ctx.__logStartTime || Date.now();
+    ctx.logger.error(ctx.request.method, ctx.request.url, '耗时', Date.now() - logStartTime, ctx.origin, err.stack);
     return {
       code: 1001,
       msg: `校验参数错误${err.message}`,
@@ -18,7 +19,8 @@ export class ValidateErrorFilter {
 @Catch()
 export class AllServerErrorFilter {
   async catch(err: MidwayHttpError & { isCustomError?: boolean }, ctx: Context) {
-    ctx.logger.error(ctx.request.method, ctx.request.url, '耗时', Date.now() - ctx.__logStartTime, ctx.origin);
+    const logStartTime = ctx.__logStartTime || Date.now();
+    ctx.logger.error(ctx.request.method, ctx.request.url, '耗时', Date.now() - logStartTime, ctx.origin);
     if (err?.isCustomError) {
       return err;
     }
